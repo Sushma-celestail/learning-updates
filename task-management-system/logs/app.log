@@ -1,0 +1,193 @@
+2026-03-20 09:00:00 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-20 09:00:00 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-20 09:00:00 - INFO - main - Debug mode: True
+2026-03-20 09:00:01 - INFO - repositories.json_repository - Created new storage file: data/users.json
+2026-03-20 09:00:01 - INFO - repositories.json_repository - Created new storage file: data/tasks.json
+2026-03-20 09:01:10 - INFO - services.user_service - User 'alice' registered with id=1
+2026-03-20 09:01:10 - INFO - middleware - POST /users/register | 201 | 12ms
+2026-03-20 09:01:30 - INFO - services.user_service - User 'bob' registered with id=2
+2026-03-20 09:01:30 - INFO - middleware - POST /users/register | 201 | 10ms
+2026-03-20 09:02:00 - INFO - middleware - GET /users | 200 | 5ms
+2026-03-20 09:05:00 - INFO - services.user_service - User 'alice' logged in successfully
+2026-03-20 09:05:00 - INFO - middleware - POST /users/login | 200 | 8ms
+2026-03-20 09:06:00 - WARNING - services.user_service - Bad password attempt for 'alice'
+2026-03-20 09:06:00 - INFO - middleware - POST /users/login | 401 | 6ms
+2026-03-20 09:07:00 - WARNING - services.user_service - Duplicate username attempt: 'alice'
+2026-03-20 09:07:00 - INFO - middleware - POST /users/register | 409 | 4ms
+2026-03-20 10:00:00 - INFO - services.task_service - Task 'Write Q2 report' created with id=1 by 'alice'
+2026-03-20 10:00:00 - INFO - middleware - POST /tasks | 201 | 15ms
+2026-03-20 11:00:00 - INFO - services.task_service - Task 'Fix login bug' created with id=2 by 'bob'
+2026-03-20 11:00:00 - INFO - middleware - POST /tasks | 201 | 13ms
+2026-03-20 12:30:00 - INFO - services.task_service - Task id=2 partially updated: ['status']
+2026-03-20 12:30:00 - INFO - middleware - PATCH /tasks/2 | 200 | 9ms
+2026-03-20 14:00:00 - INFO - services.task_service - Task id=3 partially updated: ['status']
+2026-03-20 14:00:00 - INFO - middleware - PATCH /tasks/3 | 200 | 8ms
+2026-03-20 14:33:00 - ERROR - main - TaskNotFoundError: Task with id 999 not found
+2026-03-20 14:33:00 - INFO - middleware - GET /tasks/999 | 404 | 3ms
+2026-03-21 08:00:00 - INFO - services.task_service - Task 'Deploy to staging' created with id=4 by 'bob'
+2026-03-21 08:00:00 - INFO - middleware - POST /tasks | 201 | 11ms
+2026-03-21 10:00:00 - INFO - services.task_service - Task 'Code review for PR #42' created with id=5 by 'alice'
+2026-03-21 10:00:00 - INFO - middleware - POST /tasks | 201 | 14ms
+2026-03-21 15:00:00 - INFO - services.task_service - Task id=5 fully updated
+2026-03-21 15:00:00 - INFO - middleware - PUT /tasks/5 | 200 | 10ms
+2026-03-21 15:30:00 - INFO - middleware - GET /tasks | 200 | 7ms
+2026-03-21 15:31:00 - INFO - middleware - GET /tasks?status=pending | 200 | 6ms
+2026-03-21 15:32:00 - INFO - middleware - GET /tasks?priority=high&owner=alice | 200 | 5ms
+2026-03-21 15:33:00 - INFO - middleware - GET /tasks?page=1&limit=2 | 200 | 4ms
+2026-03-23 08:37:53 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 08:37:53 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 08:37:53 - INFO - main - Debug mode: True
+2026-03-23 08:38:20 - INFO - middleware - GET /favicon.ico | 404 | 1ms
+2026-03-23 08:38:23 - INFO - middleware - GET / | 404 | 1ms
+2026-03-23 08:38:38 - INFO - main - TaskManagementAPI shutting down
+2026-03-23 08:38:41 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 08:38:41 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 08:38:41 - INFO - main - Debug mode: True
+2026-03-23 08:40:22 - INFO - middleware - GET /docs | 200 | 1ms
+2026-03-23 08:40:22 - INFO - middleware - GET /openapi.json | 200 | 17ms
+2026-03-23 08:40:45 - ERROR - main - StorageError: Storage error: Cannot write data/users.json: The file lock 'data/users.json.lock' could not be acquired.
+2026-03-23 08:40:45 - INFO - middleware - POST /users/register | 500 | 5086ms
+2026-03-23 08:41:06 - INFO - middleware - GET /users | 200 | 2ms
+2026-03-23 08:41:08 - INFO - middleware - GET /users | 200 | 10ms
+2026-03-23 08:41:10 - INFO - middleware - GET /users | 200 | 3ms
+2026-03-23 08:41:24 - INFO - middleware - GET /users | 200 | 4ms
+2026-03-23 08:41:24 - INFO - middleware - GET /favicon.ico | 404 | 0ms
+2026-03-23 11:22:55 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 11:22:55 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 11:22:55 - INFO - main - Debug mode: True
+2026-03-23 11:23:34 - INFO - middleware - GET /favicon.ico | 404 | 3ms
+2026-03-23 11:23:39 - INFO - middleware - GET /docs | 200 | 1ms
+2026-03-23 11:23:40 - INFO - middleware - GET /openapi.json | 200 | 38ms
+2026-03-23 11:25:28 - WARNING - services.user_service - Login attempt for unknown user 'string'
+2026-03-23 11:25:28 - WARNING - main - InvalidCredentialsError: Invalid username or password
+2026-03-23 11:25:28 - INFO - middleware - POST /users/login | 401 | 30ms
+2026-03-23 11:26:14 - INFO - middleware - GET /users | 200 | 9ms
+2026-03-23 11:51:47 - INFO - middleware - GET / | 404 | 1ms
+2026-03-23 11:53:03 - INFO - middleware - GET / | 404 | 1ms
+2026-03-23 11:53:03 - INFO - middleware - GET /favicon.ico | 404 | 1ms
+2026-03-23 11:54:40 - INFO - middleware - GET / | 404 | 1ms
+2026-03-23 11:54:40 - INFO - middleware - GET /favicon.ico | 404 | 1ms
+2026-03-23 11:54:45 - INFO - middleware - GET /users | 200 | 11ms
+2026-03-23 11:54:56 - INFO - middleware - GET /redoc | 200 | 1ms
+2026-03-23 11:55:14 - INFO - middleware - GET /tasks | 200 | 8ms
+2026-03-23 11:57:20 - INFO - middleware - GET /docs | 200 | 1ms
+2026-03-23 11:57:20 - INFO - middleware - GET /openapi.json | 200 | 1ms
+2026-03-23 11:58:34 - WARNING - main - ValidationError: body → email: value is not a valid email address: An email address cannot have a period immediately after the @-sign.
+2026-03-23 11:58:34 - INFO - middleware - POST /users/register | 422 | 55ms
+2026-03-23 11:59:14 - WARNING - main - ValidationError: body → email: value is not a valid email address: An email address cannot have a period immediately after the @-sign.
+2026-03-23 11:59:14 - INFO - middleware - POST /users/register | 422 | 9ms
+2026-03-23 11:59:28 - WARNING - main - ValidationError: body → email: value is not a valid email address: An email address cannot have a period immediately after the @-sign.
+2026-03-23 11:59:28 - INFO - middleware - POST /users/register | 422 | 4ms
+2026-03-23 11:59:58 - INFO - middleware - GET /users/register | 405 | 1ms
+2026-03-23 12:02:31 - WARNING - main - ValidationError: body → email: value is not a valid email address: An email address cannot have a period immediately after the @-sign.
+2026-03-23 12:02:31 - INFO - middleware - POST /users/register | 422 | 8ms
+2026-03-23 12:03:44 - WARNING - main - ValidationError: body → 79: JSON decode error
+2026-03-23 12:03:44 - INFO - middleware - POST /users/register | 422 | 6ms
+2026-03-23 12:04:25 - INFO - middleware - GET /users | 200 | 14ms
+2026-03-23 12:04:35 - INFO - middleware - GET /users | 200 | 12ms
+2026-03-23 12:05:01 - INFO - middleware - GET /users/register | 405 | 1ms
+2026-03-23 12:06:31 - WARNING - main - ValidationError: body → password: String should have at least 8 characters
+2026-03-23 12:06:31 - INFO - middleware - POST /users/register | 422 | 13ms
+2026-03-23 12:06:53 - ERROR - main - StorageError: Storage error: Cannot write data/users.json: The file lock 'data/users.json.lock' could not be acquired.
+2026-03-23 12:06:53 - INFO - middleware - POST /users/register | 500 | 5077ms
+2026-03-23 12:14:18 - INFO - main - TaskManagementAPI shutting down
+2026-03-23 12:14:20 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 12:14:20 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 12:14:20 - INFO - main - Debug mode: True
+2026-03-23 12:14:37 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 12:14:37 - INFO - services.user_service - User 'sushma' registered with id=3
+2026-03-23 12:14:37 - INFO - middleware - POST /users/register | 201 | 50ms
+2026-03-23 12:15:14 - INFO - services.user_service - User 'sushma' logged in successfully
+2026-03-23 12:15:14 - INFO - middleware - POST /users/login | 200 | 14ms
+2026-03-23 12:15:35 - INFO - middleware - GET /users | 200 | 6ms
+2026-03-23 12:16:16 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 12:16:16 - INFO - services.user_service - User id=2 deleted
+2026-03-23 12:16:16 - INFO - middleware - DELETE /users/2 | 200 | 21ms
+2026-03-23 12:17:20 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 12:17:20 - INFO - services.task_service - Task 'user managament' created with id=6 by 'sushma'
+2026-03-23 12:17:20 - INFO - middleware - POST /tasks | 201 | 29ms
+2026-03-23 12:23:57 - INFO - main - TaskManagementAPI shutting down
+2026-03-23 12:24:05 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 12:24:05 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 12:24:05 - INFO - main - Debug mode: True
+2026-03-23 12:25:28 - INFO - middleware - GET /docs | 200 | 2ms
+2026-03-23 12:25:28 - INFO - middleware - GET /openapi.json | 200 | 34ms
+2026-03-23 12:32:10 - INFO - middleware - GET /tasks | 200 | 10ms
+2026-03-23 12:32:56 - INFO - middleware - GET /tasks/6 | 200 | 37ms
+2026-03-23 12:33:10 - INFO - middleware - GET /tasks/6 | 200 | 6ms
+2026-03-23 12:34:12 - ERROR - main - UserNotFoundError: User 'RAGHAV' not found
+2026-03-23 12:34:12 - INFO - middleware - PUT /tasks/6 | 404 | 16ms
+2026-03-23 12:34:36 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 12:34:36 - INFO - services.task_service - Task id=6 fully updated
+2026-03-23 12:34:36 - INFO - middleware - PUT /tasks/6 | 200 | 47ms
+2026-03-23 12:35:03 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 12:35:03 - INFO - services.task_service - Task id=6 fully updated
+2026-03-23 12:35:03 - INFO - middleware - PUT /tasks/6 | 200 | 23ms
+2026-03-23 12:35:22 - INFO - middleware - GET /health | 200 | 4ms
+2026-03-23 12:35:47 - INFO - middleware - GET /health | 200 | 3ms
+2026-03-23 12:36:05 - INFO - middleware - GET /health | 200 | 2ms
+2026-03-23 12:36:19 - INFO - middleware - GET /tasks/6 | 200 | 21ms
+2026-03-23 12:37:34 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 12:37:34 - INFO - services.user_service - User 'abc' registered with id=4
+2026-03-23 12:37:34 - INFO - middleware - POST /users/register | 201 | 69ms
+2026-03-23 12:38:00 - WARNING - services.user_service - Login attempt for unknown user 'string'
+2026-03-23 12:38:00 - WARNING - main - InvalidCredentialsError: Invalid username or password
+2026-03-23 12:38:00 - INFO - middleware - POST /users/login | 401 | 9ms
+2026-03-23 12:38:24 - INFO - services.user_service - User 'abc' logged in successfully
+2026-03-23 12:38:24 - INFO - middleware - POST /users/login | 200 | 10ms
+2026-03-23 12:39:13 - INFO - middleware - GET /users | 200 | 10ms
+2026-03-23 12:46:33 - INFO - main - TaskManagementAPI shutting down
+2026-03-23 12:47:14 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 12:47:14 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 12:47:14 - INFO - main - Debug mode: True
+2026-03-23 12:48:57 - INFO - main - TaskManagementAPI shutting down
+2026-03-23 12:48:59 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 12:48:59 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 12:48:59 - INFO - main - Debug mode: True
+2026-03-23 12:49:01 - INFO - main - TaskManagementAPI shutting down
+2026-03-23 12:49:33 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 12:49:33 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 12:49:33 - INFO - main - Debug mode: True
+2026-03-23 12:50:02 - INFO - middleware - GET / | 404 | 3ms
+2026-03-23 12:50:02 - INFO - middleware - GET /favicon.ico | 404 | 1ms
+2026-03-23 12:50:09 - INFO - middleware - GET /docs | 200 | 1ms
+2026-03-23 12:50:10 - INFO - middleware - GET /openapi.json | 200 | 36ms
+2026-03-23 12:54:43 - INFO - middleware - GET / | 404 | 1ms
+2026-03-23 12:55:00 - INFO - middleware - GET /redocs | 404 | 1ms
+2026-03-23 12:55:03 - INFO - middleware - GET /redoc | 200 | 1ms
+2026-03-23 12:55:12 - INFO - middleware - GET /redoc | 200 | 1ms
+2026-03-23 12:55:19 - INFO - middleware - GET /redocs | 404 | 1ms
+2026-03-23 12:55:25 - INFO - middleware - GET /docs | 200 | 1ms
+2026-03-23 12:55:26 - INFO - middleware - GET /openapi.json | 200 | 2ms
+2026-03-23 12:59:38 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 12:59:38 - INFO - services.user_service - User 'reeta' registered with id=5
+2026-03-23 12:59:38 - INFO - middleware - POST /users/register | 201 | 78ms
+2026-03-23 13:03:26 - WARNING - main - ValidationError: body → email: value is not a valid email address: An email address must have an @-sign.
+2026-03-23 13:03:26 - INFO - middleware - POST /users/register | 422 | 13ms
+2026-03-23 13:04:02 - WARNING - main - ValidationError: body → email: value is not a valid email address: An email address must have an @-sign.
+2026-03-23 13:04:02 - INFO - middleware - POST /users/register | 422 | 11ms
+2026-03-23 13:05:45 - INFO - middleware - GET /docs | 200 | 1ms
+2026-03-23 13:05:45 - INFO - middleware - GET /openapi.json | 200 | 1ms
+2026-03-23 13:08:03 - WARNING - main - ValidationError: body → status: Input should be 'pending', 'in_progress', 'completed' or 'cancelled'
+2026-03-23 13:08:03 - INFO - middleware - POST /tasks | 422 | 20ms
+2026-03-23 13:08:25 - WARNING - main - ValidationError: body → status: Input should be 'pending', 'in_progress', 'completed' or 'cancelled'
+2026-03-23 13:08:25 - INFO - middleware - POST /tasks | 422 | 5ms
+2026-03-23 13:09:13 - INFO - middleware - GET /tasks | 200 | 14ms
+2026-03-23 13:10:01 - INFO - repositories.json_repository - Ellipsis
+2026-03-23 13:10:01 - INFO - services.task_service - Task 'ML project' created with id=7 by 'Anita'
+2026-03-23 13:10:01 - INFO - middleware - POST /tasks | 201 | 51ms
+2026-03-23 13:10:37 - INFO - middleware - GET /tasks | 200 | 9ms
+2026-03-23 13:11:53 - INFO - middleware - GET /tasks/7 | 200 | 16ms
+2026-03-23 13:12:28 - ERROR - services.task_service - Task id=10 not found
+2026-03-23 13:12:28 - ERROR - main - TaskNotFoundError: Task with id 10 not found
+2026-03-23 13:12:28 - INFO - middleware - GET /tasks/10 | 404 | 22ms
+2026-03-23 13:16:07 - ERROR - main - UserNotFoundError: User '' not found
+2026-03-23 13:16:07 - INFO - middleware - POST /tasks | 404 | 11ms
+2026-03-23 13:18:56 - INFO - middleware - GET /tasks/7 | 200 | 10ms
+2026-03-23 13:20:56 - INFO - middleware - GET /health | 200 | 4ms
+2026-03-23 13:21:23 - INFO - middleware - GET /health | 200 | 2ms
+2026-03-23 15:03:59 - INFO - main - TaskManagementAPI shutting down
+2026-03-23 15:04:00 - INFO - main - Starting TaskManagementAPI v1.0.0
+2026-03-23 15:04:00 - INFO - main - Storage: tasks=data/tasks.json, users=data/users.json
+2026-03-23 15:04:00 - INFO - main - Debug mode: True
+2026-03-23 15:06:35 - INFO - main - TaskManagementAPI shutting down

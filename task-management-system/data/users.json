@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "Anita",
+      "email": "anita@mail.com",
+      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2026-03-20T09:00:00"
+    },
+    {
+      "username": "sushma",
+      "email": "sushma@example.com",
+      "password": "a446865431423457fbdd206bcd03540ae94eef99257eaa9ec19fba52b7496272",
+      "created_at": "2026-03-23T12:14:37.539547",
+      "id": 3
+    },
+    {
+      "username": "abc",
+      "email": "abc@example.com",
+      "password": "f4968baaf66d143fc6308624b900e098ca2e81cd502119db4734e93e7217743a",
+      "created_at": "2026-03-23T12:37:34.482550",
+      "id": 4
+    },
+    {
+      "username": "reeta",
+      "email": "reeta@example.com",
+      "password": "07be1495d5f37850b1cfe2cded6dcc287145d76e46270ec2ba8f760412cd350b",
+      "created_at": "2026-03-23T12:59:38.757278",
+      "id": 5
+    }
+  ]
+}
