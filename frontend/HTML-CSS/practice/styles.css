@@ -1,0 +1,41 @@
+/* styles.css */
+
+/* Basic reset to make things look consistent across browsers */
+* {
+    box-sizing: border-box;
+}
+
+/* Style the main body of the page */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    color: #333333;
+    margin: 40px auto;
+    max-width: 800px; /* Keeps the text from stretching too wide on big screens */
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* Style the headings */
+h1 {
+    color: #2c3e50;
+    text-align: center;
+}
+
+h2 {
+    color: #2980b9;
+    margin-top: 30px;
+}
+
+/* Style the horizontal line */
+hr {
+    border: none;
+    height: 2px;
+    background-color: #dddddd;
+    margin: 30px 0;
+}
+img{
+    margin-top: 30px;
+    border: none;
+    margin: 30px 0;
+}

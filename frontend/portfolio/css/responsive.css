@@ -1,0 +1,536 @@
+/* =============================================================
+   FILE: responsive.css
+   PURPOSE: Media queries for responsive design
+   
+   WORKFLOW — MOBILE-FIRST APPROACH:
+   
+   "Mobile-first" means we write BASE CSS for mobile screens.
+   Then we use min-width media queries to progressively ENHANCE
+   the layout as screens get BIGGER.
+   
+   WHY MOBILE-FIRST?
+   1. Most web traffic is mobile — serve them well first
+   2. Progressive enhancement: start minimal, add complexity
+   3. Avoids the "desktop shrink" problem — much harder to
+      squish a complex desktop layout than to expand a simple mobile one
+   
+   THE CSS CASCADE WORKS FOR US:
+   Mobile styles (no media query) → apply everywhere
+   @media (min-width: 768px) → overrides for tablet+
+   @media (min-width: 1024px) → overrides for desktop+
+   @media (min-width: 1440px) → optional fine-tuning for wide screens
+   
+   BREAKPOINTS:
+   - 375px  → Mobile (base styles, no query)
+   - 768px  → Tablet
+   - 1024px → Desktop
+   - 1440px → Wide desktop (optional)
+   
+   NOTE: Some global responsive rules already live in layout.css.
+   This file handles SECTION-SPECIFIC responsive adjustments.
+   ============================================================= */
+
+
+/* =============================================================
+   MOBILE BASE STYLES
+   These apply at ALL sizes (375px and above).
+   They represent the simplest, single-column layout.
+   ============================================================= */
+
+/* ── NAVIGATION — MOBILE ── */
+/*
+  On mobile, the nav links are hidden by default.
+  They appear when the CSS checkbox trick is triggered.
+  
+  HOW THE CSS-ONLY HAMBURGER WORKS:
+  1. <input type="checkbox" id="nav-toggle"> (hidden checkbox in HTML)
+  2. <label for="nav-toggle"> shows the ☰ icon as a button
+  3. .nav__links starts as display:none
+  4. #nav-toggle:checked ~ .nav__links → shows the links  
+  5. No JavaScript needed!
+*/
+
+/* Show the hamburger icon on mobile */
+.nav__toggle-label {
+  display: flex;  /* visible on mobile */
+}
+
+/* Mobile nav links — hidden initially, stacked vertically */
+.nav__links {
+  position: fixed;
+  top: 0;
+  right: -100%;          /* starts OFF-SCREEN to the right */
+  width: min(80vw, 30rem); /* max 80% of viewport or 300px */
+  height: 100vh;
+  background: var(--color-bg-secondary);
+  border-left: 1px solid var(--color-border);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-12) var(--space-8);
+  gap: var(--space-4);
+  box-shadow: var(--shadow-xl);
+  transition: right var(--transition-base);
+  z-index: calc(var(--z-fixed) - 1);
+}
+
+/* 
+  When checkbox is checked (#nav-toggle:checked),
+  the ~ (general sibling) selector targets .nav__links.
+  We slide the menu INTO view by setting right: 0.
+  
+  This is purely CSS — no JavaScript!
+*/
+#nav-toggle:checked ~ .nav__links {
+  right: 0;  /* slides in from the right */
+}
+
+/* Mobile nav links are full-width and larger for touch targets */
+.nav__link {
+  font-size: var(--font-lg);    /* larger on mobile for easy tapping */
+  width: 100%;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Hamburger → X animation when open */
+#nav-toggle:checked ~ .nav__controls .nav__toggle-label span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+#nav-toggle:checked ~ .nav__controls .nav__toggle-label span:nth-child(2) {
+  opacity: 0;
+}
+
+#nav-toggle:checked ~ .nav__controls .nav__toggle-label span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Overlay behind open mobile menu */
+#nav-toggle:checked + .nav__overlay {
+  display: block;
+}
+
+.nav__overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-fixed) - 2);  /* behind menu, above page */
+}
+
+/* ── HERO — MOBILE ── */
+.hero__name {
+  font-size: 3.6rem;  /* smaller on mobile — clamp handles this */
+}
+
+/* ── ABOUT — MOBILE ── */
+/*
+  On mobile, the two-column grid collapses to single column.
+  grid-template-areas changes to stack image above text.
+*/
+.about__grid {
+  grid-template-areas:
+    "image"    /* image on top */
+    "text";   /* text below */
+  grid-template-columns: 1fr;  /* single column */
+  gap: var(--space-8);
+}
+
+/* Image takes reasonable height on mobile (not too tall) */
+.about__image-placeholder {
+  aspect-ratio: 16 / 9;  /* wider ratio for mobile — uses horizontal space */
+  font-size: 5rem;
+}
+
+/* ── SKILLS — MOBILE ── */
+/* Skill item: label above bar on very small screens */
+.skill-item {
+  grid-template-columns: 1fr;  /* stack label and bar */
+  gap: var(--space-2);
+}
+
+/* ── PROJECTS — MOBILE ── */
+/* Featured card: no 2-column span on mobile (only 1 column anyway) */
+.project-card--featured {
+  grid-column: span 1;
+}
+
+/* ── TIMELINE — MOBILE ── */
+/*
+  On mobile, all timeline items go to ONE SIDE (left-aligned).
+  The vertical line moves to the left edge instead of center.
+*/
+.timeline::before {
+  left: 1.6rem;    /* line moves to left side */
+  transform: none; /* no centering needed */
+}
+
+.timeline__item {
+  width: calc(100% - 4rem);  /* full width minus room for the left dot */
+  margin-left: 4rem !important;  /* all items indent from left line */
+  text-align: left !important;   /* all left-aligned */
+}
+
+/* Dots move to left side for all items */
+.timeline__item::before {
+  left: -3.2rem !important;   /* positioned on the left line */
+  right: auto !important;
+  top: var(--space-6);
+}
+
+/* ── TESTIMONIALS — MOBILE ── */
+/* Stack testimonials vertically on mobile */
+.testimonials__grid {
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Remove the middle card elevation on mobile (no room) */
+.testimonial-card:nth-child(2) {
+  transform: none;
+}
+
+/* ── CONTACT — MOBILE ── */
+/* Contact grid stacks to single column */
+.contact__grid {
+  grid-template-areas:
+    "form"
+    "details";
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+/* Name+Email form row stacks to single column on mobile */
+.form-row {
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+/* ── FOOTER — MOBILE ── */
+/* Footer columns stack vertically */
+.footer__inner {
+  grid-template-columns: 1fr;   /* single column */
+  gap: var(--space-8);
+  text-align: center;
+}
+
+/* Center footer links on mobile */
+.footer__links {
+  align-items: center;
+}
+
+.footer__social {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+/* =============================================================
+   TABLET BREAKPOINT — 768px and above
+   Layout transitions from single-column to two-column where needed.
+   ============================================================= */
+@media (min-width: 768px) {
+
+  /* ── NAVIGATION ── */
+  /* Hide hamburger on tablet+ (nav links always visible) */
+  .nav__toggle-label {
+    display: none;
+  }
+
+  /* Reset mobile nav styling — back to horizontal flexbox */
+  .nav__links {
+    position: static;          /* back to normal flow */
+    width: auto;
+    height: auto;
+    background: transparent;
+    border-left: none;
+    flex-direction: row;       /* horizontal links */
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0;
+    box-shadow: none;
+    gap: var(--space-2);
+    transition: none;          /* no transition needed for static display */
+  }
+
+  /* Reset individual nav link size */
+  .nav__link {
+    font-size: var(--font-sm);
+    width: auto;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: none;
+  }
+
+  /* ── ABOUT ── */
+  /* About grid: skill item label + bar side by side again */
+  .skill-item {
+    grid-template-columns: 12rem 1fr;
+    gap: var(--space-4);
+  }
+
+  /* ── TESTIMONIALS ── */
+  /* Two testimonials side by side on tablet */
+  .testimonials__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .testimonial-card {
+    min-width: calc(50% - var(--space-3)); /* ~50% width accounting for gap */
+  }
+
+  /* ── FOOTER ── */
+  /* Footer: two columns on tablet */
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
+  }
+
+  .footer__links {
+    align-items: flex-start;
+  }
+
+  .footer__social {
+    justify-content: flex-start;
+  }
+}
+
+
+/* =============================================================
+   DESKTOP BREAKPOINT — 1024px and above
+   Full multi-column layouts activate.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+  /* ── HERO ── */
+  .hero__name {
+    font-size: clamp(4.8rem, 7vw, 7rem); /* larger range on desktop */
+  }
+
+  /* ── ABOUT ── */
+  /* Two-column about grid activates */
+  .about__grid {
+    grid-template-areas: "image text"; /* side by side */
+    grid-template-columns: 1fr 1.5fr;
+    gap: var(--space-12);
+  }
+
+  /* Restore portrait ratio on desktop */
+  .about__image-placeholder {
+    aspect-ratio: 4 / 5;
+    font-size: 8rem;
+  }
+
+  /* ── TIMELINE ── */
+  /* Restore alternating left-right on desktop */
+  .timeline::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .timeline__item {
+    width: 45%;
+    text-align: left;
+  }
+
+  /* Odd items (1st, 3rd) go back to left */
+  .timeline__item:nth-child(odd) {
+    margin-left: 0 !important;
+    text-align: right !important;
+  }
+
+  /* Even items (2nd, 4th) go back to right */
+  .timeline__item:nth-child(even) {
+    margin-left: 55% !important;
+    text-align: left !important;
+  }
+
+  /* Restore dot positions */
+  .timeline__item:nth-child(odd)::before {
+    right: -10% !important;
+    left: auto !important;
+  }
+
+  .timeline__item:nth-child(even)::before {
+    left: -10% !important;
+    right: auto !important;
+  }
+
+  /* ── TESTIMONIALS ── */
+  /* All 3 testimonials in a row on desktop */
+  .testimonials__grid {
+    flex-wrap: nowrap;      /* prevent wrapping — force one row */
+  }
+
+  .testimonial-card {
+    min-width: 0;           /* reset tablet min-width */
+    flex: 1;               /* equal thirds */
+  }
+
+  /* Middle card elevated again on desktop */
+  .testimonial-card:nth-child(2) {
+    transform: translateY(-8px);
+  }
+
+  /* ── CONTACT ── */
+  /* Two-column contact layout */
+  .contact__grid {
+    grid-template-areas: "form details";
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-12);
+  }
+
+  /* Name+Email side by side in form */
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  /* ── FOOTER ── */
+  /* Three column footer */
+  .footer__inner {
+    grid-template-columns: repeat(3, 1fr);
+    text-align: left;
+  }
+
+  /* ── PROJECTS ── */
+  /* Featured card spans 2 columns on desktop */
+  .project-card--featured {
+    grid-column: span 2;
+  }
+}
+
+
+/* =============================================================
+   WIDE DESKTOP — 1440px
+   Minor tweaks for very large screens.
+   ============================================================= */
+@media (min-width: 1440px) {
+
+  /* Wider container on large screens */
+  .container {
+    max-width: 1400px;
+  }
+
+  /* Bigger hero text on wide screens */
+  .hero__name {
+    font-size: 7.2rem;
+  }
+
+  /* More comfortable section padding */
+  section {
+    padding-block: var(--space-24);
+  }
+}
+
+
+/* =============================================================
+   HORIZONTAL SCROLL PREVENTION
+   
+   This is applied globally to prevent any horizontal overflow
+   at any viewport width. This MUST be true at 375px, 768px, and 1440px.
+   ============================================================= */
+html,
+body {
+  overflow-x: hidden;   /* never allow horizontal scroll */
+}
+
+/*
+  All elements must stay within their containers.
+  This catches any element that might overflow.
+*/
+* {
+  max-width: 100%;       /* no element can be wider than its container */
+}
+
+/* EXCEPTION: Images already handled by reset.css */
+/* EXCEPTION: ::before/::after can be wider (decorative) */
+
+
+/* =============================================================
+   CONTAINER PADDING ADJUSTMENT FOR EACH BREAKPOINT
+   ============================================================= */
+
+/* Mobile: less side padding */
+.container {
+  padding-inline: var(--space-4);  /* 16px sides on mobile */
+}
+
+/* Tablet: more side padding */
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-6);  /* 24px sides on tablet */
+  }
+}
+
+/* Desktop: even more breathing room */
+@media (min-width: 1024px) {
+  .container {
+    padding-inline: var(--space-8);  /* 32px sides on desktop */
+  }
+}
+
+
+/* =============================================================
+   SECTION-SPECIFIC FONT SIZE SCALING
+   These changes make typography feel right at each breakpoint.
+   ============================================================= */
+
+/* Mobile */
+.section-header__title {
+  font-size: var(--font-2xl);   /* 24px on mobile */
+}
+
+.about__title {
+  font-size: var(--font-2xl);
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .section-header__title {
+    font-size: var(--font-3xl);  /* 32px on tablet */
+  }
+
+  .about__title {
+    font-size: var(--font-3xl);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .section-header__title {
+    font-size: clamp(3.2rem, 4vw, 4.8rem);  /* fluid between 32px-48px */
+  }
+
+  .about__title {
+    font-size: clamp(3.2rem, 3.5vw, 4rem);
+  }
+}
+
+
+/* =============================================================
+   PRINT STYLES (BONUS — GOOD PRACTICE)
+   When someone prints the portfolio, hide navigation and animations.
+   ============================================================= */
+@media print {
+  .nav,
+  .hero__scroll-indicator,
+  .theme-toggle,
+  .btn {
+    display: none;  /* hide interactive elements when printing */
+  }
+
+  .hero {
+    min-height: auto;
+    padding: var(--space-8) 0;
+    color: black;
+    background: white;
+  }
+
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

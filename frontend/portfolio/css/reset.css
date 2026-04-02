@@ -1,0 +1,162 @@
+/* =============================================================
+   FILE: reset.css
+   PURPOSE: CSS Reset / Normalize
+   WHY: Different browsers have different default styles (margins,
+        paddings, font sizes). This file strips all those defaults
+        so we start from a consistent "blank slate" across all browsers.
+   WORKFLOW: This is the FIRST CSS file linked in index.html, so it
+             runs before any other styles. Think of it as clearing
+             the whiteboard before you draw.
+   ============================================================= */
+
+/* 
+  Universal box-sizing reset:
+  By default, CSS width does NOT include padding/border (content-box).
+  Setting box-sizing: border-box means width INCLUDES padding+border,
+  making layout math much easier and predictable.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;  /* padding and border are INSIDE the declared width */
+  margin: 0;               /* remove all default outer spacing */
+  padding: 0;              /* remove all default inner spacing */
+}
+
+/* 
+  Root font size:
+  Setting 62.5% makes 1rem = 10px (instead of default 16px).
+  This makes rem-based math simple: 1.6rem = 16px, 2.4rem = 24px, etc.
+  WHY REM: rem is relative to root, so it scales with user's browser
+  font preference (accessibility-friendly), unlike px which is fixed.
+*/
+html {
+  font-size: 62.5%;               /* 1rem = 10px */
+  scroll-behavior: smooth;        /* CSS smooth scrolling for anchor links */
+  -webkit-text-size-adjust: 100%; /* Prevent font scaling on mobile rotation */
+}
+
+/* 
+  Body defaults:
+  Set the baseline font so ALL child elements inherit it (unless overridden).
+  'line-height: 1.6' means line height is 1.6× the font size — improves readability.
+*/
+body {
+  font-size: 1.6rem;   /* 16px — readable default */
+  line-height: 1.6;    /* comfortable vertical space between lines */
+  min-height: 100vh;   /* body fills at least full viewport height */
+}
+
+/* 
+  Remove list bullets/numbers by default.
+  Navigation menus use <ul>/<li> semantically but don't need bullets.
+  We add styles back only where lists should look like lists.
+*/
+ul,
+ol {
+  list-style: none;
+}
+
+/* 
+  Remove underline from links by default.
+  We add text decorations back only where needed (e.g., inline text links).
+  Also remove the blue default color — our CSS variables will define colors.
+*/
+a {
+  text-decoration: none;
+  color: inherit; /* inherit color from parent — avoids surprise blue links */
+}
+
+/* 
+  Make all images responsive by default:
+  - max-width: 100% prevents images from overflowing their container
+  - display: block removes the extra "inline gap" beneath images (caused by
+    images being inline elements — they leave space for letter descenders)
+*/
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 
+  Form elements don't inherit font by default — they use browser-specific fonts.
+  This forces them to use our defined fonts.
+*/
+input,
+button,
+textarea,
+select {
+  font: inherit; /* inherit font-family, font-size, line-height from parent */
+}
+
+/* 
+  Remove all default button styling.
+  We will style our buttons from scratch using components.css.
+*/
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* 
+  Headings default weight reset:
+  Some resets set headings to font-weight: inherit which removes the <b> look.
+  We keep font-weight but reset margin, because margins differ across browsers.
+*/
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;   /* bold by default but we control exact weights in components */
+  line-height: 1.2;   /* tighter line height for large headings */
+}
+
+/* 
+  Paragraph margin reset:
+  Some browsers add top/bottom margin to <p>. We remove it for predictable spacing.
+*/
+p {
+  overflow-wrap: break-word; /* break long words so they don't overflow containers */
+}
+
+/* 
+  Table reset: collapse borders so there are no gaps between cells.
+*/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/*
+  Remove default fieldset styling so we can style it our way.
+  Fieldsets group form fields logically (accessibility benefit).
+*/
+fieldset {
+  border: none;
+}
+
+/* 
+  Ensure :focus-visible shows an outline for keyboard users.
+  The 'outline: none' on focus would be an accessibility violation.
+  :focus-visible shows outline ONLY for keyboard navigation (not mouse clicks).
+  This is the correct, accessible pattern.
+*/
+:focus-visible {
+  outline: 3px solid var(--color-accent, #4a90e2); /* uses our accent color from variables.css */
+  outline-offset: 2px;
+}
+
+/*
+  Remove default quote marks from blockquotes.
+  We use ::before in components.css to add custom decorative quotes.
+*/
+blockquote {
+  quotes: none;
+}
+
+blockquote::before,
+blockquote::after {
+  content: none;
+}

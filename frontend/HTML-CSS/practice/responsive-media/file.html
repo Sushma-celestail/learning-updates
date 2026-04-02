@@ -1,0 +1,212 @@
+<!-- Write a mobile-first stylesheet that changes layout from single-column to multi-column at tablet (768px) and desktop (1024px) breakpoints. 
+
+Create responsive typography using clamp() that scales smoothly from mobile to desktop. 
+
+Build a responsive image gallery that shows 1 column on mobile, 2 on tablet, and 4 on desktop. 
+
+Create a responsive navigation that collapses into a hamburger-style layout on mobile (CSS-only).  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Design Demo</title>
+
+<style>
+
+/* =========================
+   1️⃣ MOBILE-FIRST BASE STYLES
+   ========================= */
+
+/* Mobile-first means:
+   - Start with small screens
+   - Then add styles using min-width breakpoints */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* =========================
+   2️⃣ RESPONSIVE TYPOGRAPHY (clamp)
+   ========================= */
+
+/* clamp(min, preferred, max)
+   - Text scales smoothly between sizes */
+
+h1 {
+  font-size: clamp(24px, 5vw, 48px);
+}
+
+p {
+  font-size: clamp(14px, 2.5vw, 18px);
+}
+
+/* =========================
+   3️⃣ RESPONSIVE NAVBAR (CSS ONLY)
+   ========================= */
+
+/* Hidden checkbox trick for hamburger */
+#menu-toggle {
+  display: none;
+}
+
+.navbar {
+  background: black;
+  color: white;
+  padding: 15px;
+}
+
+/* Hamburger icon */
+.menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+  display: block;
+}
+
+/* Nav links */
+.nav-links {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Show menu when checkbox checked */
+#menu-toggle:checked + .menu-icon + .nav-links {
+  display: flex;
+}
+
+/* =========================
+   4️⃣ LAYOUT (Single column mobile)
+   ========================= */
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile = single column */
+  gap: 10px;
+  padding: 10px;
+}
+
+.box {
+  background: teal;
+  color: white;
+  padding: 20px;
+}
+
+/* =========================
+   5️⃣ RESPONSIVE IMAGE GALLERY
+   ========================= */
+
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile = 1 column */
+  gap: 10px;
+}
+
+.gallery img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* =========================
+   6️⃣ TABLET BREAKPOINT (768px)
+   ========================= */
+
+@media (min-width: 768px) {
+
+  /* Layout becomes 2 columns */
+  .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Gallery becomes 2 columns */
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Navbar becomes horizontal */
+  .menu-icon {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
+
+/* =========================
+   7️⃣ DESKTOP BREAKPOINT (1024px)
+   ========================= */
+
+@media (min-width: 1024px) {
+
+  /* Layout becomes 3 columns */
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Gallery becomes 4 columns */
+  .gallery {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- =========================
+     NAVIGATION (CSS HAMBURGER)
+     ========================= -->
+
+<nav class="navbar">
+  <!-- Hidden checkbox -->
+  <input type="checkbox" id="menu-toggle">
+
+  <!-- Hamburger icon -->
+  <label for="menu-toggle" class="menu-icon">☰</label>
+
+  <!-- Links -->
+  <div class="nav-links">
+    <a href="#" style="color:white;">Home</a>
+    <a href="#" style="color:white;">About</a>
+    <a href="#" style="color:white;">Contact</a>
+  </div>
+</nav>
+
+<!-- =========================
+     TYPOGRAPHY DEMO
+     ========================= -->
+
+<section style="padding:20px;">
+  <h1>Responsive Typography</h1>
+  <p>This text scales smoothly using clamp(). Resize screen to see magic.</p>
+</section>
+
+<!-- =========================
+     RESPONSIVE LAYOUT
+     ========================= -->
+
+<section class="container">
+  <div class="box">Box 1</div>
+  <div class="box">Box 2</div>
+  <div class="box">Box 3</div>
+</section>
+
+<!-- =========================
+     RESPONSIVE IMAGE GALLERY
+     ========================= -->
+
+<section class="gallery">
+  <img src="https://picsum.photos/300?1">
+  <img src="https://picsum.photos/300?2">
+  <img src="https://picsum.photos/300?3">
+  <img src="https://picsum.photos/300?4">
+</section>
+
+</body>
+</html>

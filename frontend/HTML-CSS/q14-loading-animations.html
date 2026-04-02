@@ -1,0 +1,403 @@
+<!-- Q14. Animated Loading States 
+
+Topics: @keyframes, animation, transform, transition 
+
+Problem Statement: 
+
+Create a page that showcases four different CSS-only loading animations: (a) A spinning circle (border spinner), (b) Three bouncing dots, (c) A pulsing skeleton screen (content placeholder), (d) A horizontal progress bar that fills from 0% to 100% and repeats. 
+
+Constraints: 
+
+Each animation must use @keyframes with meaningful names 
+
+Spinner: use border with one transparent side + rotate 360deg 
+
+Bouncing dots: use animation-delay to stagger the three dots 
+
+Skeleton screen: use a gradient animation (shimmer effect) moving left to right 
+
+Progress bar: use width animation from 0% to 100% with ease timing 
+
+All animations must use transform and opacity where possible (GPU-friendly properties) 
+
+No JavaScript — pure CSS animations 
+
+Add animation-iteration-count: infinite where appropriate  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q14 — Animated Loading States</title>
+  <style>
+    :root {
+      --color-bg: #3d3d3f;
+      --color-surface: #1a1a2e;
+      --color-border: #2d3748;
+      --color-primary: #818cf8;
+      --color-text: #ffffff;
+      --color-text-muted: #718096;
+      --border-radius: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      padding: 2rem;
+    }
+
+    h2 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* ============================================================
+       (A) SPINNER — border trick
+
+       The spinner is a single div. Its "ring" appearance comes
+       from using border on all sides but making ONE side transparent.
+
+       border: 3px solid rgba(129, 140, 248, 0.2)
+         →  a faint ring visible all the way around
+
+       border-top-color: var(--color-primary)
+         →  one side is opaque — this is the "moving part"
+
+       When we rotate the element 360 degrees, the opaque arc
+       appears to chase around the ring.
+
+       @keyframes spin
+         →  defines the animation sequence.
+            Name "spin" is arbitrary — choose meaningful names.
+            from: transform: rotate(0deg)   →  starting state
+            to:   transform: rotate(360deg) →  ending state
+
+       animation: spin 0.8s linear infinite
+         →  spin      = keyframe name to use
+            0.8s      = one full rotation takes 0.8 seconds
+            linear    = constant speed (not ease-in or ease-out)
+                        linear is crucial for smooth looping
+            infinite  = repeat forever
+
+       WHY transform IS GPU-FRIENDLY:
+       CSS transforms (rotate, translate, scale) and opacity are
+       handled by the compositor thread — a separate thread that
+       doesn't block JavaScript or layout. This means animations
+       run at 60fps even when JS is busy.
+       Avoid animating width, height, left, top, margin, padding —
+       these trigger layout recalculation (expensive).
+    ============================================================ */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(129, 140, 248, 0.2); /* faint full ring */
+      border-top-color: var(--color-primary);      /* one opaque arc */
+      border-radius: 50%;                          /* make it circular */
+      animation: spin 0.8s linear infinite;        /* rotate forever */
+    }
+
+    /* Size variant: large */
+    .spinner.lg {
+      width: 72px;
+      height: 72px;
+      border-width: 5px;
+    }
+
+    /* ============================================================
+       (B) BOUNCING DOTS — animation-delay stagger
+
+       Three small circles that bob up and down.
+       The key is using animation-delay to OFFSET when each dot
+       starts — this creates the wave/chasing effect.
+
+       @keyframes bounce
+         →  0% and 100% are at translateY(0) — neutral position
+            40% is at translateY(-12px) — moved up 12px
+
+       Why 40% and not 50%?
+         →  By putting the peak at 40% (not midpoint), the dot
+            spends more time going UP than coming down, creating
+            a snappier, more natural bounce feel.
+
+       animation-delay: 0s, 0.15s, 0.3s
+         →  dot 1 starts immediately
+            dot 2 starts 0.15s later
+            dot 3 starts 0.15s after dot 2
+         This delay STAGGERS the dots so they appear to ripple.
+    ============================================================ */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      40%       { transform: translateY(-14px); }
+    }
+
+    .dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      animation: bounce 1s ease-in-out infinite;
+      /* Each dot runs the SAME animation but starts at a different time */
+    }
+
+    .dot:nth-child(1) { animation-delay: 0s; }
+    .dot:nth-child(2) { animation-delay: 0.15s; }
+    .dot:nth-child(3) { animation-delay: 0.3s; }
+
+    /* ============================================================
+       (C) SKELETON SCREEN — shimmer gradient animation
+
+       Skeleton screens are placeholders that mimic the layout
+       of real content while it loads — better UX than a spinner
+       because users can see WHERE content will appear.
+
+       The shimmer effect is a gradient that moves LEFT to RIGHT:
+
+       background: linear-gradient(
+         90deg,
+         rgba(255,255,255,0.05) 0%,   — dim
+         rgba(255,255,255,0.15) 50%,  — bright (the "shine")
+         rgba(255,255,255,0.05) 100%  — dim again
+       )
+
+       background-size: 200% 100%
+         →  The gradient is TWICE the element's width.
+            This gives it room to "scroll" from right to left.
+
+       @keyframes shimmer
+         →  moves background-position from right to left.
+            100% means "I've moved the whole width" — at which
+            point the animation loops and it looks continuous.
+
+       NOTE: we animate background-position, not transform.
+       Normally this is less GPU-efficient, but for skeleton
+       screens it's the standard approach and negligible in cost.
+    ============================================================ */
+    @keyframes shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0.04) 0%,
+        rgba(255,255,255,0.12) 50%,
+        rgba(255,255,255,0.04) 100%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.8s linear infinite;
+      border-radius: 6px;
+    }
+
+    /* Skeleton layout — mimics a card with avatar + text */
+    .skeleton-card {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .skeleton-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .skeleton-lines {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .skeleton-line {
+      height: 14px;
+    }
+
+    /* ============================================================
+       (D) PROGRESS BAR — width animation
+
+       The progress bar animates its pseudo-element's width
+       from 0% → 100%, simulating a file download or page load.
+
+       @keyframes progress
+         →  starts at width: 0%, ends at width: 100%.
+            This is NOT a GPU-friendly property (width changes
+            trigger layout), but for a single progress bar
+            it's imperceptible and simpler to understand.
+
+       animation-timing-function: ease
+         →  starts slow, speeds up in the middle, slows at end.
+            This feels natural — like a real progress bar
+            that moves quickly at first, then slows near completion.
+
+       animation-iteration-count: infinite
+         →  repeats forever (resets to 0% and runs again).
+
+       The outer .progress-track is the gray background rail.
+       The inner .progress-fill is the colored moving bar.
+    ============================================================ */
+    @keyframes progress {
+      0%   { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden; /* clips the fill bar at the rounded edges */
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%; /* starting state — animation overrides this */
+      background: var(--color-primary);
+      border-radius: 99px;
+      animation: progress 2s ease infinite;
+    }
+
+    /* Optional: a glowing variant of the progress bar */
+    .progress-fill.glow {
+      box-shadow: 0 0 8px rgba(129, 140, 248, 0.6);
+    }
+
+    /* ============================================================
+       DEMO LAYOUT HELPERS
+    ============================================================ */
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .demo-label {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      font-family: monospace;
+      background: rgba(255,255,255,0.05);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* ============================================================
+       ACCESSIBILITY: prefers-reduced-motion
+
+       Some users have vestibular disorders or simply prefer less
+       motion. The prefers-reduced-motion media query detects this
+       OS setting and should pause or remove animations.
+
+       We don't remove the skeleton/spinner (they serve a purpose)
+       but we pause the decorative animations.
+    ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      .spinner, .dot, .skeleton, .progress-fill {
+        animation-play-state: paused;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Loading Animations</h1>
+  <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 2rem;">Four CSS-only loading states — no JavaScript.</p>
+
+  <!-- (A) SPINNER -->
+  <div class="demo-panel">
+    <h2>(A) Border Spinner</h2>
+    <div class="demo-row">
+      <div class="spinner"></div>
+      <div class="spinner lg"></div>
+      <span class="demo-label">border + border-top-color + rotate(360deg)</span>
+    </div>
+    <p style="font-size:0.8rem; color:var(--color-text-muted)">
+      One transparent border side creates the arc. Rotating the element 360° makes it appear to spin.
+      <code>animation: spin 0.8s linear infinite</code>
+    </p>
+  </div>
+
+  <!-- (B) BOUNCING DOTS -->
+  <div class="demo-panel">
+    <h2>(B) Bouncing Dots</h2>
+    <div class="demo-row">
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <span class="demo-label">translateY + animation-delay stagger</span>
+    </div>
+    <p style="font-size:0.8rem; color:var(--color-text-muted)">
+      Same animation on all three dots. <code>animation-delay: 0s, 0.15s, 0.3s</code> creates the wave.
+    </p>
+  </div>
+
+  <!-- (C) SKELETON SCREEN -->
+  <div class="demo-panel">
+    <h2>(C) Skeleton Screen</h2>
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-avatar"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton skeleton-line" style="width: 45%"></div>
+        <div class="skeleton skeleton-line" style="width: 80%"></div>
+        <div class="skeleton skeleton-line" style="width: 65%"></div>
+      </div>
+    </div>
+    <div class="skeleton skeleton-line" style="width: 100%; height: 80px; margin-top: 0.5rem; border-radius: 8px;"></div>
+    <span class="demo-label">background-size: 200% + animating background-position</span>
+    <p style="font-size:0.8rem; color:var(--color-text-muted)">
+      A gradient twice the element's width scrolls from right to left, creating the shimmer. Mimics real content layout.
+    </p>
+  </div>
+
+  <!-- (D) PROGRESS BAR -->
+  <div class="demo-panel">
+    <h2>(D) Progress Bar</h2>
+    <div class="progress-track">
+      <div class="progress-fill glow"></div>
+    </div>
+    <div class="progress-track" style="margin-top: 1rem; height: 4px;">
+      <div class="progress-fill" style="animation-duration: 3s; animation-timing-function: linear;"></div>
+    </div>
+    <span class="demo-label">width: 0% → 100% + ease timing-function</span>
+    <p style="font-size:0.8rem; color:var(--color-text-muted)">
+      Animating <code>width</code> from 0% to 100%. The top bar uses <code>ease</code> (natural feel).
+      Bottom bar uses <code>linear</code> (constant rate). Both loop with <code>infinite</code>.
+    </p>
+  </div>
+
+</body>
+</html>

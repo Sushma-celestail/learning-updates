@@ -1,0 +1,73 @@
+/* 
+==========================================
+BOX MODEL EXPLORER STYLES
+==========================================
+*/
+
+/* Container to align boxes side by side */
+.container {
+    display: flex;
+    gap: 20px;
+}
+
+/* Common box styles */
+.box {
+    width: 300px;        /* Base width */
+    padding: 20px;       /* Inner space */
+    border: 5px solid black; /* Border */
+    margin: 10px;        /* Outer space */
+}
+
+/* Box 1: content-box (default behavior) */
+.content-box {
+    box-sizing: content-box;
+    background-color: lightblue;
+}
+
+/*
+In content-box:
+Total width = content + padding + border
+
+= 300 + 20 + 20 + 5 + 5
+= 350px
+
+So actual rendered size becomes bigger than defined width
+*/
+
+/* Box 2: border-box */
+.border-box {
+    box-sizing: border-box;
+    background-color: lightgreen;
+}
+
+/*
+In border-box:
+Total width = 300px (fixed)
+
+Padding and border are INCLUDED inside width,
+so content shrinks automatically:
+
+Content width = 300 - 20 - 20 - 5 - 5 = 250px
+*/
+
+/* Label styling */
+.label {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/*
+==========================================
+WHY border-box IS PREFERRED
+==========================================
+
+- It makes layout predictable
+- Width remains constant (no unexpected overflow)
+- Easier to design responsive layouts
+- Widely used in modern CSS frameworks
+
+Common practice:
+* {
+    box-sizing: border-box;
+}
+*/

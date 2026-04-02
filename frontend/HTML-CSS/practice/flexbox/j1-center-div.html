@@ -1,0 +1,32 @@
+<!-- Center a div (Horizontal + Vertical) -->
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    display: flex;
+    justify-content: center;  /* Horizontal */
+    align-items: center;      /* Vertical */
+    height: 100vh;
+    background: #f0f0f0;
+}
+
+.box {
+    width: 200px;
+    height: 100px;
+    background: teal;
+    color: white;
+    display: flex;
+    justify-content: center; /* horizontal control of the box  */
+    align-items: center;  /* vertical control of the box*/
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="box">Centered</div>
+</div>
+
+</body>
+</html>

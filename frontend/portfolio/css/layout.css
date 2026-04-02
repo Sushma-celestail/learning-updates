@@ -1,0 +1,469 @@
+/* =============================================================
+   FILE: layout.css
+   PURPOSE: Page structure, Grid & Flexbox layouts
+   
+   WORKFLOW:
+   This file defines the STRUCTURAL skeletons of all sections.
+   Think of it as the blueprint/architecture of a building.
+   It answers: "WHERE does each block go on the page?"
+   
+   The actual LOOKS (colors, fonts, etc.) are in components.css.
+   The MOVEMENT (animations) are in animations.css.
+   The RESPONSIVE CHANGES (media queries) are in responsive.css.
+   
+   KEY CONCEPTS USED:
+   ► CSS Grid   → 2D layout (rows AND columns) — used for page sections
+   ► Flexbox    → 1D layout (row OR column) — used for nav, footer, card rows
+   ► grid-template-areas → visual ASCII-art-like layout definition
+   ► repeat(auto-fill, minmax()) → automatic responsive columns without media queries
+   ============================================================= */
+
+
+/* ─────────────────────────────────────────────────────────────
+   BASE BODY LAYOUT
+   ───────────────────────────────────────────────────────────── */
+/*
+  Body uses Flexbox column to stack sections vertically.
+  min-height: 100vh ensures the footer is always at the bottom
+  even if content is short.
+*/
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;  /* stack header, main, footer vertically */
+  min-height: 100vh;
+  transition: background-color var(--transition-base), color var(--transition-base);
+  /* ↑ Smooth color transition when theme toggles dark/light */
+}
+
+/*
+  The <main> element wraps all content sections.
+  flex: 1 makes it grow to fill available space between nav and footer.
+*/
+main {
+  flex: 1;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   CONTAINER — REUSABLE WIDTH CONSTRAINER
+   
+   Used by adding class="container" to section inner wrappers.
+   Prevents content from stretching to full width on large screens.
+   Centers content with auto margins.
+   ───────────────────────────────────────────────────────────── */
+.container {
+  max-width: var(--container-max);   /* 1200px — max content width */
+  width: 100%;
+  margin-inline: auto;               /* auto left+right margin = centered */
+  padding-inline: var(--container-padding); /* side breathing room */
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ① NAVIGATION LAYOUT — STICKY TOP BAR
+   
+   Uses Flexbox to place logo on left, nav links on right.
+   position: sticky keeps it visible while scrolling.
+   ───────────────────────────────────────────────────────────── */
+.nav {
+  position: sticky;       /* sticks to top of viewport while scrolling */
+  top: 0;                 /* 0px from top of viewport */
+  left: 0;
+  right: 0;
+  z-index: var(--z-fixed); /* above all page content */
+}
+
+/*
+  Inner nav wrapper uses Flexbox:
+  - justify-content: space-between → logo on far-left, links on far-right
+  - align-items: center → vertically center logo and links
+*/
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-4);  /* top/bottom padding (shorthand for padding-top + padding-bottom) */
+  gap: var(--space-4);
+}
+
+/*
+  Navigation links group (ul element)
+  Flexbox row with gaps between each link.
+*/
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);   /* small gap between nav link items */
+}
+
+/*
+  Nav controls (theme toggle + mobile menu area)
+  Flexbox to keep them in line.
+*/
+.nav__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE NAVIGATION — CSS-ONLY APPROACH
+   
+   How CSS-only mobile nav works:
+   1. A <input type="checkbox" id="nav-toggle"> is hidden
+   2. A <label for="nav-toggle"> acts as the burger button
+   3. The :checked CSS pseudo-class detects when checkbox is clicked
+   4. Adjacent sibling selector (~) shows/hides the nav links
+   
+   This achieves toggling WITHOUT any JavaScript!
+   ───────────────────────────────────────────────────────────── */
+.nav__toggle {
+  display: none;  /* hidden — just for state, not visible */
+}
+
+/* Show the hamburger menu button only on mobile */
+.nav__toggle-label {
+  display: none;         /* hidden on desktop */
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: var(--space-2);
+  z-index: var(--z-fixed);
+}
+
+/* Each line of the hamburger icon */
+.nav__toggle-label span {
+  display: block;
+  width: 25px;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: var(--radius-full);
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ② HERO SECTION LAYOUT — FULL VIEWPORT HEIGHT
+   
+   100vh = 100% of the viewport height.
+   Uses CSS Grid to center content both horizontally and vertically.
+   ───────────────────────────────────────────────────────────── */
+.hero {
+  min-height: var(--hero-height);  /* 100vh — full screen height */
+  display: grid;
+  place-items: center;             /* center-center using grid shorthand */
+  position: relative;              /* for pseudo-element positioning */
+  overflow: hidden;                /* clip overflow from animations */
+}
+
+/*
+  Hero content wrapper — centers text content in the middle.
+*/
+.hero__content {
+  text-align: center;
+  position: relative;
+  z-index: var(--z-raised);       /* above background pseudo-elements */
+  max-width: 80rem;                /* constrain text width for readability */
+  padding: var(--space-8) var(--container-padding);
+}
+
+/*
+  Scroll indicator at bottom of hero — absolute-positioned.
+*/
+.hero__scroll-indicator {
+  position: absolute;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);    /* center horizontally */
+  z-index: var(--z-raised);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ③ ABOUT SECTION LAYOUT — CSS GRID TWO-COLUMN
+   
+   grid-template-areas creates a named visual ASCII map:
+   "image text"  → image column on left, text on right
+   
+   This makes the layout self-documenting — you can SEE
+   the structure by reading the template.
+   ───────────────────────────────────────────────────────────── */
+.about__grid {
+  display: grid;
+  /* Named area layout — IMAGE takes left column, TEXT takes right */
+  grid-template-areas: "image text";  /* ← requirement: at least one grid-template-areas */
+  grid-template-columns: 1fr 1.5fr;   /* image column: 1 share, text column: 1.5 shares */
+  gap: var(--space-12);               /* gap between columns */
+  align-items: center;
+}
+
+/* Each grid child is placed by naming which area it belongs to */
+.about__image-wrapper {
+  grid-area: image;  /* places this element in the "image" named area */
+}
+
+.about__text {
+  grid-area: text;   /* places this element in the "text" named area */
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   SKILLS LAYOUT — HORIZONTAL BAR CHART (CSS ONLY)
+   
+   No images or JS — each skill bar is a div with width set
+   as a CSS custom property, then animated with keyframes.
+   ───────────────────────────────────────────────────────────── */
+.skills__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+/* Each skill item: label on left, bar filling right */
+.skill-item {
+  display: grid;
+  grid-template-columns: 12rem 1fr;  /* fixed label width, flexible bar */
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Tag cloud layout (alternative skill display) */
+.skills__tags {
+  display: flex;
+  flex-wrap: wrap;   /* tags wrap to next line when they run out of space */
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ④ PROJECTS SECTION LAYOUT — AUTO-RESPONSIVE GRID
+   
+   repeat(auto-fill, minmax(300px, 1fr)) is the "magic" layout:
+   - auto-fill: create as many columns as fit
+   - minmax(300px, 1fr): each column is AT LEAST 300px, max 1fr
+   - Result: automatically fills columns without ANY media queries!
+   
+   This is the most powerful CSS Grid feature for responsive layouts.
+   ───────────────────────────────────────────────────────────── */
+.projects__grid {
+  display: grid;
+  /* ↓ requirement: at least one repeat(auto-fill, minmax()) */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-6);         /* space between project cards */
+}
+
+/*
+  Featured card spans 2 columns on desktop.
+  This makes one project feel "featured" and breaks the monotony.
+  On mobile (1 column grid), this has no visible effect.
+*/
+.project-card--featured {
+  grid-column: span 2;  /* ← requirement: at least one card spans 2 columns */
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑤ EXPERIENCE/TIMELINE LAYOUT
+   
+   The timeline uses a central vertical line.
+   Entries alternate left-right using :nth-child(even/odd).
+   The line and dots are created with ::before/::after pseudo-elements.
+   ───────────────────────────────────────────────────────────── */
+.timeline {
+  position: relative;
+  max-width: 90rem;
+  margin-inline: auto;
+}
+
+/*
+  The vertical timeline line.
+  
+  ::before pseudo-element creates the center vertical line.
+  It's not a real HTML element — CSS generates it!
+  WHY: Keeps HTML clean — no extra divs just for decorative lines.
+*/
+.timeline::before {
+  content: '';            /* pseudo-elements MUST have content to show */
+  position: absolute;
+  left: 50%;             /* center of the timeline container */
+  top: 0;
+  bottom: 0;
+  width: 2px;            /* thin vertical line */
+  background: var(--gradient-primary);
+  transform: translateX(-50%);  /* center the 2px line itself */
+}
+
+.timeline__item {
+  position: relative;
+  width: 45%;            /* each item takes less than half width to allow for center line */
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+/*
+  Odd items (1st, 3rd, 5th) go on the LEFT side.
+  They are right-aligned text pointing toward center line.
+*/
+.timeline__item:nth-child(odd) {
+  margin-left: 0;         /* flush to left edge */
+  text-align: right;      /* text flows rightward toward center */
+}
+
+/*
+  Even items (2nd, 4th, 6th) go on the RIGHT side.
+  They are left-aligned, starting past center.
+*/
+.timeline__item:nth-child(even) {
+  margin-left: 55%;       /* positioned past center line */
+  text-align: left;
+}
+
+/*
+  The dot on the timeline for each entry.
+  ::before pseudo-element creates the circle dot.
+*/
+.timeline__item::before {
+  content: '';
+  position: absolute;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: var(--radius-full);  /* circle */
+  background: var(--color-primary);
+  border: 3px solid var(--color-bg);  /* ring effect */
+  top: var(--space-8);
+}
+
+/* Dot for odd (left) items: positioned on the RIGHT edge (toward center) */
+.timeline__item:nth-child(odd)::before {
+  right: -10%;
+}
+
+/* Dot for even (right) items: positioned on the LEFT edge (toward center) */
+.timeline__item:nth-child(even)::before {
+  left: -10%;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑥ TESTIMONIALS LAYOUT — FLEXBOX ROW
+   
+   3 cards in a horizontal row.
+   Flexbox makes them equal-width and evenly spaced.
+   ───────────────────────────────────────────────────────────── */
+.testimonials__grid {
+  display: flex;
+  gap: var(--space-6);
+  align-items: stretch;  /* all cards same height regardless of text length */
+}
+
+.testimonial-card {
+  flex: 1;     /* each card grows to fill 1/3 of available space */
+  min-width: 0; /* prevent flex items from overflowing */
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑦ CONTACT SECTION LAYOUT — CSS GRID TWO-COLUMN
+   
+   Uses grid-template-areas again for clear structure:
+   "form details"  → form on left, contact details on right
+   ───────────────────────────────────────────────────────────── */
+.contact__grid {
+  display: grid;
+  /* Named areas: form left, details right */
+  grid-template-areas: "form details";
+  grid-template-columns: 1.5fr 1fr;   /* form gets more space */
+  gap: var(--space-12);
+  align-items: start;   /* align to top (not stretch) */
+}
+
+.contact__form-area {
+  grid-area: form;
+}
+
+.contact__info-area {
+  grid-area: details;
+}
+
+/*
+  Form grid — fields stack vertically, submit button full width.
+*/
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/*
+  Two-column form row (Name + Email side by side on desktop).
+*/
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* equal two columns */
+  gap: var(--space-4);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑧ FOOTER LAYOUT — FLEXBOX OR GRID THREE-COLUMN
+   
+   3 equal columns: Quick Links | Social Links | Copyright
+   ───────────────────────────────────────────────────────────── */
+.footer__inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  /* exactly 3 equal columns */
+  gap: var(--space-8);
+  align-items: start;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   SECTION BASE LAYOUT — CONSISTENT VERTICAL SPACING
+   
+   Applied to ALL section elements for consistent page rhythm.
+   ───────────────────────────────────────────────────────────── */
+section {
+  padding-block: var(--section-padding);  /* 80px top+bottom */
+}
+
+/*
+  Alternating section backgrounds create visual separation
+  between sections without heavy dividers.
+*/
+section:nth-child(even) {
+  background-color: var(--color-bg-tertiary);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   SECTION HEADER — CENTERED HEADING BLOCK
+   
+   Used at the top of each section for consistent styling.
+   ───────────────────────────────────────────────────────────── */
+.section-header {
+  text-align: center;
+  margin-bottom: var(--space-12);  /* space between heading and content */
+}
+
+.section-header__subtitle {
+  display: block;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;          /* wide tracking for subtitle label */
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.section-header__title {
+  font-size: var(--font-3xl);
+  font-weight: var(--font-extrabold);
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+}

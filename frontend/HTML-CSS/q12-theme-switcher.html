@@ -1,0 +1,502 @@
+<!-- Section E — Responsive Design & Visual Styling 
+
+Q12. CSS Variables Theme Switcher 
+
+Topics: CSS Variables, :root, Theming, Media Queries 
+
+Problem Statement: 
+
+Create a page that supports both light and dark themes using CSS custom properties. Define all colors, fonts, and spacing as CSS variables in :root. Apply a .dark-theme class on the <body> that overrides these variables. Include a toggle button that switches themes (use a single line of JavaScript to toggle the class). Additionally, respect the user's OS preference using prefers-color-scheme media query as the default. 
+
+CSS Variable Requirements: 
+
+--color-bg, --color-surface, --color-text, --color-text-muted 
+
+--color-primary, --color-primary-hover, --color-accent 
+
+--color-border, --color-shadow 
+
+--font-family, --font-size-base, --font-size-lg, --font-size-sm 
+
+--spacing-sm, --spacing-md, --spacing-lg, --spacing-xl 
+
+--border-radius, --transition-speed 
+
+Constraints: 
+
+Zero hardcoded color or font values in the component CSS — everything via var() 
+
+prefers-color-scheme: dark must set dark as default for matching OS preference 
+
+Toggling .dark-theme on body overrides the system preference 
+
+All components on the page (cards, buttons, nav, footer) must respond to the theme switch 
+
+The toggle button itself must also be themed  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q12 — CSS Variables Theme Switcher</title>
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES (Variables) — THE DESIGN SYSTEM
+
+       :root  →  the topmost element in the document (equivalent to
+         <html>). Variables defined here are globally available
+         throughout the entire stylesheet.
+
+       Syntax: --property-name: value;
+       Usage:  color: var(--color-text);
+
+       WHY THIS MATTERS:
+       Without variables, changing a theme means finding and
+       replacing hundreds of hardcoded color/font values.
+       With variables, you change ONE definition and EVERY
+       usage updates automatically. That's the power here.
+
+       LIGHT THEME (default)
+       These values are the baseline — what the page shows
+       unless overridden by .dark-theme or prefers-color-scheme.
+    ============================================================ */
+    :root {
+      /* === COLORS === */
+      --color-bg:           #f8f9fa;    /* page background */
+      --color-surface:      #ffffff;    /* card / component surface */
+      --color-text:         #1a1a2e;    /* primary text */
+      --color-text-muted:   #6b7280;    /* secondary / hint text */
+      --color-primary:      #4f46e5;    /* brand color — buttons, links */
+      --color-primary-hover:#4338ca;    /* darker on hover */
+      --color-accent:       #06b6d4;    /* highlight / badge color */
+      --color-border:       #e5e7eb;    /* dividers and outlines */
+      --color-shadow:       rgba(0,0,0,0.08); /* box shadows */
+
+      /* === TYPOGRAPHY === */
+      --font-family:        'Segoe UI', system-ui, sans-serif;
+      --font-size-sm:       0.8125rem;  /* 13px */
+      --font-size-base:     1rem;       /* 16px */
+      --font-size-lg:       1.125rem;   /* 18px */
+
+      /* === SPACING === */
+      --spacing-sm:         0.5rem;     /* 8px */
+      --spacing-md:         1rem;       /* 16px */
+      --spacing-lg:         1.5rem;     /* 24px */
+      --spacing-xl:         2rem;       /* 32px */
+
+      /* === MISC === */
+      --border-radius:      10px;
+      --transition-speed:   0.25s;
+    }
+
+    /* ============================================================
+       DARK THEME — .dark-theme class on <body>
+
+       When this class is present, ALL variables in :root are
+       overridden with dark-mode values. Every component that
+       uses var(--color-*) automatically switches — zero extra CSS.
+
+       This works because CSS variable inheritance flows down the
+       tree. .dark-theme redefines the variables at the body level,
+       and all descendants inherit the new values.
+
+       The toggle button uses one line of JS to add/remove this class.
+    ============================================================ */
+    .dark-theme {
+      --color-bg:           #0f0f13;
+      --color-surface:      #1a1a2e;
+      --color-text:         #e2e8f0;
+      --color-text-muted:   #718096;
+      --color-primary:      #818cf8;
+      --color-primary-hover:#a5b4fc;
+      --color-accent:       #22d3ee;
+      --color-border:       #2d3748;
+      --color-shadow:       rgba(0,0,0,0.4);
+    }
+
+    /* ============================================================
+       OS-LEVEL DARK MODE — prefers-color-scheme
+
+       This media query reads the user's OPERATING SYSTEM preference
+       (set in System Preferences / Display Settings).
+
+       If the OS is in dark mode AND .dark-theme is NOT manually
+       toggled, we apply dark variables automatically.
+
+       SPECIFICITY NOTE: .dark-theme (a class) has higher
+       specificity than @media rules, so manual toggle always
+       wins over OS preference.
+
+       ORDER MATTERS: This block must come BEFORE .dark-theme
+       in the CSS so the explicit class can override it.
+    ============================================================ */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-bg:           #0f0f13;
+        --color-surface:      #1a1a2e;
+        --color-text:         #e2e8f0;
+        --color-text-muted:   #718096;
+        --color-primary:      #818cf8;
+        --color-primary-hover:#a5b4fc;
+        --color-accent:       #22d3ee;
+        --color-border:       #2d3748;
+        --color-shadow:       rgba(0,0,0,0.4);
+      }
+    }
+
+    /* ============================================================
+       GLOBAL STYLES
+       Every color, font, and spacing uses var() — ZERO hardcoded values.
+       transition: background-color, color  →  smooth theme switch animation.
+    ============================================================ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      /* Animate the background and text color during theme transitions */
+      transition:
+        background-color var(--transition-speed) ease,
+        color var(--transition-speed) ease;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    .nav {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--spacing-md) var(--spacing-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background-color var(--transition-speed) ease,
+                  border-color var(--transition-speed) ease;
+    }
+
+    .nav-logo {
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--spacing-lg);
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: var(--font-size-sm);
+      transition: color var(--transition-speed) ease;
+    }
+
+    .nav-links a:hover { color: var(--color-text); }
+
+    /* ============================================================
+       THEME TOGGLE BUTTON
+
+       This button is also fully themed — it reads from the same
+       CSS variables, so it automatically adjusts in both modes.
+
+       The data-label attribute is updated by JS to show the
+       correct label depending on current theme.
+    ============================================================ */
+    .theme-toggle {
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: var(--font-size-sm);
+      font-family: var(--font-family);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        background-color var(--transition-speed) ease,
+        border-color var(--transition-speed) ease,
+        color var(--transition-speed) ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--color-bg);
+    }
+
+    /* ============================================================
+       MAIN CONTENT AREA
+    ============================================================ */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--spacing-xl);
+    }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    .hero {
+      text-align: center;
+      padding: var(--spacing-xl) 0;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .hero h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .hero p {
+      color: var(--color-text-muted);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--color-accent);
+      color: var(--color-bg); /* use bg color as text for contrast */
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      margin-bottom: var(--spacing-md);
+      transition: background-color var(--transition-speed) ease;
+    }
+
+    /* ============================================================
+       CARDS GRID
+    ============================================================ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      box-shadow: 0 2px 8px var(--color-shadow);
+      transition:
+        background-color var(--transition-speed) ease,
+        border-color var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .card h3 {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .card p {
+      color: var(--color-text-muted);
+      font-size: var(--font-size-sm);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn-primary {
+      background: var(--color-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: calc(var(--border-radius) / 2);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-size: var(--font-size-base);
+      font-family: var(--font-family);
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        background-color var(--transition-speed) ease,
+        transform var(--transition-speed) ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+      border-radius: calc(var(--border-radius) / 2);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-size: var(--font-size-base);
+      font-family: var(--font-family);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-primary);
+      color: #ffffff;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .footer {
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      padding: var(--spacing-lg) var(--spacing-xl);
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: var(--font-size-sm);
+      transition:
+        background-color var(--transition-speed) ease,
+        border-color var(--transition-speed) ease;
+    }
+
+    .cta-section {
+      text-align: center;
+      padding: var(--spacing-xl);
+      background: var(--color-surface);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+      transition: background-color var(--transition-speed) ease;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: var(--spacing-md);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">⬡ Lumina</div>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Pricing</a></li>
+    </ul>
+    <!--
+      TOGGLE BUTTON
+      onclick calls a one-liner: document.body.classList.toggle('dark-theme')
+      This adds .dark-theme to <body> if absent, removes it if present.
+      When .dark-theme is on the body, all CSS variables cascade down
+      to every element that uses var() — instant full theme switch.
+    -->
+    <button
+      class="theme-toggle"
+      onclick="toggleTheme(this)"
+      id="theme-btn"
+      aria-label="Toggle dark/light theme"
+    >
+      <span id="theme-icon">☀️</span>
+      <span id="theme-label">Light mode</span>
+    </button>
+  </nav>
+
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="badge">CSS Variables Demo</div>
+      <h1>Design tokens that adapt</h1>
+      <p>
+        Every color, font, and spacing value on this page is a CSS variable.
+        Toggle the theme — every component responds instantly.
+      </p>
+    </section>
+
+    <!-- CARDS -->
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🎨</div>
+        <h3>Unified design tokens</h3>
+        <p>All visual values live in :root as CSS variables. Change once, update everywhere — zero selector hunting.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌙</div>
+        <h3>OS preference aware</h3>
+        <p>prefers-color-scheme detects your system setting automatically. No JavaScript required for the default.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Instant transitions</h3>
+        <p>All color properties transition smoothly during theme switch — a single CSS transition rule handles everything.</p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <h2 style="font-size: 1.5rem; font-weight: 700;">Ready to get started?</h2>
+      <p style="color: var(--color-text-muted);">Join thousands of developers using design token systems.</p>
+      <div class="btn-group">
+        <button class="btn-primary">Get started free</button>
+        <button class="btn-secondary">View docs</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 Lumina. Built with CSS custom properties.</p>
+  </footer>
+
+  <script>
+    /*
+      THEME TOGGLE — one-liner + icon update
+      document.body.classList.toggle('dark-theme')
+        →  if .dark-theme is not on body, adds it → dark mode
+           if .dark-theme is on body, removes it → light mode
+      This overrides both the :root defaults AND the
+      prefers-color-scheme media query.
+    */
+    function toggleTheme(btn) {
+      const isDark = document.body.classList.toggle('dark-theme');
+      document.getElementById('theme-icon').textContent  = isDark ? '🌙' : '☀️';
+      document.getElementById('theme-label').textContent = isDark ? 'Dark mode' : 'Light mode';
+    }
+
+    /* Initialize button label to match OS preference on page load */
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.getElementById('theme-icon').textContent  = '🌙';
+      document.getElementById('theme-label').textContent = 'Dark mode';
+    }
+  </script>
+
+</body>
+</html>

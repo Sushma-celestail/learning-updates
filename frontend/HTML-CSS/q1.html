@@ -1,0 +1,158 @@
+<!-- Q1. Semantic Page Layout 
+
+Topics: Semantic HTML, Document Structure, Accessibility 
+
+Problem Statement: 
+
+You are given a webpage built entirely with <div> elements. Refactor it into a fully semantic HTML5 page. The page must include: a site header with navigation, a hero section, a main content area with two article cards, a sidebar with related links, and a footer with copyright information. Every section must use appropriate semantic tags. 
+
+Current Structure (to refactor): 
+
+<div class="header"> 
+
+  <div class="logo">TechBlog</div> 
+
+  <div class="nav"> 
+
+    <div class="nav-item">Home</div> 
+
+    <div class="nav-item">Articles</div> 
+
+    <div class="nav-item">About</div> 
+
+  </div> 
+
+</div> 
+
+<div class="main"> 
+
+  <div class="article">...</div> 
+
+  <div class="article">...</div> 
+
+  <div class="sidebar">...</div> 
+
+</div> 
+
+<div class="footer">...</div> 
+
+Expected Output: 
+
+A fully semantic HTML5 page using: <header>, <nav>, <main>, <section>, <article>, <aside>, <footer>, <h1>–<h3>, <time>, <p>, and <a> tags. No <div> should be used where a semantic alternative exists. 
+
+Constraints: 
+
+Use only semantic HTML5 tags — no <div> for structural layout 
+
+Include proper heading hierarchy (only one <h1>) 
+
+Each article must have its own <header> with a <time> element for the publish date 
+
+Navigation must use a <nav> with an unordered list of links 
+
+Add alt attributes to any images used  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechBlog</title>
+
+<!-- <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+/* FULL RESET */
+* {
+    all: unset;
+    box-sizing: border-box;
+}
+</style> -->
+</head>
+<body>
+
+    <!-- Header with Navigation -->
+    <header>
+        
+    <h1>
+        TechBlog 
+        <span  lang="kn">(ಟೆಕ್ ಬ್ಲಾಗ್)</span>
+    </h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#">Articles</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home">
+        <h2 >Welcome to TechBlog</h2>
+        <p>Your source for the latest in technology, programming, and innovation.</p>
+        <img src="images/tech.jpg" alt="Technology themed banner image">
+    </section>
+
+    <!-- Main Content Area -->
+    <main>
+
+        <!-- Articles Section -->
+        <section id="articles">
+            <h2>Latest Articles</h2>
+
+            <!-- Article 1 -->
+            <article>
+                <header>
+                    <h3>Understanding AI in 2026</h3>
+                    <p>Published on 
+                        <time datetime="2026-03-01">March 1, 2026</time>
+                    </p>
+                </header>
+                <p>
+                    Artificial Intelligence continues to evolve rapidly, transforming industries and daily life...
+                </p>
+                <a href="#">Read more</a>
+            </article>
+
+            <!-- Article 2 -->
+            <article>
+                <header>
+                    <h3>Getting Started with Web Development</h3>
+                    <p>Published on 
+                        <time datetime="2026-02-20">February 20, 2026</time>
+                    </p>
+                </header>
+                <p>
+                    Web development is a fundamental skill in today's digital world. Here's how you can begin...
+                </p>
+                <a href="#">Read more</a>
+            </article>
+        </section>
+
+        <!-- Sidebar -->
+        <aside>
+            <h2>Related Links</h2>
+            <ul>
+                <li><a href="#">Top Programming Languages</a></li>
+                <li><a href="#">AI Trends</a></li>
+                <li><a href="#">Frontend Tips</a></li>
+            </ul>
+        </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 TechBlog. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
+</html>

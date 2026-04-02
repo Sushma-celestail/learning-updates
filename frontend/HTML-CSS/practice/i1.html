@@ -1,0 +1,33 @@
+<!--
+Center a div both horizontally and vertically using Flexbox. -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 100vh;
+  background: #f0f0f0;
+}
+
+.box {
+  width: 400px;
+  height: 200px;
+  background: teal;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="box">Centered</div>
+</div>
+
+</body>
+</html>

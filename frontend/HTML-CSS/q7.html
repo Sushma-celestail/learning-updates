@@ -1,0 +1,231 @@
+<!-- Q7. Responsive Navigation Bar 
+
+Topics: Flexbox, justify-content, align-items, flex-wrap, Responsive 
+
+Problem Statement: 
+
+Build a responsive navigation bar using only Flexbox. On desktop (>768px): the logo is on the left, navigation links are centered, and a "Sign Up" button is on the right. On mobile (≤768px): all items stack vertically, centered. The nav links must wrap if there are too many for one row. 
+
+Desktop Layout: 
+
+[Logo]     [Home] [About] [Services] [Blog] [Contact]     [Sign Up] 
+
+Mobile Layout: 
+
+         [Logo] 
+
+         [Home] 
+
+        [About] 
+
+      [Services] 
+
+         [Blog] 
+
+       [Contact] 
+
+       [Sign Up] 
+
+Constraints: 
+
+Use display: flex on the nav container 
+
+Use justify-content: space-between for desktop layout 
+
+Use flex-wrap: wrap for link overflow handling 
+
+Use a media query at 768px to switch to column layout 
+
+Links must have hover effects (color change + underline transition) 
+
+No JavaScript — CSS/HTML only  -->
+
+<!--
+Think of this navbar like a well-trained orchestra 🎻 where Flexbox is the conductor.
+
+🔹 1. display: flex (Main Engine)
+Applied on .navbar
+Turns everything inside into flexible items
+Enables horizontal layout by default
+🔹 2. Desktop Layout Magic
+justify-content: space-between;
+align-items: center;
+space-between spreads items:
+Logo → left
+Links → center (with help)
+Button → right
+align-items: center keeps everything vertically aligned
+🔹 3. Centering Links (Important Trick)
+.nav-links {
+    flex: 1;
+    justify-content: center;
+}
+flex: 1 makes nav-links take available space
+This pushes it to the center between logo and button
+🔹 4. Wrapping Behavior
+flex-wrap: wrap;
+Applied on:
+.navbar
+.nav-links
+
+If links grow too many → they wrap instead of breaking layout
+
+🔹 5. Hover Effects (Smooth & Clean)
+Color change ✔
+Underline animation ✔
+a::after {
+    width: 0 → 100%;
+}
+
+Creates a sliding underline effect like a tiny progress bar ✨
+
+🔹 6. Mobile Layout Transformation
+@media (max-width: 768px)
+
+Switches layout to:
+
+flex-direction: column;
+align-items: center;
+
+Result:
+
+Everything stacks vertically
+Perfectly centered like a neat column
+📱 Final Behavior Summary
+Desktop (>768px)
+[Logo]     [Links centered]     [Sign Up]
+Mobile (≤768px)
+Logo
+Home
+About
+Services
+Blog
+Contact
+Sign Up
+
+
+-->>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexbox Responsive Navbar</title>
+
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+        }
+
+        /* Navbar Container */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* allows wrapping if needed */
+            padding: 15px 40px;
+            background: #222;
+            color: white;
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* Nav Links Container */
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap; /* ensures links wrap if overflow */
+            justify-content: center;
+            flex: 1; /* helps center links between logo and button */
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        /* Hover Effect */
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0%;
+            height: 2px;
+            background: #00c6ff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #00c6ff;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Sign Up Button */
+        .signup-btn {
+            background: #00c6ff;
+            border: none;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .signup-btn:hover {
+            background: #0094cc;
+        }
+
+        /* Mobile View */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">MyLogo</div>
+
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Blog</a>
+            <a href="#">Contact</a>
+        </div>
+
+        <button class="signup-btn">Sign Up</button>
+    </nav>
+
+</body>
+</html>

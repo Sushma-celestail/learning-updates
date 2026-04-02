@@ -1,0 +1,861 @@
+<!-- Q6. Positioning Playground — Sticky Header, Tooltip & Fixed Button 
+
+Topics: position (static, relative, absolute, fixed, sticky), z-index 
+
+Problem Statement: 
+
+Build a single page that demonstrates all five CSS position values in practical scenarios: (a) A sticky navigation bar that stays at the top when scrolling. (b) A product card with a "Sale" badge positioned absolutely in the top-right corner. (c) A tooltip that appears on hover over an info icon, positioned absolutely relative to the icon's parent. (d) A fixed "Back to Top" button in the bottom-right corner. (e) Normal static content for the rest of the page body. 
+
+Constraints: 
+
+The page must have enough content to scroll (at least 3 full viewport heights) 
+
+Sticky nav: must use position: sticky with top: 0 
+
+Sale badge: parent card must be position: relative; badge must be position: absolute 
+
+Tooltip: hidden by default, shown on :hover using visibility or opacity transition 
+
+Fixed button: must remain visible at all times during scroll 
+
+Use z-index appropriately to prevent overlap issues 
+
+All positioning must be done with CSS only — no JavaScript 
+
+Section C — Flexbox Layouts  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Positioning Playground</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Root ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0f;
+      --surface:   #161619;
+      --border:    #2a2a30;
+      --accent:    #e8ff47;
+      --accent2:   #ff5c5c;
+      --accent3:   #5cefff;
+      --text:      #e8e8e0;
+      --muted:     #6c6c78;
+      --card-bg:   #1c1c22;
+      --nav-h:     64px;
+      --radius:    12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* subtle grain overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── Label chip used throughout ───────────────────────── */
+    .label {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--surface);
+      user-select: none;
+    }
+    .label.accent  { border-color: var(--accent);  color: var(--accent);  background: rgba(232,255,71,.08); }
+    .label.accent2 { border-color: var(--accent2); color: var(--accent2); background: rgba(255,92,92,.08); }
+    .label.accent3 { border-color: var(--accent3); color: var(--accent3); background: rgba(92,239,255,.08); }
+
+    /* ─── (a) STICKY NAV — position: sticky; top: 0 ─────────── */
+    .nav {
+      position: sticky;    /* ← THE KEY PROPERTY */
+      top: 0;              /* sticks once it reaches the top */
+      z-index: 100;        /* sits above page content */
+      height: var(--nav-h);
+      background: rgba(13,13,15,.82);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(16px, 5vw, 64px);
+      gap: 24px;
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -.02em;
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      letter-spacing: .04em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+      font-family: 'DM Mono', monospace;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-badge { margin-left: auto; }
+
+    /* ─── Hero ───────────────────────────────────────────────── */
+    .hero {
+      min-height: calc(100vh - var(--nav-h));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px clamp(16px, 5vw, 64px);
+      position: relative; /* static children, just for layout */
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(42px, 8vw, 96px);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -.03em;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero p {
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 48px;
+    }
+
+    .scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: .08em;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .scroll-hint svg { opacity: .5; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(8px); }
+    }
+
+    /* ─── Section Wrapper ─────────────────────────────────── */
+    .section {
+      padding: clamp(64px, 10vh, 120px) clamp(16px, 5vw, 64px);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+
+    .section-header h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin: 12px 0 16px;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      max-width: 600px;
+    }
+
+    .code-snippet {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 20px;
+      color: var(--accent3);
+      overflow-x: auto;
+      line-height: 1.8;
+    }
+
+    .code-snippet .key { color: var(--accent); }
+    .code-snippet .val { color: var(--accent2); }
+    .code-snippet .com { color: var(--muted); }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0 clamp(16px, 5vw, 64px);
+    }
+
+    /* ─── (b) PRODUCT CARDS — position: relative on card ──── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .product-card {
+      position: relative;   /* ← establishes containing block for badge */
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .25s, border-color .25s;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      border-color: #444;
+    }
+
+    .sale-badge {
+      position: absolute;   /* ← anchored to .product-card */
+      top: 14px;
+      right: 14px;
+      z-index: 2;
+      background: var(--accent2);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .new-badge {
+      position: absolute;   /* another absolute example */
+      top: 14px;
+      left: 14px;
+      z-index: 2;
+      background: var(--accent);
+      color: #0d0d0f;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .card-image {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-body { padding: 20px; }
+
+    .card-body h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .card-body .desc {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .card-price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .price-now {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .price-was {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    /* ─── (c) TOOLTIP — position: absolute relative to icon wrapper */
+    .tooltip-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 48px;
+      align-items: flex-start;
+    }
+
+    .tooltip-wrapper {
+      position: relative;          /* ← containing block for tooltip */
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .info-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--accent3);
+      transition: border-color .2s, background .2s;
+      flex-shrink: 0;
+    }
+    .tooltip-wrapper:hover .info-icon {
+      border-color: var(--accent3);
+      background: rgba(92,239,255,.1);
+    }
+
+    .tooltip {
+      position: absolute;          /* ← anchored to .tooltip-wrapper */
+      bottom: calc(100% + 12px);   /* above the icon */
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 220px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+      pointer-events: none;
+      z-index: 50;
+      /* Hidden by default — opacity + visibility transition */
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .22s ease, visibility .22s ease, transform .22s ease;
+      transform: translateX(-50%) translateY(6px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.5);
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-top-color: var(--border);
+    }
+
+    .tooltip-wrapper:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .tooltip-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ─── Static Content Section ─────────────────────────── */
+    .static-section { }
+
+    .content-blocks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .content-block {
+      /* position: static — the default, shown explicitly */
+      position: static;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+
+    .content-block h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .content-block p { color: var(--muted); font-size: 14px; }
+
+    .block-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    /* ─── Positioning Summary Table ─────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 14px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    td:first-child {
+      font-family: 'DM Mono', monospace;
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    td:nth-child(2) { color: var(--accent3); font-size: 13px; }
+    td:last-child { color: var(--muted); }
+
+    /* ─── (d) FIXED "Back to Top" button ────────────────── */
+    .back-to-top {
+      position: fixed;   /* ← always visible, viewport-relative */
+      bottom: 32px;
+      right: 32px;
+      z-index: 200;      /* above everything */
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0d0d0f;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 24px rgba(232,255,71,.35);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .back-to-top:hover {
+      transform: translateY(-3px) scale(1.06);
+      box-shadow: 0 8px 32px rgba(232,255,71,.5);
+    }
+
+    .back-to-top svg { flex-shrink: 0; }
+
+    /* ─── Footer ──────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: 'DM Mono', monospace;
+      border-top: 1px solid var(--border);
+    }
+
+    footer span { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════
+       (a) STICKY NAV  —  position: sticky; top: 0
+  ══════════════════════════════════════════════════════════════ -->
+  <nav class="nav" id="top">
+    <span class="nav-logo">⬡ Posit</span>
+    <ul class="nav-links">
+      <li><a href="#cards">Cards</a></li>
+      <li><a href="#tooltip">Tooltip</a></li>
+      <li><a href="#static">Static</a></li>
+      <li><a href="#summary">Summary</a></li>
+    </ul>
+    <span class="label accent nav-badge">position: sticky</span>
+  </nav>
+
+
+  <!-- ── Hero ─────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <span class="label">CSS Positioning</span>
+      <span class="label accent">Playground</span>
+    </div>
+    <h1>All Five<br/><em>Position</em><br/>Values.</h1>
+    <p>Scroll to explore sticky, relative, absolute, fixed, and static positioning — each in a real, practical context.</p>
+    <div class="scroll-hint">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+      scroll to begin
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       (b) PRODUCT CARDS  —  parent: relative / badge: absolute
+  ══════════════════════════════════════════════════════════════ -->
+  <hr class="divider" />
+  <section class="section" id="cards">
+    <div class="section-header">
+      <span class="label accent2">position: relative + absolute</span>
+      <h2>Product Cards with Sale Badge</h2>
+      <p>Each card sets <code>position: relative</code> to become a containing block. The badges inside use <code>position: absolute</code> and are pinned to the card's corners with <code>top</code> / <code>right</code> / <code>left</code>.</p>
+      <div class="code-snippet">
+<span class="com">/* Card — becomes the containing block */</span>
+.product-card { <span class="key">position</span>: <span class="val">relative</span>; }
+
+<span class="com">/* Badge — anchored to card's top-right corner */</span>
+.sale-badge {
+  <span class="key">position</span>: <span class="val">absolute</span>;
+  <span class="key">top</span>: <span class="val">14px</span>;
+  <span class="key">right</span>: <span class="val">14px</span>;
+  <span class="key">z-index</span>: <span class="val">2</span>;
+}
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <!-- Card 1: Sale badge only -->
+      <div class="product-card">
+        <span class="sale-badge">Sale</span>
+        <div class="card-image">🎧</div>
+        <div class="card-body">
+          <h3>Studio Headphones</h3>
+          <p class="desc">Over-ear, 40hr battery, ANC</p>
+          <div class="card-price">
+            <span class="price-now">₹5,499</span>
+            <span class="price-was">₹8,999</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: New badge only -->
+      <div class="product-card">
+        <span class="new-badge">New</span>
+        <div class="card-image">⌚</div>
+        <div class="card-body">
+          <h3>Smart Watch Pro</h3>
+          <p class="desc">Always-on AMOLED, GPS, SpO2</p>
+          <div class="card-price">
+            <span class="price-now">₹12,999</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Both badges -->
+      <div class="product-card">
+        <span class="new-badge">New</span>
+        <span class="sale-badge">Sale</span>
+        <div class="card-image">📷</div>
+        <div class="card-body">
+          <h3>Mirrorless Camera</h3>
+          <p class="desc">24MP, 4K video, IBIS</p>
+          <div class="card-price">
+            <span class="price-now">₹44,999</span>
+            <span class="price-was">₹59,999</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: No badge (contrast) -->
+      <div class="product-card">
+        <div class="card-image">🖥</div>
+        <div class="card-body">
+          <h3>4K Monitor</h3>
+          <p class="desc">27", IPS, 144Hz, USB-C</p>
+          <div class="card-price">
+            <span class="price-now">₹28,500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       (c) TOOLTIP  —  parent: relative / tooltip: absolute
+  ══════════════════════════════════════════════════════════════ -->
+  <hr class="divider" />
+  <section class="section" id="tooltip">
+    <div class="section-header">
+      <span class="label accent3">position: absolute (tooltip)</span>
+      <h2>Hover Tooltips</h2>
+      <p>The <code>.tooltip-wrapper</code> is <code>position: relative</code>. The tooltip itself is <code>position: absolute</code>, offset above the icon. It transitions from invisible to visible on <code>:hover</code> — pure CSS, no JavaScript.</p>
+      <div class="code-snippet">
+<span class="com">/* Parent — tooltip is positioned relative to this */</span>
+.tooltip-wrapper { <span class="key">position</span>: <span class="val">relative</span>; }
+
+<span class="com">/* Tooltip — hidden by default */</span>
+.tooltip {
+  <span class="key">position</span>: <span class="val">absolute</span>;
+  <span class="key">bottom</span>: <span class="val">calc(100% + 12px)</span>;
+  <span class="key">opacity</span>: <span class="val">0</span>;  <span class="key">visibility</span>: <span class="val">hidden</span>;
+  <span class="key">transition</span>: <span class="val">opacity .22s, visibility .22s</span>;
+}
+<span class="com">/* Shown on hover */</span>
+.tooltip-wrapper:hover .tooltip { <span class="key">opacity</span>: <span class="val">1</span>; <span class="key">visibility</span>: <span class="val">visible</span>; }
+      </div>
+    </div>
+
+    <div class="tooltip-demo">
+
+      <div class="tooltip-wrapper">
+        <div class="info-icon">i</div>
+        <span class="tooltip-label">Hover for shipping info</span>
+        <div class="tooltip">
+          🚚 Free delivery on orders above ₹999. Express delivery available in 2–3 business days across 500+ cities.
+        </div>
+      </div>
+
+      <div class="tooltip-wrapper">
+        <div class="info-icon">?</div>
+        <span class="tooltip-label">Hover for return policy</span>
+        <div class="tooltip">
+          🔄 30-day hassle-free returns. Items must be unused and in original packaging. Refund within 5–7 working days.
+        </div>
+      </div>
+
+      <div class="tooltip-wrapper">
+        <div class="info-icon">★</div>
+        <span class="tooltip-label">Hover for warranty details</span>
+        <div class="tooltip">
+          🛡 All electronics carry a 1-year manufacturer warranty. Extended plans available at checkout for up to 3 years.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       (e) STATIC CONTENT  —  position: static (the default)
+  ══════════════════════════════════════════════════════════════ -->
+  <hr class="divider" />
+  <section class="section static-section" id="static">
+    <div class="section-header">
+      <span class="label">position: static</span>
+      <h2>Normal Page Flow</h2>
+      <p>These blocks use the browser default — <code>position: static</code>. They stack vertically in document order and cannot be offset with <code>top</code>, <code>left</code>, etc. This is 99% of the page.</p>
+      <div class="code-snippet">
+<span class="com">/* Static is the default — no positioning context */</span>
+.content-block {
+  <span class="key">position</span>: <span class="val">static</span>; <span class="com">/* default — flows normally */</span>
+  <span class="com">/* top / left / right / bottom have NO effect here */</span>
+}
+      </div>
+    </div>
+
+    <div class="content-blocks">
+      <div class="content-block">
+        <div class="block-icon">🧭</div>
+        <h3>Normal Flow</h3>
+        <p>Static elements participate in normal document flow. They push siblings down and don't create a stacking context.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-icon">📐</div>
+        <h3>No Offset</h3>
+        <p>You cannot move a static element with <code>top</code>, <code>right</code>, <code>bottom</code>, or <code>left</code>. Those properties are ignored.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-icon">🔢</div>
+        <h3>No z-index</h3>
+        <p><code>z-index</code> has no effect on static elements either. Use relative, absolute, fixed, or sticky to control layering.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-icon">🌊</div>
+        <h3>The Default State</h3>
+        <p>Every element starts as static. You only add other positioning values when you need to break out of the normal flow for a reason.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-icon">📦</div>
+        <h3>Block-level boxes</h3>
+        <p>Block elements like <code>div</code>, <code>p</code>, <code>section</code> stack vertically. Inline elements like <code>span</code> sit on the same line.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-icon">🔍</div>
+        <h3>Readable Source Order</h3>
+        <p>Keeping content in static flow maintains accessible source order — screen readers and tab focus follow document order naturally.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── Summary Table ──────────────────────────────────────── -->
+  <hr class="divider" />
+  <section class="section" id="summary">
+    <div class="section-header">
+      <span class="label">Reference</span>
+      <h2>All Five Values at a Glance</h2>
+      <p>A quick reference comparing every CSS <code>position</code> value, its containing block, and its effect on document flow.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Value</th>
+            <th>Containing Block</th>
+            <th>In Normal Flow?</th>
+            <th>Scroll Behaviour</th>
+            <th>Demo on this page</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>static</td>
+            <td>—</td>
+            <td>✅ Yes</td>
+            <td>Scrolls with page</td>
+            <td>Content blocks (section §e)</td>
+          </tr>
+          <tr>
+            <td>relative</td>
+            <td>Itself (original spot)</td>
+            <td>✅ Yes (space reserved)</td>
+            <td>Scrolls with page</td>
+            <td>Product card wrapper (§b)</td>
+          </tr>
+          <tr>
+            <td>absolute</td>
+            <td>Nearest non-static ancestor</td>
+            <td>❌ No (removed)</td>
+            <td>Scrolls with page</td>
+            <td>Sale badge & tooltip (§b, §c)</td>
+          </tr>
+          <tr>
+            <td>fixed</td>
+            <td>Viewport</td>
+            <td>❌ No (removed)</td>
+            <td>Fixed to viewport</td>
+            <td>Back to Top button (§d)</td>
+          </tr>
+          <tr>
+            <td>sticky</td>
+            <td>Scroll container</td>
+            <td>✅ Yes (hybrid)</td>
+            <td>Scrolls, then sticks</td>
+            <td>Navigation bar (§a)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ── Extra scroll space to clearly demonstrate sticky/fixed ── -->
+  <section class="section">
+    <div class="section-header">
+      <span class="label">Keep scrolling…</span>
+      <h2>Observe the sticky nav &amp; fixed button</h2>
+      <p>The yellow nav above should be stuck to the top of the viewport right now. The ↑ button at the bottom-right is always visible. Both will persist all the way to the footer below.</p>
+    </div>
+    <div class="content-blocks">
+      <div class="content-block">
+        <div class="block-icon">📌</div>
+        <h3>Sticky vs Fixed</h3>
+        <p>Sticky elements start in the document flow and "stick" only after scrolling past their original position. Fixed elements are always removed from flow and attached to the viewport.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-icon">🪄</div>
+        <h3>z-index Stacking</h3>
+        <p>The nav has <code>z-index: 100</code>, tooltips have <code>z-index: 50</code>, and the fixed button has <code>z-index: 200</code> — preventing any content from overlapping them incorrectly.</p>
+      </div>
+      <div class="content-block">
+        <div class="block-icon">🎯</div>
+        <h3>Pure CSS</h3>
+        <p>Every positioning effect on this page — the sticky nav, absolute badges, hovering tooltips, and fixed button — uses only CSS. Zero JavaScript.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       (d) FIXED BUTTON  —  position: fixed; bottom/right
+       (declared here in HTML order, but visually always fixed)
+  ══════════════════════════════════════════════════════════════ -->
+  <a href="#top" class="back-to-top" title="Back to top" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </a>
+
+
+  <footer>
+    <p>CSS Positioning Playground &mdash; <span>position: static | relative | absolute | fixed | sticky</span></p>
+    <p style="margin-top:8px; font-size:11px;">All layout achieved with CSS only — no JavaScript positioning logic.</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!-- Q2. Accessible Registration Form with HTML5 Validation 
+
+Topics: Forms, Input Types, Validation Attributes, Accessibility 
+
+Problem Statement: 
+
+Build a user registration form with the following fields: Full Name, Email, Password, Confirm Password, Date of Birth, Phone Number, Gender (radio buttons), Skills (checkboxes: HTML, CSS, JavaScript, Python), Bio (textarea), and a Profile Picture upload. Apply HTML5 validation to all fields. 
+
+Validation Requirements: 
+
+Full Name: required, minimum 3 characters 
+
+Email: required, must be valid email format (use type='email') 
+
+Password: required, minimum 8 characters, must include pattern for at least one uppercase, one lowercase, and one digit 
+
+Phone: required, pattern for 10-digit number 
+
+Date of Birth: required, must not be a future date (use max attribute) 
+
+Gender: required (at least one radio must be selected) 
+
+Skills: at least one checkbox should be selected (validate with HTML structure) 
+
+Bio: optional, max 500 characters 
+
+Profile Picture: accept only .jpg, .png, .webp files 
+
+Constraints: 
+
+Every input must have an associated <label> using the for attribute 
+
+Group related inputs with <fieldset> and <legend> 
+
+Use appropriate input types: text, email, password, date, tel, radio, checkbox, file, textarea 
+
+Use HTML5 validation attributes: required, minlength, maxlength, pattern, min, max, accept 
+
+Do NOT use JavaScript for validation — HTML5 only 
+
+Form must be keyboard-navigable (proper tab order)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+</head>
+<body>
+
+<h1>User Registration</h1>
+
+<form>
+
+    <!-- Full Name -->
+    <p>
+        <label id="fullname">Full Name:</label><br>
+        <input 
+            type="text" 
+            id="fullname" 
+            placeholder="enter your name"
+            name="fullname" 
+            required 
+            minlength="3"
+        >
+    </p>
+
+    <!-- Email -->
+    <p>
+        <label id="email">Email:</label><br>
+        <input 
+            type="email" 
+            
+            id="email" 
+            name="email" 
+            required
+        >
+    </p>
+
+    <!-- Password -->
+    <p>
+        <label id="password">Password:</label><br>
+        <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            required
+            minlength="8"
+            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+            title="Must contain at least 1 uppercase, 1 lowercase, and 1 number"
+        >
+    </p>
+
+    <!-- Confirm Password -->
+    <p>
+        <label for="confirm">Confirm Password:</label><br>
+        <input 
+            type="password" 
+            id="confirm" 
+            name="confirm" 
+            required
+            minlength="8"
+        >
+    </p>
+
+    <!-- Date of Birth -->
+    <p>
+        <label for="dob">Date of Birth:</label><br>
+        <input 
+            type="date" 
+            id="dob" 
+            name="dob" 
+            required
+            max="2026-03-31"
+        >
+    </p>
+
+    <!-- Phone -->
+    <p>
+        <label for="phone">Phone Number:</label><br>
+        <input 
+            type="tel" 
+            id="phone" 
+            name="phone" 
+            required
+            pattern="[0-9]{10}"
+            title="Enter a 10-digit phone number"
+        >
+    </p>
+
+    <!-- Gender -->
+    <fieldset>
+        <legend>Gender</legend>
+
+        <input type="radio" id="male" name="gender" value="male" required>
+        <label for="male">Male</label>
+
+        <input type="radio" id="female" name="gender" value="female">
+        <label for="female">Female</label>
+
+        <input type="radio" id="other" name="gender" value="other">
+        <label for="other">Other</label>
+    </fieldset>
+
+    <!-- Skills -->
+    <fieldset>
+        <legend>Skills (Select at least one)</legend>
+
+        <input type="checkbox" id="html" name="skills" value="html" required>
+        <label for="html">HTML</label>
+
+        <input type="checkbox" id="css" name="skills" value="css">
+        <label for="css">CSS</label>
+
+        <input type="checkbox" id="js" name="skills" value="js">
+        <label for="js">JavaScript</label>
+
+        <input type="checkbox" id="python" name="skills" value="python">
+        <label for="python">Python</label>
+    </fieldset>
+
+    <!-- Bio -->
+    <p>
+        <label for="bio">Bio:</label><br>
+        <textarea 
+            id="bio" 
+            name="bio" 
+            maxlength="500"
+            rows="4"
+            cols="30"
+        ></textarea>
+    </p>
+
+    <!-- Profile Picture -->
+    <p>
+        <label for="profile">Profile Picture:</label><br>
+        <input 
+            type="file" 
+            id="profile" 
+            name="profile"
+            accept=".jpg, .png, .webp"
+        >
+    </p>
+
+    <!-- Submit -->
+    <p>
+        <button type="submit">Register</button>
+    </p>
+
+</form>
+
+</body>
+</html>

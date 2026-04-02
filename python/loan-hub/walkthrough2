@@ -1,0 +1,65 @@
+# LoanHub API Walkthrough
+
+LoanHub is a robust Loan Management System built with FastAPI, SQLAlchemy, and Alembic. It follows SOLID principles and implements sophisticated features like role-based access control, background notifications, and concurrent process checks.
+
+## Key Features Implemented
+
+### 1. Unified Authentication
+- **Registration**: Users can register with validation for income, phone numbers, and unique credentials.
+- **Login**: Secure login with password hashing via `bcrypt`.
+- **Role-Based Access**: Custom dependency [require_role](file:///c:/learning-updates/loan-hub/decorators/auth.py#6-20) ensures only Admins can access sensitive endpoints.
+
+### 2. Loan Management
+- **Application**: Users can apply for loans with automatic validation (max 3 pending loans, amount limits).
+- **Admin Review**: Admins can approve or reject loans with mandatory remarks. This process is atomic and triggers background notifications.
+- **Filtering & Pagination**: Comprehensive filtering for both users and admins.
+
+### 3. Concurrency & Performance
+- **Background Tasks**: Status updates and new applications trigger background logging and notification simulations.
+- **Async Notifications**: Uses `asyncio.gather` to simulate sending Email, SMS, and Push notifications concurrently.
+- **Bulk Eligibility Check**: Uses `ThreadPoolExecutor` to concurrently compute eligibility scores for multiple loans.
+
+### 4. Advanced Aggregations
+- **Analytics Dashboard**: The `/analytics/summary` endpoint uses Python comprehensions to aggregate data efficiently (Requirement 10).
+
+### 5. Robust Infrastructure
+- **Database Migrations**: Fully managed via Alembic (Requirement 5).
+- **Custom Decorators**: Includes `@timer` for profiling and `@retry` for database connection resilience.
+- **Standardized Error Handling**: Custom global exception handlers for consistent API error responses.
+
+## Verification Results
+
+### Automated Tests
+Successfully ran 15+ tests covering:
+- User registration and login (success/failure cases)
+- Loan application and business rule enforcement
+- Admin review flows and role restrictions
+
+### Database Schema
+Managed by Alembic with the following migrations:
+1. `Initial schema`: Users and Loans tables.
+2. `Add credit_score column`: Schema evolution.
+- Verified rollback functionality via `alembic downgrade -1`.
+
+### Logs
+- `logs/app.log`: Records all incoming requests with method, status, and duration.
+- `logs/notifications.log`: Records all background notification events.
+
+## Project Structure
+```text
+loanhub/
+├── main.py                # App entrypoint & lifspan
+├── config.py              # Pydantic settings
+├── database.py            # DB engine & pooling
+├── models/                # Enums, SQLAlchemy models, Pydantic schemas
+├── services/              # Business logic (User, Loan, Analytics)
+├── repositories/          # Repository pattern implementation
+├── routers/               # API endpoints
+├── decorators/            # Custom logic decorators
+├── middleware/            # request logging
+├── exceptions/            # Error handling
+├── utils/                 # Notifications
+├── alembic/               # Migrations
+├── tests/                 # Pytest suite
+└── logs/                  # Application logs
+```

@@ -1,0 +1,44 @@
+<!--
+1. Convert non-semantic <div> layout → semantic layout-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1>1. Convert non-semantic layout → semantic layout</h1>
+</head>
+
+<!-- before semantic -->
+<body>
+    <div class="header">Header</div>
+    <div class="nav">Navigation</div>
+    <div class="content">
+        <div class="post">Blog Content</div>
+    </div>
+    <div class="footer">Footer</div>
+
+<header>
+    <h1>
+        My website
+    </h1>
+
+</header>
+<nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+</nav>
+<main>
+    <section>
+        <article>
+            <h2>Blog Title</h2>
+            <p>This is a blog post</p>
+        </article>
+    </section>
+</main>
+<footer>
+    <p>@ 2026 My website</p>
+</footer>
+
+</body>
+</html>    

@@ -1,0 +1,486 @@
+<!-- Q13. Responsive Pricing Table 
+
+Topics: Flexbox/Grid, Media Queries, Transitions, Mobile-First 
+
+Problem Statement: 
+
+Build a responsive pricing table with 3 tiers: Basic, Pro, and Enterprise. Each tier card shows: plan name, monthly price, a list of features (with checkmarks for included and X marks for excluded), and a CTA button. The "Pro" card should be visually highlighted (larger, different background, "Popular" badge). Write the CSS mobile-first. 
+
+Expected Layout: 
+
+Mobile (<768px):   Cards stacked vertically, full width 
+
+Tablet (768-1024):  Cards in a row, Pro card slightly elevated 
+
+Desktop (>1024px):  Cards in a row, Pro card 10% larger (transform: scale) 
+
+Constraints: 
+
+CSS must be written mobile-first (base styles for mobile, min-width queries for larger screens) 
+
+Use Flexbox or Grid for the card row layout 
+
+Pro card must have a "Popular" badge using CSS ::before or position: absolute 
+
+CTA button must have hover transition (background-color, box-shadow, transform) 
+
+Feature list must use CSS for checkmark (✓) and X mark (✗) icons via ::before pseudo-element 
+
+Typography must scale using clamp() for the price display 
+
+All spacing and colors must use CSS variables defined in :root  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q13 — Responsive Pricing Table</title>
+  <style>
+    /* ============================================================
+       CSS VARIABLES — SINGLE SOURCE OF TRUTH
+    ============================================================ */
+    :root {
+      --color-bg:           #f0f4ff;
+      --color-surface:      #ffffff;
+      --color-text:         #1e1b4b;
+      --color-text-muted:   #6b7280;
+      --color-primary:      #4f46e5;
+      --color-primary-hover:#4338ca;
+      --color-pro-bg:       #1e1b4b;
+      --color-pro-text:     #ffffff;
+      --color-pro-muted:    #a5b4fc;
+      --color-accent:       #818cf8;
+      --color-border:       #e0e7ff;
+      --color-success:      #10b981;
+      --color-error:        #ef4444;
+      --font-family:        'Segoe UI', system-ui, sans-serif;
+      --font-size-sm:       0.8125rem;
+      --font-size-base:     1rem;
+      --font-size-lg:       1.25rem;
+      --spacing-sm:         0.5rem;
+      --spacing-md:         1rem;
+      --spacing-lg:         1.5rem;
+      --spacing-xl:         2rem;
+      --border-radius:      16px;
+      --transition-speed:   0.2s;
+    }
+
+    /* ============================================================
+       RESET & BASE — MOBILE FIRST
+       These base styles apply at ALL viewport sizes.
+       We build up from the smallest screen.
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--color-bg);
+      color: var(--color-text);
+      padding: var(--spacing-xl) var(--spacing-md);
+    }
+
+    /* ============================================================
+       SECTION HEADER
+    ============================================================ */
+    .pricing-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .pricing-header h1 {
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      /* clamp(min, preferred, max) — fluid type scaling:
+         - never smaller than 1.5rem
+         - naturally scales with viewport (5vw)
+         - never larger than 2.5rem */
+      font-weight: 800;
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.5px;
+    }
+
+    .pricing-header p {
+      color: var(--color-text-muted);
+      font-size: var(--font-size-lg);
+    }
+
+    /* ============================================================
+       PRICING GRID
+
+       MOBILE FIRST: single column, cards stacked vertically.
+       We'll override this at larger breakpoints below.
+    ============================================================ */
+    .pricing-grid {
+      display: flex;
+      flex-direction: column;   /* MOBILE: stack vertically */
+      gap: var(--spacing-lg);
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: center;       /* center narrower cards on mobile */
+    }
+
+    /* ============================================================
+       PRICING CARD — BASE (MOBILE) STYLES
+
+       All three cards share these styles as the starting point.
+       Specific cards override where needed.
+    ============================================================ */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-xl);
+      width: 100%;              /* MOBILE: full width */
+      max-width: 400px;
+      position: relative;       /* needed for .badge pseudo-element */
+      transition:
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+    }
+
+    /* ============================================================
+       PRO CARD — highlighted styles
+
+       The "Pro" card has its own color scheme, slightly larger
+       appearance, and a "Popular" badge.
+    ============================================================ */
+    .card.pro {
+      background: var(--color-pro-bg);
+      color: var(--color-pro-text);
+      border-color: var(--color-accent);
+    }
+
+    /* ============================================================
+       "POPULAR" BADGE using ::before pseudo-element
+
+       ::before creates a virtual element BEFORE the card's content.
+       It's positioned absolutely, anchored to the card
+       (which has position: relative).
+
+       content: "Popular"  →  required for pseudo-elements to render.
+       Without content:'', the element is invisible.
+    ============================================================ */
+    .card.pro::before {
+      content: "Most Popular";
+      position: absolute;
+      top: -14px;               /* moves UP above the card's top edge */
+      left: 50%;
+      transform: translateX(-50%); /* center horizontally */
+      background: var(--color-accent);
+      color: var(--color-surface);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      padding: 0.3rem 1.25rem;
+      border-radius: 20px;
+      white-space: nowrap;      /* prevent badge text from wrapping */
+      letter-spacing: 0.03em;
+    }
+
+    /* ============================================================
+       PLAN HEADER
+    ============================================================ */
+    .plan-name {
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-primary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .card.pro .plan-name {
+      color: var(--color-accent);
+    }
+
+    /* ============================================================
+       PRICE — clamp() for fluid typography
+
+       clamp(1.75rem, 8vw, 3rem):
+         - minimum: 1.75rem (safe on tiny screens)
+         - preferred: 8vw (scales with viewport)
+         - maximum: 3rem (caps on wide screens)
+
+       This makes the price naturally responsive without
+       needing media queries just for font sizes.
+    ============================================================ */
+    .price {
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .price-period {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .card.pro .price-period {
+      color: var(--color-pro-muted);
+    }
+
+    .plan-description {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-lg);
+      line-height: 1.6;
+      padding-bottom: var(--spacing-lg);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .card.pro .plan-description {
+      color: var(--color-pro-muted);
+      border-bottom-color: rgba(255,255,255,0.1);
+    }
+
+    /* ============================================================
+       FEATURE LIST
+
+       The checkmark and X mark icons are added via ::before
+       pseudo-elements on <li> elements. This keeps the HTML clean
+       — no extra markup, no icon fonts, no images.
+
+       list-style: none  →  removes the default browser bullet point
+       padding-left  →  creates space on the left for our icon
+
+       ::before on <li>:
+         content: "✓"  →  renders the checkmark character
+         position: absolute  →  positions relative to the <li>
+         left: 0  →  at the very left of the padding area
+    ============================================================ */
+    .features {
+      list-style: none;
+      padding: 0;
+      margin-bottom: var(--spacing-xl);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .features li {
+      position: relative;       /* anchor for ::before */
+      padding-left: 1.75rem;    /* room for the icon */
+      font-size: var(--font-size-sm);
+      line-height: 1.5;
+    }
+
+    /* Included feature — green checkmark */
+    .features li.included::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--color-success);
+      font-weight: 700;
+    }
+
+    /* Excluded feature — red X, muted text */
+    .features li.excluded::before {
+      content: "✗";
+      position: absolute;
+      left: 0;
+      color: var(--color-error);
+      font-weight: 700;
+    }
+
+    .features li.excluded {
+      color: var(--color-text-muted);
+      text-decoration: line-through;
+      text-decoration-color: var(--color-error);
+    }
+
+    .card.pro .features li.included::before {
+      color: #6ee7b7; /* brighter green on dark background */
+    }
+
+    .card.pro .features li.excluded {
+      color: var(--color-pro-muted);
+    }
+
+    /* ============================================================
+       CTA BUTTON
+
+       Base styles (mobile-first — apply at all sizes):
+       - background-color transition for smooth hover
+       - box-shadow transition for lift effect
+       - transform transition for press effect
+
+       The hover state combines all three for a polished feel.
+    ============================================================ */
+    .cta-btn {
+      display: block;
+      width: 100%;
+      padding: var(--spacing-md);
+      border: none;
+      border-radius: calc(var(--border-radius) / 2);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      background: var(--color-primary);
+      color: #ffffff;
+      /* Transition multiple properties simultaneously */
+      transition:
+        background-color var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease,
+        transform var(--transition-speed) ease;
+    }
+
+    .cta-btn:hover {
+      background: var(--color-primary-hover);
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+      transform: translateY(-2px); /* subtle lift */
+    }
+
+    .cta-btn:active {
+      transform: translateY(0);    /* "click down" feedback */
+      box-shadow: none;
+    }
+
+    .cta-btn:focus-visible {
+      outline: 3px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    /* Pro card gets a white/accent button */
+    .card.pro .cta-btn {
+      background: var(--color-accent);
+    }
+
+    .card.pro .cta-btn:hover {
+      background: #a5b4fc;
+      box-shadow: 0 8px 24px rgba(129, 140, 248, 0.5);
+    }
+
+    /* ============================================================
+       RESPONSIVE — TABLET (768px and up)
+
+       min-width queries = mobile-first approach.
+       "At 768px and above, apply THESE styles."
+       Base styles still apply; we're only adding/overriding.
+    ============================================================ */
+    @media (min-width: 768px) {
+      .pricing-grid {
+        flex-direction: row;    /* TABLET: side-by-side in a row */
+        align-items: flex-start; /* cards align at the top */
+        justify-content: center;
+      }
+
+      .card {
+        width: calc(33.333% - var(--spacing-lg));
+        max-width: none;
+      }
+
+      /* Pro card slightly elevated — translate UP */
+      .card.pro {
+        transform: translateY(-12px);
+      }
+
+      .card.pro:hover {
+        transform: translateY(-16px); /* hover lifts from elevated position */
+      }
+    }
+
+    /* ============================================================
+       RESPONSIVE — DESKTOP (1024px and up)
+
+       On large screens, the Pro card gets even larger via scale().
+
+       transform: scale(1.1)
+         →  enlarges the Pro card 10% in both dimensions.
+            Combined with translateY, we must declare BOTH in the
+            transform shorthand or one will override the other.
+    ============================================================ */
+    @media (min-width: 1024px) {
+      .card.pro {
+        transform: translateY(-16px) scale(1.1);
+        /* scale(1.1) = 10% larger in both width and height */
+        /* Note: always list translateY before scale for predictable
+           transform-origin behavior */
+      }
+
+      .card.pro:hover {
+        transform: translateY(-20px) scale(1.1);
+      }
+
+      /* Regular cards hover state */
+      .card:not(.pro):hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pricing-header">
+    <h1>Simple, transparent pricing</h1>
+    <p>No hidden fees. Cancel anytime.</p>
+  </div>
+
+  <!--
+    PRICING GRID
+    Three cards: basic, pro (highlighted), enterprise.
+    The "pro" class on the middle card triggers all the
+    special styling (dark background, badge, scale).
+  -->
+  <div class="pricing-grid">
+
+    <!-- BASIC CARD -->
+    <div class="card">
+      <div class="plan-name">Basic</div>
+      <div class="price">$9</div>
+      <div class="price-period">per month</div>
+      <p class="plan-description">Perfect for individuals and small personal projects.</p>
+      <ul class="features">
+        <li class="included">5 projects</li>
+        <li class="included">10 GB storage</li>
+        <li class="included">Email support</li>
+        <li class="excluded">Team collaboration</li>
+        <li class="excluded">Custom domain</li>
+        <li class="excluded">Analytics dashboard</li>
+      </ul>
+      <a href="#" class="cta-btn">Get started</a>
+    </div>
+
+    <!-- PRO CARD — featured with ::before badge + scale -->
+    <div class="card pro">
+      <div class="plan-name">Pro</div>
+      <div class="price">$29</div>
+      <div class="price-period">per month</div>
+      <p class="plan-description">For teams that need more power and collaboration tools.</p>
+      <ul class="features">
+        <li class="included">Unlimited projects</li>
+        <li class="included">100 GB storage</li>
+        <li class="included">Priority support</li>
+        <li class="included">Team collaboration</li>
+        <li class="included">Custom domain</li>
+        <li class="excluded">White-label</li>
+      </ul>
+      <a href="#" class="cta-btn">Start free trial</a>
+    </div>
+
+    <!-- ENTERPRISE CARD -->
+    <div class="card">
+      <div class="plan-name">Enterprise</div>
+      <div class="price">$99</div>
+      <div class="price-period">per month</div>
+      <p class="plan-description">For large teams and organizations at scale.</p>
+      <ul class="features">
+        <li class="included">Unlimited projects</li>
+        <li class="included">1 TB storage</li>
+        <li class="included">24/7 phone support</li>
+        <li class="included">Team collaboration</li>
+        <li class="included">Custom domain</li>
+        <li class="included">White-label</li>
+      </ul>
+      <a href="#" class="cta-btn">Contact sales</a>
+    </div>
+
+  </div>
+
+</body>
+</html>

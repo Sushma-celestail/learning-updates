@@ -1,0 +1,29 @@
+<!--3. Search Form with <datalist>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Search Form</h2>
+
+<form>
+  <label>Search:</label>
+  <input type="text" list="suggestions" placeholder="Search here...">
+
+  <datalist id="suggestions">
+    <option value="Python">
+    <option value="JavaScript">
+    <option value="Machine Learning">
+    <option value="Data Science">
+    <option value="Flask">
+  </datalist>
+
+  <button type="submit">Search</button>
+</form>
+
+<hr>
+</body>
+</html>

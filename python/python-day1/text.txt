@@ -1,0 +1,72 @@
+Infrastructure Modernization
+Agile, Reliable, and Secure
+Infrastructure To Deliver, Deploy and Maintain at High Speed
+Whether your goals are to increase sales, detect fraud, automate processes, perform predictive analysis, or deliver personalizedcustomer experiences, we can help your developers, data scientists, and data engineers bring their ideas to life
+
+Preventing Cost Escalations
+Security
+Identity and Access Management
+Avoiding Vendor Lock-ins
+How we help
+Modernize your infrastructure to scale and innovate faster
+
+
+Optimize Costs with An Infrastructure Assessment​
+Celestial’s team of experts focus on your overall goals and strategy to help you power success we ll assess your current infrastructure make recommendations for efficient processes and workflows and help you identify cost optimization opportunities to align cloud spending with your business goals.
+
+
+Align Your IT Goals with Your Business Needs
+Convert raw data into actionable insights affordably migrate to azure aws or google cloud for cost savings and scalability optimize computing capacity or build a cloud native data lake for flexible workloads.
+
+
+Seamlessly Migrate Your Private Cloud Workloads
+Experience the freedom flexibility and speed of running your critical workloads in the public cloud we ll help you migrate your private cloud v ms seamlessly without refactoring or rebuilding applications enabling you to maintain operational continuity and leverage your existing investments and tools
+
+Tech Stack
+Celestial systems’ managed cloud services teams have expertise in assessment and implementation of devops, security in devops, monitory & provisioning of on-prem/cloud infra as well as multi-cloud adoption and optimizations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Our Capabilities
+Clients benefit from our flexible engagement options designed to meet their specific needs.We bundle our solutions under two broad categories.
+
+DevOps
+Assess devops process IT infra ALM capability.
+Design & Deploy CI/CD pipelines.
+Infrastructure provisioning & management.
+Read More
+TechOps
+Seamless operations of pipeline continuous onboarding of projects people (access Identity).
+Governance, compliance & maintenance, and infrastructure support.
+Read More
+Industries We Work With
+View all
+
+
+
+
+
+
+

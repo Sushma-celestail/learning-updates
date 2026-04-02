@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.hero {
+  position: relative;
+  height: 100vh;
+  background: linear-gradient(120deg, #1e3c72, #2a5298);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+/* Overlay */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+}
+
+/* Content above overlay */
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Welcome</h1>
+    <p>Beautiful gradient hero section</p>
+  </div>
+</section>
+
+</body>
+</html>

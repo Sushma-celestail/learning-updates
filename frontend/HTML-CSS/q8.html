@@ -1,0 +1,576 @@
+
+<!-- Q8. Equal-Height Card Layout with Flexbox 
+
+Topics: Flexbox, flex-grow, flex-basis, flex-wrap, gap 
+
+Problem Statement: 
+
+Create a responsive card grid displaying 6 product cards. Each card has: an image placeholder (colored div), a title, a description of varying length, a price, and an "Add to Cart" button. All cards in the same row must be equal height, and the button must always be pinned to the bottom of each card regardless of description length. 
+
+Expected Layout: 
+
+Desktop (>1024px):  3 cards per row 
+
+Tablet (768-1024px): 2 cards per row 
+
+Mobile (<768px):     1 card per row 
+
+Constraints: 
+
+Cards must use display: flex with flex-direction: column 
+
+The description area must use flex-grow: 1 to push the button to the bottom 
+
+Use flex-wrap on the container for responsive behavior 
+
+Use gap for spacing between cards (no margin hacks) 
+
+Card width must be set using flex-basis or flex shorthand 
+
+All cards in a row must be the same height (Flexbox default behavior) 
+
+Add box-shadow and hover transform for visual polish  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flexbox Card Grid</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<style>
+  /* ── Reset & Tokens ─────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #f5f2ed;
+    --surface:  #ffffff;
+    --border:   #e4dfd8;
+    --text:     #1a1814;
+    --muted:    #8a8278;
+    --accent:   #2d4a3e;
+    --accent-h: #1e3329;
+    --tag:      #e8f0ec;
+    --tag-text: #2d4a3e;
+    --shadow:   0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.05);
+    --shadow-h: 0 16px 40px rgba(0,0,0,.13), 0 4px 10px rgba(0,0,0,.07);
+    --r: 16px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* subtle dot grid background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: radial-gradient(circle, #c8c0b5 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: .35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Page Header ────────────────────────────────── */
+  .page-header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 64px 24px 48px;
+  }
+
+  .page-header .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-family: 'DM Sans', monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--tag);
+    border: 1px solid #c3d9cc;
+    border-radius: 999px;
+    padding: 4px 14px;
+    margin-bottom: 20px;
+  }
+
+  .page-header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .page-header h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--muted);
+  }
+
+  .page-header p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── Layout Indicator ───────────────────────────── */
+  .layout-pill {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    padding: 0 16px;
+  }
+
+  .pill {
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: .06em;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--surface);
+  }
+  .pill b { color: var(--accent); font-weight: 500; }
+
+  /* ── CARD CONTAINER ─────────────────────────────────
+     KEY FLEXBOX PROPERTIES:
+     display: flex         → enables flexbox
+     flex-wrap: wrap       → cards wrap to next row
+     gap                   → spacing (no margin hacks)
+  ──────────────────────────────────────────────────── */
+  .card-grid {
+    position: relative;
+    z-index: 1;
+    display: flex;           /* ← Flexbox on */
+    flex-wrap: wrap;         /* ← Cards wrap responsively */
+    gap: 24px;               /* ← Uniform spacing, no margins */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 48px);
+  }
+
+  /* ── CARD ───────────────────────────────────────────
+     KEY FLEXBOX PROPERTIES:
+     flex: 0 1 calc(33.333% - 16px)
+       flex-grow: 0   → don't grow beyond basis
+       flex-shrink: 1 → can shrink if needed
+       flex-basis: calc(33.333% - 16px) → 3 per row on desktop
+
+     display: flex + flex-direction: column
+       → stack children vertically so description
+         can flex-grow and push button to bottom
+  ──────────────────────────────────────────────────── */
+  .card {
+    /* Width via flex-basis — 3 per row (gap = 24px × 2 / 3) */
+    flex: 0 1 calc(33.333% - 16px); /* ← flex-basis for desktop */
+
+    /* Column flex to pin button at bottom */
+    display: flex;               /* ← Flex on the card itself */
+    flex-direction: column;      /* ← Vertical stack */
+
+    background: var(--surface);
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow);   /* ← Visual polish */
+    transition: transform .28s cubic-bezier(.34,1.56,.64,1),
+                box-shadow .28s ease;
+  }
+
+  /* Hover polish */
+  .card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: var(--shadow-h);
+  }
+
+  /* ── Image Placeholder ──────────────────────────── */
+  .card-image {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    flex-shrink: 0;            /* never shrink the image area */
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* subtle shimmer overlay on hover */
+  .card-image::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity .28s;
+  }
+  .card:hover .card-image::after { opacity: 1; }
+
+  /* Individual card color palettes */
+  .card:nth-child(1) .card-image { background: linear-gradient(135deg,#d4e8d0,#a8ccb0); }
+  .card:nth-child(2) .card-image { background: linear-gradient(135deg,#d0dff5,#a8bcdf); }
+  .card:nth-child(3) .card-image { background: linear-gradient(135deg,#f5e6d0,#dfcaa8); }
+  .card:nth-child(4) .card-image { background: linear-gradient(135deg,#ead0d0,#d4a8a8); }
+  .card:nth-child(5) .card-image { background: linear-gradient(135deg,#e0d0f0,#c4a8df); }
+  .card:nth-child(6) .card-image { background: linear-gradient(135deg,#d0eef5,#a8d4df); }
+
+  /* ── Card Body ──────────────────────────────────── */
+  .card-body {
+    display: flex;
+    flex-direction: column;  /* ← Column so description can grow */
+    flex: 1;                 /* ← Fill remaining card height */
+    padding: 22px 22px 20px;
+    gap: 0;
+  }
+
+  /* Tag row */
+  .card-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--tag-text);
+    background: var(--tag);
+    border: 1px solid #c3d9cc;
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-weight: 500;
+  }
+
+  /* Title */
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  /* ── DESCRIPTION — KEY PROPERTY ────────────────────
+     flex-grow: 1 makes this area absorb all leftover
+     vertical space in the card, pushing the price +
+     button below it to the very bottom.
+  ──────────────────────────────────────────────────── */
+  .card-desc {
+    flex-grow: 1;            /* ← THE KEY PROPERTY */
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+
+  /* ── Price Row ─────────────────────────────────── */
+  .card-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .price {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+
+  .price-original {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  .price-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: #c0392b;
+    background: #fdecea;
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-left: auto;
+  }
+
+  /* ── Add to Cart Button ─────────────────────────── */
+  .btn-cart {
+    /* mt-auto is not needed — flex-grow on desc handles it */
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background .2s, transform .15s;
+    flex-shrink: 0;           /* never shrink the button */
+  }
+
+  .btn-cart:hover {
+    background: var(--accent-h);
+    transform: scale(1.02);
+  }
+
+  .btn-cart:active { transform: scale(.98); }
+
+  /* ── Responsive Breakpoints ─────────────────────────
+     flex-basis changes to adjust columns per row.
+     gap stays the same — no margin recalculation needed.
+  ──────────────────────────────────────────────────── */
+
+  /* Tablet: 2 per row */
+  @media (max-width: 1024px) {
+    .card {
+      flex: 0 1 calc(50% - 12px); /* ← 2 columns, gap = 24px / 2 */
+    }
+  }
+
+  /* Mobile: 1 per row */
+  @media (max-width: 768px) {
+    .card {
+      flex: 0 1 100%; /* ← Full width, single column */
+    }
+    .card-grid { gap: 16px; }
+  }
+
+  /* ── Annotation Strip ───────────────────────────── */
+  .annotation {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 48px auto 0;
+    padding: 0 clamp(16px, 4vw, 48px);
+  }
+
+  .annotation-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+
+  .ann-item h4 {
+    font-family: 'DM Sans', monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .ann-item p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .ann-item code {
+    background: var(--tag);
+    color: var(--accent);
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="eyebrow">⬡ Flexbox Layout</div>
+    <h1>Our <em>finest</em><br/>Products</h1>
+    <p>Equal-height cards using Flexbox. Descriptions grow to fill space; buttons are always pinned to the bottom.</p>
+  </header>
+
+  <!-- Breakpoint pills -->
+  <div class="layout-pill">
+    <span class="pill">Desktop <b>&gt;1024px</b> → 3 per row</span>
+    <span class="pill">Tablet <b>768–1024px</b> → 2 per row</span>
+    <span class="pill">Mobile <b>&lt;768px</b> → 1 per row</span>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       CARD GRID
+       display:flex + flex-wrap:wrap + gap
+  ════════════════════════════════════════════════════ -->
+  <main class="card-grid">
+
+    <!-- Card 1 — Short description -->
+    <article class="card">
+      <div class="card-image">🌿</div>
+      <div class="card-body">
+        <div class="card-tags"><span class="tag">Wellness</span><span class="tag">New</span></div>
+        <h2 class="card-title">Matcha Starter Kit</h2>
+        <p class="card-desc">
+          Everything you need to brew a perfect cup. Bamboo whisk, ceramic bowl, and 30g ceremonial-grade matcha included.
+        </p>
+        <div class="card-price-row">
+          <span class="price">₹1,299</span>
+          <span class="price-original">₹1,799</span>
+          <span class="price-badge">−28%</span>
+        </div>
+        <button class="btn-cart">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+    <!-- Card 2 — Medium description -->
+    <article class="card">
+      <div class="card-image">📓</div>
+      <div class="card-body">
+        <div class="card-tags"><span class="tag">Stationery</span></div>
+        <h2 class="card-title">Linen Hardcover Journal</h2>
+        <p class="card-desc">
+          240 pages of 100gsm ivory paper, thread-sewn binding, and a natural linen cover that ages beautifully. Available in four muted tones. Pairs perfectly with any fountain pen or fine liner. A timeless companion for daily writing, sketching, and reflection.
+        </p>
+        <div class="card-price-row">
+          <span class="price">₹849</span>
+        </div>
+        <button class="btn-cart">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+    <!-- Card 3 — Very long description -->
+    <article class="card">
+      <div class="card-image">☕</div>
+      <div class="card-body">
+        <div class="card-tags"><span class="tag">Coffee</span><span class="tag">Sale</span></div>
+        <h2 class="card-title">Single-Origin Pour-Over Set</h2>
+        <p class="card-desc">
+          Sourced from a small co-operative in Coorg, Karnataka, this washed-process Arabica presents notes of bergamot, honey, and a clean citrus finish. The set includes a hand-ground ceramic dripper, bleached filter papers, and a 250g bag of freshly roasted beans. Roast date printed on every bag. Ships within 48 hours of roasting to ensure peak freshness. Ideal for the discerning home barista who takes their morning ritual seriously.
+        </p>
+        <div class="card-price-row">
+          <span class="price">₹2,199</span>
+          <span class="price-original">₹2,799</span>
+          <span class="price-badge">−21%</span>
+        </div>
+        <button class="btn-cart">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+    <!-- Card 4 — Short description -->
+    <article class="card">
+      <div class="card-image">🕯</div>
+      <div class="card-body">
+        <div class="card-tags"><span class="tag">Home</span></div>
+        <h2 class="card-title">Soy Wax Candle</h2>
+        <p class="card-desc">
+          50-hour burn time, hand-poured in small batches. Scent: cedarwood and smoked amber.
+        </p>
+        <div class="card-price-row">
+          <span class="price">₹649</span>
+        </div>
+        <button class="btn-cart">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+    <!-- Card 5 — Medium description -->
+    <article class="card">
+      <div class="card-image">🧴</div>
+      <div class="card-body">
+        <div class="card-tags"><span class="tag">Skincare</span><span class="tag">Vegan</span></div>
+        <h2 class="card-title">Rosehip Face Serum</h2>
+        <p class="card-desc">
+          Cold-pressed rosehip oil blended with bakuchiol and vitamin C derivatives. Clinically tested for sensitive skin. Reduces hyperpigmentation over 4–6 weeks with consistent use. Fragrance-free and cruelty-free certified.
+        </p>
+        <div class="card-price-row">
+          <span class="price">₹1,799</span>
+          <span class="price-original">₹2,299</span>
+          <span class="price-badge">−22%</span>
+        </div>
+        <button class="btn-cart">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+    <!-- Card 6 — Short description -->
+    <article class="card">
+      <div class="card-image">🎋</div>
+      <div class="card-body">
+        <div class="card-tags"><span class="tag">Desk</span><span class="tag">Eco</span></div>
+        <h2 class="card-title">Bamboo Desk Organiser</h2>
+        <p class="card-desc">
+          Modular 5-slot organiser made from sustainably harvested bamboo. Holds pens, cards, and small devices neatly.
+        </p>
+        <div class="card-price-row">
+          <span class="price">₹999</span>
+        </div>
+        <button class="btn-cart">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- Annotation strip -->
+  <div class="annotation">
+    <div class="annotation-inner">
+      <div class="ann-item">
+        <h4>Container</h4>
+        <p><code>display:flex</code> <code>flex-wrap:wrap</code> <code>gap:24px</code> — no margin hacks, wraps automatically.</p>
+      </div>
+      <div class="ann-item">
+        <h4>Card width</h4>
+        <p><code>flex: 0 1 calc(33.333% - 16px)</code> → desktop 3-col. Overridden at tablet &amp; mobile breakpoints.</p>
+      </div>
+      <div class="ann-item">
+        <h4>Equal height</h4>
+        <p>Flexbox cross-axis default — <code>align-items:stretch</code> — makes all cards in a row the same height.</p>
+      </div>
+      <div class="ann-item">
+        <h4>Pinned button</h4>
+        <p>Card uses <code>flex-direction:column</code>. Description has <code>flex-grow:1</code>, absorbing slack and pushing button down.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

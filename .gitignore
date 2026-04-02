@@ -1,0 +1,184 @@
+# =========================
+
+# Python
+
+# =========================
+
+**pycache**/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# =========================
+
+# Virtual Environments
+
+# =========================
+
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# =========================
+
+# Environment Variables
+
+# =========================
+
+.env
+.env.*
+*.env
+
+# =========================
+
+# IDE / Editor Files
+
+# =========================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# =========================
+
+# Logs
+
+# =========================
+
+*.log
+logs/
+log/
+
+# =========================
+
+# Jupyter Notebook
+
+# =========================
+
+.ipynb_checkpoints
+
+# =========================
+
+# Pytest / Coverage
+
+# =========================
+
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# =========================
+
+# MyPy / Type Checking
+
+# =========================
+
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# =========================
+
+# FastAPI / Uvicorn
+
+# =========================
+
+*.db
+*.sqlite3
+
+# =========================
+
+# Alembic (DB migrations)
+
+# =========================
+
+alembic/versions/*.pyc
+alembic/versions/**pycache**/
+
+# Optional: ignore full alembic folder (only if not needed in repo)
+
+# alembic/
+
+# =========================
+
+# Machine Learning / Models
+
+# =========================
+
+*.h5
+*.hdf5
+*.pkl
+*.joblib
+*.onnx
+*.pt
+*.ckpt
+
+# =========================
+
+# Data Files
+
+# =========================
+
+data/
+datasets/
+*.csv
+*.xlsx
+
+# =========================
+
+# OS Files
+
+# =========================
+
+Thumbs.db
+
+# =========================
+
+# Docker
+
+# =========================
+
+*.tar
+*.gz
+
+# =========================
+
+# Temporary Files
+
+# =========================
+
+tmp/
+temp/
+
+# =========================
+
+# Node (if frontend included)
+
+# =========================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

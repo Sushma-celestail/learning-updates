@@ -1,0 +1,21 @@
+<!--Embed a video with controls, a poster image, and fallback text for unsupported browsers. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Demo Video</h2>
+
+<video controls width="500" poster="thumbnail.jpg">
+    <!-- Multiple formats for compatibility -->
+    <source src="video.mp4" type="video/mp4">
+    <source src="video.webm" type="video/webm">
+
+    <!-- Fallback text if browser doesn't support video -->
+    Your browser does not support the video tag.
+</video>
+</body>
+</html>

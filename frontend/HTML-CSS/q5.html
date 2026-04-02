@@ -1,0 +1,298 @@
+<!-- Q5. CSS Specificity Challenge 
+
+Topics: Selectors, Specificity, Cascade, Pseudo-classes 
+
+Problem Statement: 
+
+Create an HTML page with a list of 10 items. Using only CSS (no inline styles, no !important), apply the following styles simultaneously. Your CSS must demonstrate that you understand specificity by using progressively more specific selectors to override each other. 
+
+All list items: font-size 16px, color gray 
+
+Items with class '.highlight': color blue 
+
+The item with id '#special': color red, font-weight bold 
+
+Even items (using :nth-child): background light yellow 
+
+Odd items (using :nth-child): background light gray 
+
+First item (using :first-child): font-size 20px, text-transform uppercase 
+
+Last item (using :last-child): font-style italic 
+
+Items that are hovered: underline text, transform scale 1.02 
+
+Constraints: 
+
+Do NOT use !important anywhere 
+
+Do NOT use inline styles 
+
+Write a CSS comment above each rule block explaining its specificity score (e.g., /* Specificity: 0-1-1 */) 
+
+Demonstrate at least one case where a more specific selector overrides a less specific one   -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Specificity Challenge</title>
+  <style>
+
+    /* ─── Page layout ─────────────────────────────────────────────── */
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f9f9f7;
+      color: #222;
+    }
+
+    h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+    p.subtitle { font-size: 14px; color: #666; margin-bottom: 32px; }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #e0e0d8;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    /* ─── Specificity legend panel ─────────────────────────────────── */
+    .legend {
+      margin-top: 40px;
+      border: 1px solid #e0e0d8;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .legend-title {
+      background: #f0efe8;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #444;
+      border-bottom: 1px solid #e0e0d8;
+    }
+    .legend table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .legend td {
+      padding: 8px 16px;
+      border-bottom: 1px solid #f0efe8;
+      vertical-align: top;
+    }
+    .legend tr:last-child td { border-bottom: none; }
+    .legend td:first-child {
+      font-family: monospace;
+      color: #1a6aaa;
+      white-space: nowrap;
+      width: 200px;
+    }
+    .legend td:nth-child(2) {
+      font-family: monospace;
+      font-weight: 600;
+      color: #c0392b;
+      white-space: nowrap;
+      width: 90px;
+    }
+    .legend td:nth-child(3) { color: #555; }
+
+    /* ══════════════════════════════════════════════════════════════════
+       SPECIFICITY RULES — ordered from least to most specific
+       ══════════════════════════════════════════════════════════════════ */
+
+
+    /* ── Rule 1 ────────────────────────────────────────────────────────
+       Selector : li
+       Specificity: 0-0-1
+       (0 IDs, 0 classes/pseudo-classes, 1 element)
+       Base styles for ALL list items. Lowest specificity — every rule
+       below will override these where they conflict.
+    ────────────────────────────────────────────────────────────────── */
+    li {
+      font-size: 16px;
+      color: gray;
+      padding: 12px 20px;
+      border-bottom: 1px solid #e8e8e2;
+      transition: transform 0.15s ease, background 0.15s ease;
+      cursor: default;
+    }
+    li:last-child { border-bottom: none; }
+
+
+    /* ── Rule 2 ────────────────────────────────────────────────────────
+       Selector : li:nth-child(even)
+       Specificity: 0-1-1
+       (0 IDs, 1 pseudo-class, 1 element)
+       Even items get a light yellow background.
+       Overrides li { background } because 0-1-1 > 0-0-1.
+    ────────────────────────────────────────────────────────────────── */
+    li:nth-child(even) {
+      background: #fffde7;
+    }
+
+
+    /* ── Rule 3 ────────────────────────────────────────────────────────
+       Selector : li:nth-child(odd)
+       Specificity: 0-1-1
+       (0 IDs, 1 pseudo-class, 1 element)
+       Odd items get a light gray background.
+       Same specificity as Rule 2 — they target different items so
+       there's no conflict between them; both apply cleanly.
+    ────────────────────────────────────────────────────────────────── */
+    li:nth-child(odd) {
+      background: #f2f2f0;
+    }
+
+
+    /* ── Rule 4 ────────────────────────────────────────────────────────
+       Selector : li:first-child
+       Specificity: 0-1-1
+       (0 IDs, 1 pseudo-class, 1 element)
+       Same score as Rules 2 & 3, but declared LATER in the stylesheet.
+       The cascade resolves the tie by source order — this rule wins
+       over li:nth-child(odd) for item 1.
+       SPECIFICITY OVERRIDE DEMO: font-size 20px beats li's 16px because
+       0-1-1 beats 0-0-1.
+    ────────────────────────────────────────────────────────────────── */
+    li:first-child {
+      font-size: 20px;
+      text-transform: uppercase;
+    }
+
+
+    /* ── Rule 5 ────────────────────────────────────────────────────────
+       Selector : li:last-child
+       Specificity: 0-1-1
+       (0 IDs, 1 pseudo-class, 1 element)
+       Last item gets italic. Same score as Rule 4, no conflict because
+       :first-child and :last-child match different elements (items 1 & 10).
+    ────────────────────────────────────────────────────────────────── */
+    li:last-child {
+      font-style: italic;
+    }
+
+
+    /* ── Rule 6 ────────────────────────────────────────────────────────
+       Selector : li:hover
+       Specificity: 0-1-1
+       (0 IDs, 1 pseudo-class, 1 element)
+       On hover: underline + a subtle scale. Applied dynamically so it
+       sits alongside the above rules; the browser applies all matching
+       rules simultaneously.
+    ────────────────────────────────────────────────────────────────── */
+    li:hover {
+      text-decoration: underline;
+      transform: scale(1.02);
+    }
+
+
+    /* ── Rule 7 ────────────────────────────────────────────────────────
+       Selector : li.highlight
+       Specificity: 0-1-1
+       (0 IDs, 1 class, 1 element)
+       Highlighted items turn blue. Score is 0-1-1 — same number as the
+       pseudo-class rules — but because classes and pseudo-classes both
+       sit in the "b" column, they are equivalent in weight. Cascade
+       (source order) resolves ties: this rule is declared after the
+       :nth-child rules so it wins the color conflict for highlighted
+       even/odd items.
+    ────────────────────────────────────────────────────────────────── */
+    li.highlight {
+      color: #1a6aaa;
+    }
+
+
+    /* ── Rule 8 ────────────────────────────────────────────────────────
+       Selector : li#special
+       Specificity: 1-0-1
+       (1 ID, 0 classes, 1 element)
+       The ID makes this the most powerful rule in the file: 1-0-1 beats
+       every 0-x-x rule above.
+       KEY OVERRIDE DEMO: even though #special also has class .highlight,
+       the color here (red) wins because 1-0-1 > 0-1-1.
+    ────────────────────────────────────────────────────────────────── */
+    li#special {
+      color: #c0392b;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>CSS Specificity Challenge</h1>
+  <p class="subtitle">
+    10 list items styled with progressively more specific selectors — no
+    <code>!important</code>, no inline styles.
+  </p>
+
+  <ul>
+    <li>Item 1 — first-child (font-size 20px, uppercase, odd bg)</li>
+    <li class="highlight">Item 2 — .highlight (color blue, even bg)</li>
+    <li>Item 3 — plain odd item</li>
+    <li class="highlight">Item 4 — .highlight (color blue, even bg)</li>
+    <li id="special" class="highlight">Item 5 — #special + .highlight (red wins: 1-0-1 > 0-1-1)</li>
+    <li>Item 6 — plain even item</li>
+    <li class="highlight">Item 7 — .highlight (color blue, odd bg)</li>
+    <li>Item 8 — plain even item</li>
+    <li class="highlight">Item 9 — .highlight (color blue, odd bg)</li>
+    <li>Item 10 — last-child (italic)</li>
+  </ul>
+
+
+  <!-- ── Specificity reference table ──────────────────────────────── -->
+  <div class="legend">
+    <div class="legend-title">Specificity reference — all rules in this file</div>
+    <table>
+      <tr>
+        <td>li</td>
+        <td>0 – 0 – 1</td>
+        <td>Base: 16px gray. Lowest score — foundation for everything.</td>
+      </tr>
+      <tr>
+        <td>li:nth-child(even)</td>
+        <td>0 – 1 – 1</td>
+        <td>Light yellow background on even items.</td>
+      </tr>
+      <tr>
+        <td>li:nth-child(odd)</td>
+        <td>0 – 1 – 1</td>
+        <td>Light gray background on odd items.</td>
+      </tr>
+      <tr>
+        <td>li:first-child</td>
+        <td>0 – 1 – 1</td>
+        <td>20px + uppercase. Same score as :nth-child but declared later → wins font-size via cascade.</td>
+      </tr>
+      <tr>
+        <td>li:last-child</td>
+        <td>0 – 1 – 1</td>
+        <td>Italic on item 10.</td>
+      </tr>
+      <tr>
+        <td>li:hover</td>
+        <td>0 – 1 – 1</td>
+        <td>Underline + scale(1.02) on mouse-over.</td>
+      </tr>
+      <tr>
+        <td>li.highlight</td>
+        <td>0 – 1 – 1</td>
+        <td>Blue color. Wins over :nth-child color via source order.</td>
+      </tr>
+      <tr>
+        <td>li#special</td>
+        <td>1 – 0 – 1</td>
+        <td>Red + bold. ID column makes this the highest-specificity rule — overrides .highlight's blue even though both match item 5.</td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+</html>

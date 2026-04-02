@@ -1,0 +1,1030 @@
+/* =============================================================
+   FILE: components.css
+   PURPOSE: Visual styling of all individual UI components
+   
+   WORKFLOW:
+   This file styles each COMPONENT (nav, buttons, cards, forms).
+   Think of components as LEGO bricks — reusable styled pieces
+   that get combined to build the full page.
+   
+   RELATIONSHIP TO OTHER FILES:
+   - layout.css said WHERE components go (positions, grid areas)
+   - This file says HOW they LOOK (colors, fonts, shadows, borders)
+   - animations.css says how they MOVE (transitions, keyframes)
+   
+   BEM NAMING CONVENTION:
+   We use BEM (Block__Element--Modifier) for class names:
+   .card            → Block: the card component
+   .card__title     → Element: the title inside the card
+   .card--featured  → Modifier: a variant of the card
+   
+   This prevents class name conflicts and makes HTML readable.
+   ============================================================= */
+
+
+/* ─────────────────────────────────────────────────────────────
+   BASE BODY TYPOGRAPHY
+   All child elements inherit these unless overridden.
+   ───────────────────────────────────────────────────────────── */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--font-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   SKIP NAVIGATION LINK (ACCESSIBILITY REQUIREMENT)
+   
+   This is the FIRST element in <body> (in HTML).
+   Screen-reader users and keyboard users press Tab first,
+   which focuses this link — letting them skip the nav bar
+   and jump straight to main content.
+   
+   It's visually hidden until focused — visible only when
+   a keyboard user Tabs to it.
+   ───────────────────────────────────────────────────────────── */
+.skip-nav {
+  position: absolute;
+  top: -100%;              /* off-screen by default */
+  left: var(--space-4);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-semibold);
+  z-index: var(--z-top);
+  transition: top var(--transition-fast);
+}
+
+/* When focused (keyboard Tab), slide it INTO view */
+.skip-nav:focus {
+  top: var(--space-4);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ① NAVIGATION BAR COMPONENT
+   ───────────────────────────────────────────────────────────── */
+
+/* 
+  The nav bar itself — frosted glass effect:
+  backdrop-filter: blur() blurs what's BEHIND the element,
+  creating a modern "frosted glass" appearance.
+*/
+.nav {
+  background: var(--color-nav-bg);
+  backdrop-filter: blur(12px);        /* blur content behind nav */
+  -webkit-backdrop-filter: blur(12px); /* Safari prefix */
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-nav);
+  transition: background var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* Logo styling */
+.nav__logo {
+  font-size: var(--font-xl);
+  font-weight: var(--font-extrabold);
+  color: var(--color-primary);
+  letter-spacing: -0.02em;  /* tight tracking for logo */
+  text-decoration: none;
+  /* Gradient text effect */
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Individual navigation link */
+.nav__link {
+  position: relative;       /* needed for ::after pseudo-element underline */
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-nav-text);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.nav__link:hover {
+  color: var(--color-primary);
+  background: rgba(108, 99, 255, 0.08);
+}
+
+/*
+  Active state indicator — a colored underline.
+  ::after creates an underline WITHOUT actual HTML underline.
+  This is more controllable than text-decoration.
+*/
+.nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;                   /* starts at 0 width (invisible) */
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+
+/* Active link shows full-width underline */
+.nav__link.active::after,
+.nav__link:hover::after {
+  width: 80%;   /* not 100% — looks more refined */
+}
+
+/* Active link: brighter color */
+.nav__link.active {
+  color: var(--color-primary);
+  font-weight: var(--font-semibold);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   THEME TOGGLE BUTTON
+   ───────────────────────────────────────────────────────────── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: var(--font-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-primary);
+  background: rgba(108, 99, 255, 0.1);
+  transform: rotate(15deg); /* subtle rotation on hover — fun micro-interaction */
+  box-shadow: var(--shadow-md);
+}
+
+/* Show moon icon in light mode, sun icon in dark mode */
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+.dark-theme .theme-toggle .icon-sun { display: block; }
+.dark-theme .theme-toggle .icon-moon { display: none; }
+
+
+/* ─────────────────────────────────────────────────────────────
+   ② HERO SECTION COMPONENT
+   ───────────────────────────────────────────────────────────── */
+
+/* 
+  Hero background — gradient with animated stars-like overlay.
+  ::before creates the dark gradient overlay on top of any background.
+  ::after creates a decorative blob.
+*/
+.hero {
+  background: var(--gradient-hero);
+  color: var(--color-text-inverse);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;               /* shorthand for top:0 right:0 bottom:0 left:0 */
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(255, 101, 132, 0.10) 0%, transparent 40%);
+  pointer-events: none;   /* click-through — doesn't block user interaction */
+}
+
+/* Decorative circle blob — visual interest */
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 60rem;
+  height: 60rem;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, rgba(108, 99, 255, 0.08) 0%, transparent 70%);
+  top: -10rem;
+  right: -10rem;
+  pointer-events: none;
+}
+
+/* Label above the name — e.g., "Welcome / Hello I'm" */
+.hero__label {
+  display: inline-block;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-primary-light);
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgba(160, 156, 255, 0.3);
+  border-radius: var(--radius-full);
+  background: rgba(108, 99, 255, 0.1);
+}
+
+/* Main hero heading — the name */
+.hero__name {
+  font-size: clamp(3.2rem, 8vw, 7rem); /* clamp: min, preferred, max — fluid font! */
+  font-weight: var(--font-extrabold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: white;
+  margin-bottom: var(--space-4);
+}
+
+/*
+  Gradient text for the highlighted part of the name.
+  Works by clipping a gradient to the text shape.
+*/
+.hero__name-highlight {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Role/title below name */
+.hero__title {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: var(--font-medium);
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: var(--space-6);
+}
+
+/* Tagline — short sentence below title */
+.hero__tagline {
+  font-size: var(--font-lg);
+  color: rgba(255, 255, 255, 0.60);
+  max-width: 55rem;
+  margin: 0 auto var(--space-8);
+  line-height: var(--leading-loose);
+}
+
+/* Hero CTA buttons group */
+.hero__actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Scroll Indicator — bouncing arrow */
+.scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--font-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.scroll-indicator__arrow {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);   /* square rotated 45° = downward chevron */
+  /* Animation defined in animations.css */
+  animation: bounce 2s ease-in-out infinite;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ③ ABOUT SECTION COMPONENT
+   ───────────────────────────────────────────────────────────── */
+
+/* Image placeholder — when no real image is provided */
+.about__image-wrapper {
+  border-radius: var(--radius-xl);
+  overflow: hidden;        /* clips the image to rounded corners */
+  position: relative;
+  box-shadow: var(--shadow-xl);
+}
+
+/* Decorative gradient overlay on the image */
+.about__image-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), transparent);
+  pointer-events: none;
+}
+
+.about__image-placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 5;   /* taller than wide — portrait photo ratio */
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8rem;        /* large emoji as placeholder */
+  color: white;
+}
+
+/* About text section */
+.about__label {
+  display: inline-block;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-3);
+}
+
+.about__title {
+  font-size: var(--font-3xl);
+  font-weight: var(--font-extrabold);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-4);
+}
+
+.about__body {
+  color: var(--color-text-secondary);
+  line-height: var(--leading-loose);
+  margin-bottom: var(--space-4);
+}
+
+/* SKILLS BAR CHART — CSS only, no images */
+.skill-item__label {
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+}
+
+.skill-item__bar-wrapper {
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  height: 0.8rem;          /* thin bar track */
+  overflow: hidden;
+}
+
+/*
+  The actual filled bar.
+  Width is set via inline style: style="--skill-width: 85%"
+  The CSS variable approach keeps HTML clean while allowing per-item percentage.
+*/
+.skill-item__bar {
+  height: 100%;
+  width: var(--skill-width, 0%);  /* reads from inline CSS variable */
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  transform-origin: left;
+  /* Animation: slides in from left — defined in animations.css */
+  animation: skillFill 1.5s ease-out forwards;
+  animation-play-state: paused;  /* starts paused; JS or Intersection Observer starts it */
+}
+
+/* Skill tags (tag cloud alternative) */
+.skill-tag {
+  padding: var(--space-2) var(--space-4);
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(108, 99, 255, 0.2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
+  transition: all var(--transition-fast);
+}
+
+.skill-tag:hover {
+  background: var(--color-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-btn);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ④ PROJECT CARDS COMPONENT
+   ───────────────────────────────────────────────────────────── */
+.project-card {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;             /* clips: image zoom stays inside rounded corners */
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+  Hover effect: card lifts up (translateY) and shadow deepens.
+  translateY(-8px) moves card UP by 8px — "lift" effect.
+*/
+.project-card:hover {
+  transform: translateY(-8px);    /* lift off the page */
+  box-shadow: var(--shadow-card-hover);  /* deeper shadow when lifted */
+}
+
+/* Image wrapper allows image zooming without card expanding */
+.project-card__image-wrapper {
+  overflow: hidden;          /* clips zoomed image */
+  aspect-ratio: 16 / 9;     /* widescreen ratio for project screenshots */
+  position: relative;
+}
+
+/*
+  Image zoom on card hover — transform: scale on IMAGE (not card).
+  The wrapper has overflow:hidden so the zoom stays contained.
+*/
+.project-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;          /* fill the aspect ratio box, crop if needed */
+  transition: transform var(--transition-slow);
+}
+
+.project-card:hover .project-card__image {
+  transform: scale(1.08);     /* zoom in 8% on hover */
+}
+
+/* Colored placeholder when no image available */
+.project-card__image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  transition: transform var(--transition-slow);
+}
+
+.project-card:hover .project-card__image-placeholder {
+  transform: scale(1.08);
+}
+
+/* Card body — contains text content */
+.project-card__body {
+  padding: var(--space-6);
+  flex: 1;                    /* grow to fill available height */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.project-card__title {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+  line-height: var(--leading-tight);
+}
+
+.project-card__description {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  flex: 1;  /* push tech tags and button to bottom */
+}
+
+/* Tech tags row — list of technology badges */
+.project-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tech-tag {
+  font-size: var(--font-xs);
+  font-weight: var(--font-semibold);
+  padding: var(--space-1) var(--space-3);
+  background: rgba(108, 99, 255, 0.08);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(108, 99, 255, 0.15);
+}
+
+/* View Project button */
+.project-card__btn {
+  margin-top: var(--space-2);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑤ TIMELINE ENTRIES COMPONENT
+   ───────────────────────────────────────────────────────────── */
+.timeline__card {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.timeline__card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.timeline__date {
+  display: inline-block;
+  font-size: var(--font-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: rgba(108, 99, 255, 0.1);
+  border-radius: var(--radius-full);
+}
+
+.timeline__role {
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-1);
+}
+
+.timeline__company {
+  font-size: var(--font-base);
+  color: var(--color-primary);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-3);
+}
+
+.timeline__description {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-loose);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑥ TESTIMONIAL CARDS COMPONENT
+   
+   ::before pseudo-element creates the decorative opening quotation mark.
+   ───────────────────────────────────────────────────────────── */
+.testimonial-card {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  position: relative;             /* for ::before positioning */
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* Subtle background variation between cards */
+.testimonial-card:nth-child(1) {
+  background: linear-gradient(145deg, var(--color-bg-secondary), rgba(108, 99, 255, 0.03));
+}
+
+.testimonial-card:nth-child(2) {
+  background: linear-gradient(145deg, rgba(108, 99, 255, 0.04), var(--color-bg-secondary));
+  transform: translateY(-8px);    /* middle card elevated — design flourish */
+}
+
+.testimonial-card:nth-child(3) {
+  background: linear-gradient(145deg, var(--color-bg-secondary), rgba(255, 101, 132, 0.03));
+}
+
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.testimonial-card:nth-child(2):hover {
+  transform: translateY(-12px);   /* middle card lifts more */
+}
+
+/*
+  Decorative quotation mark — ::before pseudo-element.
+  This is a REQUIREMENT: at least 2 uses of ::before/::after.
+  
+  The content: '\201C' is the Unicode for " (left double quotation mark)
+  It's positioned behind the card content and styled large.
+*/
+.testimonial-card::before {
+  content: '\201C';       /* Unicode left double quotation mark " */
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-6);
+  font-size: 8rem;
+  font-family: Georgia, serif;   /* serif quotes look more elegant */
+  line-height: 1;
+  color: var(--color-primary);
+  opacity: 0.12;                 /* very transparent — decorative, not distracting */
+  pointer-events: none;
+}
+
+.testimonial-card__quote {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-loose);
+  font-style: italic;
+  margin-bottom: var(--space-6);
+  position: relative;            /* above the ::before quote mark */
+  z-index: 1;
+}
+
+.testimonial-card__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.testimonial-card__avatar {
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  color: white;
+  flex-shrink: 0;             /* don't let it compress */
+}
+
+.testimonial-card__name {
+  font-weight: var(--font-bold);
+  font-size: var(--font-base);
+}
+
+.testimonial-card__role {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑦ CONTACT FORM & DETAILS COMPONENT
+   ───────────────────────────────────────────────────────────── */
+
+/* Label — MUST be visible (accessibility requirement) */
+.form-label {
+  display: block;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+/* 
+  Required field indicator '*' — screen readers skip the *
+  We use aria-hidden="true" on it in HTML for accessibility.
+*/
+.form-label .required {
+  color: var(--color-accent);
+  margin-left: var(--space-1);
+}
+
+/* Form input, textarea, select — consistent base style */
+.form-control {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-secondary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--font-base);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* Focus state — the border highlights and a soft glow appears */
+.form-control:focus {
+  outline: none;                              /* remove default outline */
+  border-color: var(--color-border-focus);    /* use our accent border */
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15); /* soft focus ring */
+}
+
+/* Invalid state (HTML5 validation) */
+.form-control:invalid:not(:placeholder-shown) {
+  border-color: var(--color-error);
+}
+
+/* Valid state */
+.form-control:valid:not(:placeholder-shown) {
+  border-color: var(--color-success);
+}
+
+/* Textarea resize — only vertical (prevents layout breaking) */
+textarea.form-control {
+  resize: vertical;
+  min-height: 15rem;
+}
+
+/* Form group wrapping each label + input pair */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fieldset + legend for grouping related form controls */
+.form-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.form-fieldset legend {
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+}
+
+/* Select dropdown — custom arrow */
+select.form-control {
+  appearance: none;           /* remove browser default dropdown arrow */
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M6 8L0 0h12z' fill='%236c63ff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.6rem center;
+  padding-right: 4rem;        /* space for custom arrow */
+}
+
+/* Contact detail items (icon + text) */
+.contact-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.contact-detail__icon {
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: var(--radius-md);
+  background: rgba(108, 99, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  flex-shrink: 0;
+}
+
+.contact-detail__label {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.contact-detail__value {
+  font-size: var(--font-base);
+  font-weight: var(--font-medium);
+  color: var(--color-text);
+}
+
+/* Social links row */
+.social-links {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-tertiary);
+  border: 1.5px solid var(--color-border);
+  font-size: var(--font-lg);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-base);
+}
+
+/* Each social link has a distinctive hover color */
+.social-link:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.social-link--github:hover {
+  background: #24292e;
+  color: white;
+  border-color: #24292e;
+}
+
+.social-link--linkedin:hover {
+  background: #0077b5;
+  color: white;
+  border-color: #0077b5;
+}
+
+.social-link--twitter:hover {
+  background: #1da1f2;
+  color: white;
+  border-color: #1da1f2;
+}
+
+.social-link--instagram:hover {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: white;
+  border-color: transparent;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ⑧ FOOTER COMPONENT
+   ───────────────────────────────────────────────────────────── */
+.footer {
+  background: #0a0a1a;          /* deep dark — always dark regardless of theme */
+  color: rgba(255, 255, 255, 0.7);
+  padding-block: var(--space-12);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer__col-title {
+  font-size: var(--font-base);
+  font-weight: var(--font-bold);
+  color: white;
+  margin-bottom: var(--space-5);
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footer__link {
+  font-size: var(--font-sm);
+  color: rgba(255, 255, 255, 0.6);
+  transition: color var(--transition-fast);
+}
+
+.footer__link:hover {
+  color: var(--color-primary-light);
+}
+
+/* Footer social links */
+.footer__social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--font-lg);
+  transition: all var(--transition-base);
+  margin-right: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.footer__social a:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+  transform: translateY(-3px);
+}
+
+.footer__copyright {
+  font-size: var(--font-sm);
+  margin-top: var(--space-2);
+  line-height: var(--leading-loose);
+}
+
+.footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  text-align: center;
+  font-size: var(--font-sm);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   BUTTONS — REUSABLE BUTTON SYSTEM
+   
+   Three variants: primary (filled), secondary (outline), ghost
+   ───────────────────────────────────────────────────────────── */
+
+/* Base button styles shared by all variants */
+.btn {
+  display: inline-flex;      /* allows icon + text alignment */
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-base);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  white-space: nowrap;         /* prevents button text from wrapping */
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;            /* for the shine effect */
+}
+
+/* Shine animation — creates a glossy sweep on hover */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: skewX(-20deg);
+  transition: left var(--transition-base);
+}
+
+.btn:hover::after {
+  left: 125%;  /* shine sweeps from left to right on hover */
+}
+
+/* Primary button — gradient filled */
+.btn--primary {
+  background: var(--gradient-btn);
+  color: white;
+  box-shadow: var(--shadow-btn);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);       /* slight lift */
+  box-shadow: var(--shadow-btn-hover);
+}
+
+/* Active/pressed state — presses down */
+.btn--primary:active {
+  transform: translateY(0);          /* snaps back to original position */
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary button — outlined */
+.btn--secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Ghost button — for card buttons */
+.btn--ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-sm);
+}
+
+.btn--ghost:hover {
+  background: var(--color-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-btn);
+}
+
+/* Ghost button dark mode */
+.btn--ghost::after {
+  background: rgba(108, 99, 255, 0.2);
+}
+
+/* Submit button — full width form button */
+.btn--submit {
+  background: var(--gradient-btn);
+  color: white;
+  border: none;
+  width: 100%;
+  padding: var(--space-5) var(--space-8);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  box-shadow: var(--shadow-btn);
+  transition: all var(--transition-base);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn--submit:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-btn-hover);
+}
+
+/* Press effect when submit is clicked */
+.btn--submit:active {
+  transform: translateY(1px);      /* pushes DOWN when clicked */
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--submit:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}

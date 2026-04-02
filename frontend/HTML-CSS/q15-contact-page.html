@@ -1,0 +1,750 @@
+<!-- Q15. Responsive Contact Page 
+
+Topics: Grid, Flexbox, Forms, Media Queries, Transitions, CSS Variables, Semantic HTML 
+
+Problem Statement: 
+
+Build a complete, responsive Contact Us page that combines all CSS skills learned. The page includes: a header with navigation, a hero section with a heading and subtitle, a two-column layout (contact form on the left, contact info cards on the right), and a footer. Everything must be styled using CSS variables and be fully responsive. 
+
+Desktop Layout (>1024px): 
+
++---------------------------------------+ 
+
+|  [Logo]   Home  About  Contact  Login | 
+
++---------------------------------------+ 
+
+|         Get In Touch With Us          | 
+
+|     We'd love to hear from you        | 
+
++-------------------+-------------------+ 
+
+|                   |  [Phone Card]     | 
+
+|  [Contact Form]   |  [Email Card]     | 
+
+|  Name, Email,     |  [Address Card]   | 
+
+|  Subject, Message |  [Hours Card]     | 
+
+|  [Send Button]    |                   | 
+
++-------------------+-------------------+ 
+
+|           Footer                      | 
+
++---------------------------------------+ 
+
+Mobile Layout (<768px): 
+
+Everything stacks vertically: nav collapses, form is full-width, info cards stack below the form. 
+
+Constraints: 
+
+Use CSS Grid for the two-column form/info layout 
+
+Use Flexbox for navigation, card layouts, and footer 
+
+All colors, fonts, and spacing via CSS variables 
+
+Form must have HTML5 validation (required, email type, minlength) 
+
+Submit button must have hover/focus transitions 
+
+Info cards must have icons (use Unicode symbols or CSS shapes), border-left accent, and hover transform 
+
+Mobile-first CSS with min-width media queries 
+
+Use semantic HTML: <header>, <main>, <section>, <form>, <footer> 
+
+Page must be accessible: proper labels, focus styles, contrast 
+ -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q15 — Contact Us</title>
+  <style>
+    /* ============================================================
+       CSS VARIABLES — ALL COLORS, FONTS, SPACING
+       Zero hardcoded values in component styles below.
+    ============================================================ */
+    :root {
+      --color-bg:           #f8faff;
+      --color-surface:      #ffffff;
+      --color-text:         #0f172a;
+      --color-text-muted:   #64748b;
+      --color-primary:      #4f46e5;
+      --color-primary-hover:#4338ca;
+      --color-accent:       #06b6d4;
+      --color-border:       #e2e8f0;
+      --color-shadow:       rgba(15, 23, 42, 0.08);
+      --color-success:      #10b981;
+      --font-family:        'Segoe UI', system-ui, sans-serif;
+      --font-size-sm:       0.875rem;
+      --font-size-base:     1rem;
+      --font-size-lg:       1.125rem;
+      --spacing-sm:         0.5rem;
+      --spacing-md:         1rem;
+      --spacing-lg:         1.5rem;
+      --spacing-xl:         2rem;
+      --spacing-2xl:        3rem;
+      --border-radius:      12px;
+      --transition-speed:   0.2s;
+    }
+
+    /* ============================================================
+       RESET & MOBILE-FIRST BASE STYLES
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       FOCUS STYLES — ACCESSIBILITY
+       Browsers have default focus outlines but they're inconsistent.
+       We define a clear, visible focus style for keyboard users.
+       :focus-visible only shows when navigating by keyboard,
+       not on mouse click (cleaner for mouse users).
+    ============================================================ */
+    :focus-visible {
+      outline: 3px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* ============================================================
+       HEADER / NAVIGATION
+       Flexbox for horizontal layout with space between logo and nav.
+
+       MOBILE FIRST: nav is full-width, logo and links stacked.
+       At 768px we switch to inline-flex row.
+    ============================================================ */
+    .site-header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: 100; /* above all content */
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-md) var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;       /* MOBILE: allow nav to wrap below logo */
+      gap: var(--spacing-md);
+    }
+
+    .logo {
+      font-size: var(--font-size-lg);
+      font-weight: 800;
+      color: var(--color-primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    /* NAVIGATION — Flexbox for horizontal link layout */
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      list-style: none;
+      flex-wrap: wrap;
+    }
+
+    .main-nav a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 2px solid transparent;
+      transition: color var(--transition-speed) ease,
+                  border-color var(--transition-speed) ease;
+    }
+
+    .main-nav a:hover,
+    .main-nav a[aria-current="page"] {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .nav-cta {
+      background: var(--color-primary);
+      color: #fff !important;
+      border: none !important;
+      padding: var(--spacing-sm) var(--spacing-lg) !important;
+      border-radius: calc(var(--border-radius) / 2) !important;
+      transition: background-color var(--transition-speed) ease,
+                  transform var(--transition-speed) ease !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--color-primary-hover) !important;
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    .hero {
+      text-align: center;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg) 100%);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      color: var(--color-primary);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      padding: 0.25rem 0.875rem;
+      border-radius: 99px;
+      margin-bottom: var(--spacing-md);
+      letter-spacing: 0.04em;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: var(--spacing-md);
+      line-height: 1.15;
+    }
+
+    .hero p {
+      color: var(--color-text-muted);
+      font-size: var(--font-size-lg);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ============================================================
+       MAIN CONTENT WRAPPER
+    ============================================================ */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+    }
+
+    /* ============================================================
+       TWO-COLUMN LAYOUT — CSS GRID
+
+       MOBILE FIRST (default): single column, form on top, info below.
+
+       grid-template-columns: 1fr
+         →  one column, full width
+
+       At desktop (1024px+) we switch to:
+       grid-template-columns: 1fr 380px
+         →  form takes flexible space, info cards take 380px
+    ============================================================ */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr; /* MOBILE: single column */
+      gap: var(--spacing-2xl);
+    }
+
+    /* ============================================================
+       CONTACT FORM
+    ============================================================ */
+    .form-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .form-section p {
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    /* The <form> element — semantic HTML */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    /* Two inputs side-by-side on larger screens — starts stacked on mobile */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr; /* MOBILE: stacked */
+      gap: var(--spacing-md);
+    }
+
+    /* ============================================================
+       FORM FIELDS
+
+       Each .form-group wraps a <label> + <input> pair.
+       Labels must always be associated with their inputs for
+       accessibility — either via for/id or by wrapping.
+    ============================================================ */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    label {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    /* The .required-star appears after the label text for required fields */
+    label .req {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+
+    /* ============================================================
+       INPUT / TEXTAREA / SELECT STYLES
+
+       We style these uniformly so the form looks cohesive.
+       appearance: none  →  removes default OS styling on select.
+
+       HTML5 VALIDATION is handled by attributes:
+         required   →  can't submit empty
+         type="email" →  browser validates email format
+         minlength="10" →  minimum character count
+
+       CSS handles the VISUAL feedback via :invalid and :valid
+       pseudo-classes, which activate after the user has
+       interacted with a field (:user-invalid is more precise but
+       less supported, so we use a JS class approach for demo).
+    ============================================================ */
+    input, textarea, select {
+      width: 100%;
+      padding: var(--spacing-md);
+      border: 1px solid var(--color-border);
+      border-radius: calc(var(--border-radius) / 1.5);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      background: var(--color-surface);
+      transition:
+        border-color var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+      appearance: none;
+    }
+
+    input:hover, textarea:hover, select:hover {
+      border-color: var(--color-primary);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    textarea {
+      resize: vertical;   /* allow vertical resize only */
+      min-height: 140px;
+    }
+
+    /* HTML5 native validation styling — shown after user interaction */
+    input:not(:placeholder-shown):invalid,
+    textarea:not(:placeholder-shown):invalid {
+      border-color: #ef4444;
+    }
+
+    input:not(:placeholder-shown):valid,
+    textarea:not(:placeholder-shown):valid {
+      border-color: var(--color-success);
+    }
+
+    /* ============================================================
+       SUBMIT BUTTON
+
+       Full hover/focus transitions as required:
+       - background-color change
+       - box-shadow for lift effect
+       - transform for subtle raise
+    ============================================================ */
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: var(--spacing-md) var(--spacing-xl);
+      background: var(--color-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: calc(var(--border-radius) / 1.5);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      cursor: pointer;
+      transition:
+        background-color var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease,
+        transform var(--transition-speed) ease;
+    }
+
+    .submit-btn:hover {
+      background: var(--color-primary-hover);
+      box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 40%, transparent);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* ============================================================
+       CONTACT INFO CARDS
+
+       Each card uses:
+       - border-left accent (colored left border, no border-radius on that side)
+       - Unicode symbol as icon
+       - hover: translateY lift
+
+       Flexbox for icon + text layout inside each card.
+    ============================================================ */
+    .info-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .info-cards {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .info-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-left: 4px solid var(--color-primary); /* accent border */
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      /* no border-radius on left side — matches the flat accent line */
+      padding: var(--spacing-lg);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+      transition:
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+    }
+
+    .info-card:hover {
+      transform: translateX(4px); /* slide right on hover */
+      box-shadow: 0 4px 16px var(--color-shadow);
+    }
+
+    /* Each card has a different accent color via a modifier class */
+    .info-card.phone  { border-left-color: #8b5cf6; }
+    .info-card.email  { border-left-color: var(--color-primary); }
+    .info-card.address{ border-left-color: var(--color-accent); }
+    .info-card.hours  { border-left-color: #10b981; }
+
+    .card-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .info-card.phone  .card-icon-wrap { background: color-mix(in srgb, #8b5cf6 10%, transparent); }
+    .info-card.email  .card-icon-wrap { background: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+    .info-card.address .card-icon-wrap{ background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+    .info-card.hours  .card-icon-wrap { background: color-mix(in srgb, #10b981 10%, transparent); }
+
+    .card-content h3 {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-content p {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       FOOTER — Flexbox for horizontal layout
+    ============================================================ */
+    .site-footer {
+      background: var(--color-text);
+      color: rgba(255,255,255,0.6);
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      font-size: var(--font-size-sm);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--spacing-lg);
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.9); }
+
+    /* ============================================================
+       RESPONSIVE — TABLET (768px and up)
+    ============================================================ */
+    @media (min-width: 768px) {
+      /* Form row: two side-by-side inputs */
+      .form-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* ============================================================
+       RESPONSIVE — DESKTOP (1024px and up)
+    ============================================================ */
+    @media (min-width: 1024px) {
+      /* TWO-COLUMN LAYOUT: form | info cards */
+      .contact-layout {
+        grid-template-columns: 1fr 380px;
+        align-items: start; /* don't stretch cards to form height */
+      }
+    }
+  </style>
+</head>
+
+<!--
+  SEMANTIC HTML:
+  <header>, <nav>, <main>, <section>, <form>, <footer>
+  These elements have intrinsic meaning to browsers, screen readers,
+  and search engines. They're not just stylistic — they communicate
+  document structure.
+-->
+<body>
+
+  <!-- HEADER with sticky navigation -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="/" class="logo" aria-label="Nexus — Home">◈ Nexus</a>
+
+      <!-- nav element wraps navigation links (semantic landmark) -->
+      <nav aria-label="Main navigation">
+        <ul class="main-nav">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#" aria-current="page">Contact</a></li>
+          <!-- aria-current="page" tells screen readers this is the active page -->
+          <li><a href="#" class="nav-cta">Login</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO section -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-eyebrow">Contact us</div>
+    <h1 id="hero-heading">Get in touch with us</h1>
+    <p>Have a question, project in mind, or just want to say hello? We'd love to hear from you.</p>
+  </section>
+
+  <!-- MAIN content area -->
+  <main id="main-content" class="main-content">
+
+    <div class="contact-layout">
+
+      <!-- LEFT: Contact Form -->
+      <section class="form-section" aria-labelledby="form-heading">
+        <h2 id="form-heading">Send us a message</h2>
+        <p>Fill out the form and we'll get back to you within 24 hours.</p>
+
+        <!--
+          novalidate is removed so native HTML5 validation works.
+          action="#" keeps demo self-contained.
+
+          HTML5 VALIDATION ATTRIBUTES:
+          - required      → field must not be empty before submission
+          - type="email"  → validates email format (must have @)
+          - minlength="10" → minimum 10 characters
+          - These work without JavaScript!
+        -->
+        <form
+          class="contact-form"
+          action="#"
+          method="post"
+          aria-label="Contact form"
+        >
+
+          <!-- Name + Email row (side-by-side on tablet+) -->
+          <div class="form-row">
+            <div class="form-group">
+              <!--
+                for="name" links label to input via input's id="name".
+                When a user clicks the label, focus moves to the input.
+                Essential for accessibility.
+              -->
+              <label for="name">
+                Full name <span class="req" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Jane Smith"
+                required
+                autocomplete="name"
+                aria-required="true"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="email">
+                Email address <span class="req" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="jane@example.com"
+                required
+                autocomplete="email"
+                aria-required="true"
+              >
+              <!-- aria-required="true" reinforces the required attribute for screen readers -->
+            </div>
+          </div>
+
+          <!-- Subject -->
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input
+              type="text"
+              id="subject"
+              name="subject"
+              placeholder="What's this about?"
+            >
+          </div>
+
+          <!-- Message -->
+          <div class="form-group">
+            <label for="message">
+              Message <span class="req" aria-hidden="true">*</span>
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Tell us more about your project or question..."
+              required
+              minlength="10"
+              aria-required="true"
+              aria-describedby="message-hint"
+            ></textarea>
+            <!-- aria-describedby links to helper text for screen readers -->
+            <span id="message-hint" style="font-size: 0.75rem; color: var(--color-text-muted);">
+              Minimum 10 characters
+            </span>
+          </div>
+
+          <!-- Submit -->
+          <div>
+            <button type="submit" class="submit-btn">
+              Send message →
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- RIGHT: Contact Info Cards -->
+      <section class="info-section" aria-labelledby="info-heading">
+        <h2 id="info-heading">Contact information</h2>
+
+        <div class="info-cards">
+
+          <!-- Each card: icon (Unicode) + text content -->
+          <div class="info-card phone">
+            <div class="card-icon-wrap" aria-hidden="true">📞</div>
+            <div class="card-content">
+              <h3>Phone</h3>
+              <p>+1 (555) 234-5678<br>Mon–Fri, 9am–6pm EST</p>
+            </div>
+          </div>
+
+          <div class="info-card email">
+            <div class="card-icon-wrap" aria-hidden="true">✉</div>
+            <div class="card-content">
+              <h3>Email</h3>
+              <p>hello@nexus.io<br>We respond within 24 hours</p>
+            </div>
+          </div>
+
+          <div class="info-card address">
+            <div class="card-icon-wrap" aria-hidden="true">📍</div>
+            <div class="card-content">
+              <h3>Office</h3>
+              <p>123 Innovation Drive<br>San Francisco, CA 94105</p>
+            </div>
+          </div>
+
+          <div class="info-card hours">
+            <div class="card-icon-wrap" aria-hidden="true">🕐</div>
+            <div class="card-content">
+              <h3>Business hours</h3>
+              <p>Monday – Friday: 9am – 6pm<br>Weekend: Closed</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <p>© 2025 Nexus Inc. All rights reserved.</p>
+      <nav aria-label="Footer navigation">
+        <ul class="footer-links">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Sitemap</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>

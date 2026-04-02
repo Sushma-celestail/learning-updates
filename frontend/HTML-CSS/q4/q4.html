@@ -1,0 +1,78 @@
+<!-- Section B — CSS Box Model, Selectors & Positioning 
+
+Q4. Box Model Explorer 
+
+Topics: Box Model, box-sizing, margin, padding, border 
+
+Problem Statement: 
+
+Create a visual demonstration page showing two identical boxes side by side. Both boxes should have: width 300px, padding 20px, border 5px solid, and margin 10px. The first box uses box-sizing: content-box and the second uses box-sizing: border-box. Below each box, display its actual rendered width (calculated by you) as a label. 
+
+Expected Output: 
+
+Box 1 (content-box): Rendered width = 350px 
+
+  (300 + 20 + 20 + 5 + 5 = 350px) 
+
+Box 2 (border-box):  Rendered width = 300px 
+
+  (content auto-shrinks to 250px) 
+
+Constraints: 
+
+Use only external CSS (no inline styles) 
+
+Boxes must be visually distinct (different background colors) 
+
+Add visible labels showing the width calculation breakdown 
+
+Add a CSS comment explaining why border-box is preferred -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Box Model Explorer</title>
+
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h1>Box Model Explorer</h1>
+
+<!-- Container to place boxes side by side -->
+<section class="container">
+
+    <!-- Box 1: content-box -->
+    <article class="box content-box">
+        <h2>Box 1 (content-box)</h2>
+
+        <!-- This box uses default box-sizing: content-box -->
+        <p>This uses content-box</p>
+
+        <!-- Label showing calculated width -->
+        <p class="label">
+            Rendered width = 350px <br>
+            (300 + 20 + 20 + 5 + 5)
+        </p>
+    </article>
+
+    <!-- Box 2: border-box -->
+    <article class="box border-box">
+        <h2>Box 2 (border-box)</h2>
+
+        <!-- This box uses border-box -->
+        <p>This uses border-box</p>
+
+        <!-- Label showing calculated width -->
+        <p class="label">
+            Rendered width = 300px <br>
+            (content shrinks automatically)
+        </p>
+    </article>
+
+</section>
+
+</body>
+</html>

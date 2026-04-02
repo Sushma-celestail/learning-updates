@@ -1,0 +1,377 @@
+<!-- Q11. Auto-Responsive Photo Gallery 
+
+Topics: CSS Grid, repeat(), auto-fill, minmax(), gap 
+
+Problem Statement: 
+
+Create a photo gallery that automatically adjusts the number of columns based on the available space — without using media queries. Display at least 12 image placeholders (colored divs with different background colors). Each card should be a minimum of 250px wide and expand to fill available space. Some cards should span 2 columns or 2 rows to create visual variety. 
+
+Constraints: 
+
+Use display: grid with repeat(auto-fill, minmax(250px, 1fr)) 
+
+Use gap for consistent spacing 
+
+At least 2 items must span 2 columns (grid-column: span 2) 
+
+At least 1 item must span 2 rows (grid-row: span 2) 
+
+Each card should have a fixed aspect ratio (use aspect-ratio or padding trick) 
+
+No media queries allowed — the grid must be auto-responsive 
+
+Add border-radius and hover zoom (transform: scale) transition on cards  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q11 — Auto-Responsive Photo Gallery</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0a;
+      color: #e2e8f0;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #4a5568;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    /* ============================================================
+       THE GALLERY GRID — the heart of this exercise
+
+       display: grid
+         →  makes this element a grid container
+
+       repeat(auto-fill, minmax(250px, 1fr))
+         →  This is the auto-responsive magic. Let's break it down:
+
+         repeat(...)
+           →  shorthand to repeat a column pattern N times
+
+         auto-fill
+           →  instead of a fixed number, the browser calculates
+              HOW MANY columns fit. It fills the row with as many
+              columns as possible given the minmax constraint.
+              (auto-fit is similar but collapses empty columns —
+              auto-fill keeps ghost columns, better for alignment)
+
+         minmax(250px, 1fr)
+           →  each column must be AT LEAST 250px wide (min)
+              but can grow up to 1fr of available space (max).
+              At 800px container: floor(800/250)=3 columns, each ~267px
+              At 550px container: floor(550/250)=2 columns, each ~275px
+              At 280px container: 1 column, 280px wide
+              NO MEDIA QUERIES NEEDED — the math does it automatically.
+
+       gap: 1rem
+         →  consistent spacing between ALL grid cells in both
+            row and column directions (equivalent to row-gap and
+            column-gap both set to 1rem)
+    ============================================================ */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ============================================================
+       GALLERY CARDS — base styles
+
+       border-radius: 12px  →  rounded corners on every card
+
+       overflow: hidden  →  CRITICAL when combined with border-radius.
+         Without this, the img inside ignores the border-radius.
+         overflow:hidden clips child elements to the card's shape.
+
+       position: relative  →  needed so the overlay pseudo-element
+         (position:absolute) is contained within the card.
+
+       cursor: pointer  →  visual affordance that cards are interactive
+
+       transition: transform 0.3s ease
+         →  smoothly animates the transform property when it changes.
+            This enables the hover zoom effect.
+    ============================================================ */
+    .card {
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      background: #1a1a2e;
+    }
+
+    /* ============================================================
+       HOVER ZOOM EFFECT
+
+       transform: scale(1.03)
+         →  scale() enlarges/shrinks an element from its center.
+            1.0 = original size, 1.03 = 3% larger.
+            Because we set transition on .card, this change
+            is animated over 0.3s with an ease curve.
+
+       z-index: 1  →  slightly elevated so it appears above
+         adjacent cards when scaled (prevents clipping).
+
+       GPU ACCELERATION: transform is one of the two "GPU-friendly"
+       properties (along with opacity). The browser can handle these
+       on the compositor thread without triggering layout or paint,
+       making them buttery smooth even on slow devices.
+    ============================================================ */
+    .card:hover {
+      transform: scale(1.03);
+      z-index: 1;
+    }
+
+    /* ============================================================
+       ASPECT RATIO
+
+       aspect-ratio: 1 / 1  →  maintains a perfect square regardless
+         of the card's width. As the grid column width changes
+         (auto-fill recalculates), the height always equals the width.
+
+         Format: aspect-ratio: width / height
+         Examples:
+           aspect-ratio: 16 / 9  →  widescreen
+           aspect-ratio: 4 / 3   →  classic photo
+           aspect-ratio: 1 / 1   →  square
+
+         Before aspect-ratio existed, developers used the "padding trick":
+         set padding-top: 100% on a wrapper (padding % is relative to
+         width), then absolutely position the content inside. The
+         modern aspect-ratio property replaces this cleanly.
+    ============================================================ */
+    .card-inner {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+    }
+
+    /* The colored placeholder div simulates an image */
+    .card-img {
+      position: absolute;
+      inset: 0; /* shorthand for top:0; right:0; bottom:0; left:0 */
+      transition: transform 0.5s ease;
+    }
+
+    /* The image also zooms slightly on hover for a parallax feel */
+    .card:hover .card-img {
+      transform: scale(1.08);
+    }
+
+    /* Dark gradient overlay — reveals on hover */
+    .card-inner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover .card-inner::after {
+      opacity: 1;
+    }
+
+    /* Card label that appears on hover */
+    .card-label {
+      position: relative; /* above the ::after overlay (z-index context) */
+      z-index: 2;
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .card:hover .card-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       SPANNING — making some items bigger
+
+       grid-column: span 2
+         →  this item takes up 2 columns instead of 1.
+            "span 2" means "occupy 2 grid tracks from wherever
+            I'm placed". The browser handles the exact placement.
+
+       grid-row: span 2
+         →  this item takes up 2 rows.
+
+       These spanning items create visual variety in the grid
+       — some cells are larger, creating a masonry-like effect.
+
+       IMPORTANT GOTCHA: if a spanning item would overflow the
+       grid (e.g., a span-2 item in the last column), the browser
+       moves it to the next row. To prevent unwanted gaps, consider:
+       grid-auto-flow: dense  →  fills gaps with smaller items.
+    ============================================================ */
+    .gallery {
+      grid-auto-flow: dense; /* fills gaps left by spanning items */
+    }
+
+    /* Items that span 2 columns */
+    .span-col-2 {
+      grid-column: span 2;
+    }
+
+    /* Item that spans 2 rows */
+    .span-row-2 {
+      grid-row: span 2;
+    }
+
+    /* Span-2-col cards need a wider aspect ratio */
+    .span-col-2 .card-inner {
+      aspect-ratio: 2 / 1;
+    }
+
+    /* Span-2-row cards are already taller from the row height */
+    .span-row-2 .card-inner {
+      aspect-ratio: unset;
+      min-height: 100%;
+      height: 100%;
+    }
+
+    /* Combined span: 2 col × 2 row = a hero card */
+    .span-col-2.span-row-2 .card-inner {
+      aspect-ratio: 2 / 1;
+      min-height: auto;
+    }
+
+    /* ============================================================
+       GALLERY COLORS
+       Each card gets a unique color palette.
+       Using CSS custom properties per-card for variety.
+    ============================================================ */
+    .c1  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .c2  { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .c3  { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .c4  { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .c5  { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .c6  { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+    .c7  { background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); }
+    .c8  { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); }
+    .c9  { background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%); }
+    .c10 { background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%); }
+    .c11 { background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%); }
+    .c12 { background: linear-gradient(135deg, #4481eb 0%, #04befe 100%); }
+    .c13 { background: linear-gradient(135deg, #feada6 0%, #f5efef 100%); }
+    .c14 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+    .c15 { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
+  </style>
+</head>
+<body>
+
+  <h1>Photo Gallery</h1>
+  <p>Auto-responsive: resize the window — no media queries used.</p>
+
+  <!--
+    GALLERY HTML
+    Cards are plain divs. The grid handles all placement.
+    .span-col-2 and .span-row-2 classes trigger the spanning rules.
+
+    Notice: we don't specify WHERE each spanning item goes —
+    the browser places them automatically, and grid-auto-flow: dense
+    fills any gaps with regular-size cards.
+  -->
+  <div class="gallery">
+
+    <!-- Card 1: spans 2 columns (wide card) -->
+    <div class="card span-col-2">
+      <div class="card-inner">
+        <div class="card-img c1"></div>
+        <span class="card-label">Mountain Vista · 2 col span</span>
+      </div>
+    </div>
+
+    <!-- Cards 2–3: normal cards -->
+    <div class="card">
+      <div class="card-inner"><div class="card-img c2"></div><span class="card-label">Sunset Bloom</span></div>
+    </div>
+
+    <!-- Card 3: spans 2 rows (tall card) -->
+    <div class="card span-row-2">
+      <div class="card-inner"><div class="card-img c3"></div><span class="card-label">Ocean Deep · 2 row span</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c4"></div><span class="card-label">Forest Path</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c5"></div><span class="card-label">Desert Rose</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c6"></div><span class="card-label">Aurora</span></div>
+    </div>
+
+    <!-- Another 2-column span -->
+    <div class="card span-col-2">
+      <div class="card-inner">
+        <div class="card-img c7"></div>
+        <span class="card-label">Golden Hour · 2 col span</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c8"></div><span class="card-label">Ice Crystal</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c9"></div><span class="card-label">Ember Glow</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c10"></div><span class="card-label">Jade Mist</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c11"></div><span class="card-label">Cherry Blossom</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c12"></div><span class="card-label">Sky Portal</span></div>
+    </div>
+
+    <!-- Another 2-row span -->
+    <div class="card span-row-2">
+      <div class="card-inner"><div class="card-img c13"></div><span class="card-label">Coral Reef · 2 row span</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c14"></div><span class="card-label">Midnight</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-inner"><div class="card-img c15"></div><span class="card-label">Powder Blue</span></div>
+    </div>
+
+  </div>
+
+</body>
+</html>

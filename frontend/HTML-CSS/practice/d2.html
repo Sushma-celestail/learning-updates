@@ -1,0 +1,57 @@
+<!--Build a schedule/timetable table using colspan and rowspan for merged cells. -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  border-collapse: collapse;
+  width: 80%;
+  margin: 20px auto;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<table>
+  <caption>Weekly Timetable</caption>
+
+  <tr>
+    <th>Day</th>
+    <th>9-10</th>
+    <th>10-11</th>
+    <th>11-12</th>
+    <th>12-1</th>
+  </tr>
+
+  <tr>
+    <td>Monday</td>
+    <td rowspan="2">Math</td>
+    <td>Science</td>
+    <td colspan="2">Lab</td>
+  </tr>
+
+  <tr>
+    <td>Tuesday</td>
+    <td>English</td>
+    <td>History</td>
+    <td>Sports</td>
+  </tr>
+
+  <tr>
+    <td>Wednesday</td>
+    <td colspan="2">Workshop</td>
+    <td>Math</td>
+    <td>English</td>
+  </tr>
+
+</table>
+
+</body>
+</html>

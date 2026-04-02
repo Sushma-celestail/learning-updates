@@ -1,0 +1,16 @@
+/*
+Demonstrate specificity by creating conflicting rules and predict which style wins. */
+/* Low specificity */
+p {
+  color: blue;
+}
+
+/* Medium specificity */
+.content p {
+  color: green;
+}
+
+/* High specificity */
+#main p {
+  color: red;
+}

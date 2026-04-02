@@ -1,0 +1,53 @@
+<!--2. Country-State Dropdown (Dynamic using JS)-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Country & State Form</h2>
+
+<form>
+  <label>Country:</label>
+  <select id="country" onchange="updateStates()" required>
+    <option value="">Select Country</option>
+    <option value="india">India</option>
+    <option value="usa">USA</option>
+  </select>
+
+  <br><br>
+
+  <label>State:</label>
+  <select id="state" required>
+    <option value="">Select State</option>
+  </select>
+</form>
+
+<script>
+function updateStates() {
+  const states = {
+    india: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+    usa: ["California", "Texas", "New York"]
+  };
+
+  const country = document.getElementById("country").value;
+  const stateDropdown = document.getElementById("state");
+
+  stateDropdown.innerHTML = '<option value="">Select State</option>';
+
+  if (states[country]) {
+    states[country].forEach(state => {
+      let option = document.createElement("option");
+      option.value = state;
+      option.text = state;
+      stateDropdown.add(option);
+    });
+  }
+}
+</script>
+
+<hr>
+</body>
+</html>

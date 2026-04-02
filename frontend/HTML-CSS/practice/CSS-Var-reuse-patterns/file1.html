@@ -1,0 +1,163 @@
+<!-- Create a theme system using CSS variables for colors, fonts, spacing, and border-radius. Support light and dark themes by toggling a class. 
+
+Build a set of utility classes for common spacing (margin, padding), text alignment, and display properties. 
+
+Refactor a CSS file to use BEM naming convention for a card component.  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS System Demo</title>
+
+<style>
+
+/* =========================================
+   1️⃣ THEME SYSTEM USING CSS VARIABLES
+   ========================================= */
+
+/* Default (LIGHT THEME) */
+:root {
+  --color-bg: #ffffff;
+  --color-text: #222222;
+  --color-primary: teal;
+
+  --font-main: Arial, sans-serif;
+
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+
+  --radius: 10px;
+}
+
+/* DARK THEME (toggle using class on body) */
+body.dark {
+  --color-bg: #121212;
+  --color-text: #f5f5f5;
+  --color-primary: #00bcd4;
+}
+
+/* Apply variables */
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding: var(--spacing-md);
+  transition: all 0.3s ease;
+}
+
+/* =========================================
+   2️⃣ UTILITY CLASSES
+   ========================================= */
+
+/* Margin utilities */
+.m-1 { margin: var(--spacing-sm); }
+.m-2 { margin: var(--spacing-md); }
+
+/* Padding utilities */
+.p-1 { padding: var(--spacing-sm); }
+.p-2 { padding: var(--spacing-md); }
+
+/* Text alignment */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Display utilities */
+.flex { display: flex; }
+.block { display: block; }
+
+/* =========================================
+   3️⃣ BEM CARD COMPONENT
+   ========================================= */
+
+/* Block */
+.card {
+  background: var(--color-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+  max-width: 300px;
+}
+
+/* Element */
+.card__image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.card__content {
+  padding: var(--spacing-md);
+}
+
+.card__title {
+  font-size: 20px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.card__text {
+  font-size: 14px;
+}
+
+/* Modifier */
+.card--highlight {
+  border: 2px solid var(--color-primary);
+}
+
+/* Button */
+.button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+
+<!-- =========================================
+     THEME TOGGLE BUTTON
+     ========================================= -->
+
+<button class="button" onclick="toggleTheme()">Toggle Theme</button>
+
+<!-- =========================================
+     USING UTILITY CLASSES
+     ========================================= -->
+
+<div class="m-2 p-2 text-center">
+  <h2>Utility Classes Example</h2>
+  <p>This box uses margin, padding, and text alignment utilities.</p>
+</div>
+
+<!-- =========================================
+     BEM CARD COMPONENT
+     ========================================= -->
+
+<div class="card card--highlight m-2">
+  <img src="https://picsum.photos/300" class="card__image">
+
+  <div class="card__content">
+    <h3 class="card__title">Card Title</h3>
+    <p class="card__text">This is a BEM structured card.</p>
+  </div>
+</div>
+
+<!-- =========================================
+     JAVASCRIPT FOR THEME TOGGLE
+     ========================================= -->
+
+<script>
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>

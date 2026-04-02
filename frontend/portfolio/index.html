@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<!-- 
+   =============================================================
+   FILE: index.html
+   PURPOSE: Main entry point and structural content for the portfolio.
+   
+   HOW TO READ THIS FILE:
+   - This file uses SEMANTIC HTML5. Instead of using <div> for everything,
+     we use <header>, <main>, <nav>, <section>, <article>, and <footer>.
+     This helps search engines (SEO) and screen readers (Accessibility).
+   
+   - ALL styles are imported in the <head> section.
+   - The theme toggle is handled by a single line of JavaScript at the end.
+   =============================================================
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta Tags -->
+  <title>Sushma | Front-End Developer & Designer Portfolio</title>
+  <meta name="description"
+    content="Professional portfolio of Sushma, a Front-End Developer specializing in responsive, high-performance web applications using modern HTML and CSS.">
+  <meta name="keywords"
+    content="Portfolio, Front-End Developer, Web Design, Responsive Web Design, HTML, CSS, Flexbox, Grid">
+
+  <!-- Open Graph (Social Media Sharing) -->
+  <meta property="og:title" content="Sushma | Front-End Developer Portfolio">
+  <meta property="og:description"
+    content="Check out my latest projects and professional experience in web development.">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Inter (Sans-serif) and JetBrains Mono (Monospace) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <!-- 
+    CSS LINKING ORDER:
+    1. reset.css       (Basics/normalization)
+    2. variables.css   (Design tokens/colors)
+    3. layout.css      (Skeletons/structure)
+    4. components.css  (Visual styling/UI)
+    5. animations.css  (Motion/transitions)
+    6. responsive.css  (Media queries - MUST be last to override)
+  -->
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+  <!-- 
+    ACCESSIBILITY: Skip Link
+    First element in body. Allows keyboard users to jump past navigation.
+  -->
+  <a href="#main-content" class="skip-nav">Skip to main content</a>
+
+  <!-- 
+    ① NAVIGATION BAR
+    Semantic <header> element for the top section.
+  -->
+  <header class="nav" id="header">
+    <div class="container nav__inner">
+
+      <!-- LOGO -->
+      <a href="#" class="nav__logo" aria-label="Home">SUSHMA.</a>
+
+      <!-- 
+        MOBILE TOGGLE (CSS-Only Hamburger)
+        The checkbox is hidden. Clicking the label toggles the checkbox status.
+        CSS selectors detect the status and show/hide the menu.
+      -->
+      <input type="checkbox" id="nav-toggle" class="nav__toggle" aria-hidden="true">
+
+      <!-- Overlay to close menu on mobile -->
+      <div class="nav__overlay"></div>
+
+      <!-- NAV LINKS -->
+      <nav class="nav__links" id="nav-menu">
+        <ul>
+          <li><a href="#hero" class="nav__link active">Home</a></li>
+          <li><a href="#about" class="nav__link">About</a></li>
+          <li><a href="#projects" class="nav__link">Projects</a></li>
+          <li><a href="#experience" class="nav__link">Experience</a></li>
+          <li><a href="#contact" class="nav__link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- NAV CONTROLS (Theme Toggle + Hamburger Button) -->
+      <div class="nav__controls">
+        <!-- 
+          THEME TOGGLE BUTTON 
+          Single line JS runs when clicked: document.body.classList.toggle('dark-theme')
+        -->
+        <button class="theme-toggle" id="theme-button" aria-label="Toggle dark mode"
+          onclick="document.body.classList.toggle('dark-theme')">
+          <span class="icon-moon" aria-hidden="true">🌙</span>
+          <span class="icon-sun" aria-hidden="true">☀️</span>
+        </button>
+
+        <!-- MOBILE BURGER ICON -->
+        <label for="nav-toggle" class="nav__toggle-label" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+      </div>
+
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- 
+      ② HERO SECTION
+      Full-viewport height (100vh) landing section.
+    -->
+    <section id="hero" class="hero">
+      <div class="container hero__content">
+        <span class="hero__label">Aesthetically Driven Developer</span>
+        <h1 class="hero__name">Building <span class="hero__name-highlight">Digital Experiences</span><span
+            class="typing-cursor"></span></h1>
+        <p class="hero__title">Creative Front-End Developer & UI Designer</p>
+        <p class="hero__tagline">
+          I craft high-performance, accessible, and visually stunning websites
+          that bridge the gap between design and code.
+        </p>
+        <div class="hero__actions">
+          <a href="#projects" class="btn btn--primary">View My Work</a>
+          <a href="#contact" class="btn btn--secondary">Get In Touch</a>
+        </div>
+      </div>
+
+      <!-- CSS Animated Scroll Indicator -->
+      <a href="#about" class="hero__scroll-indicator scroll-indicator" aria-label="Scroll down to About section">
+        <span>Scroll Down</span>
+        <div class="scroll-indicator__arrow"></div>
+      </a>
+    </section>
+
+
+    <!-- 
+      ③ ABOUT ME SECTION
+      Two-column Grid layout (Image left, Text right).
+    -->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="about__grid">
+
+          <!-- IMAGE AREA -->
+          <div class="about__image-wrapper">
+            <div class="about__image-placeholder" aria-label="Profile image placeholder">
+              👩‍💻
+            </div>
+          </div>
+
+          <!-- TEXT AREA -->
+          <div class="about__text">
+            <header class="section-header" style="text-align: left; margin-bottom: var(--space-6);">
+              <span class="section-header__subtitle">About Me</span>
+              <h2 class="section-header__title">Transforming ideas into <span
+                  class="hero__name-highlight">reality.</span></h2>
+            </header>
+
+            <p class="about__body">
+              Hello! I'm Sushma, a developer with a passion for creating refined
+              user interfaces. With a background in design systems and accessible
+              development, I build products that are not only beautiful but
+              functionally inclusive.
+            </p>
+            <p class="about__body">
+              My approach focuses on simplicity, performance, and cross-browser
+              consistency. I love solving complex layout challenges using CSS Grid
+              and Flexbox.
+            </p>
+
+            <!-- SKILLS List (CSS Bar Chart) -->
+            <div class="skills-visible"> <!-- Class added for animation trigger -->
+              <h3 class="about__label">Technical Proficiency</h3>
+              <div class="skills__list">
+
+                <!-- Skill 1 -->
+                <div class="skill-item">
+                  <span class="skill-item__label">HTML5 / SEO</span>
+                  <div class="skill-item__bar-wrapper">
+                    <div class="skill-item__bar" style="--skill-width: 95%;"></div>
+                  </div>
+                </div>
+
+                <!-- Skill 2 -->
+                <div class="skill-item">
+                  <span class="skill-item__label">CSS Grid / Flex</span>
+                  <div class="skill-item__bar-wrapper">
+                    <div class="skill-item__bar" style="--skill-width: 98%;"></div>
+                  </div>
+                </div>
+
+                <!-- Skill 3 -->
+                <div class="skill-item">
+                  <span class="skill-item__label">UI Design</span>
+                  <div class="skill-item__bar-wrapper">
+                    <div class="skill-item__bar" style="--skill-width: 85%;"></div>
+                  </div>
+                </div>
+
+                <!-- Skill 4 -->
+                <div class="skill-item">
+                  <span class="skill-item__label">Responsive Design</span>
+                  <div class="skill-item__bar-wrapper">
+                    <div class="skill-item__bar" style="--skill-width: 92%;"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- SKILL Tags (Requirement: tag cloud) -->
+            <div class="skills__tags" style="margin-top: var(--space-8);">
+              <span class="skill-tag">Semantics</span>
+              <span class="skill-tag">Accessibility</span>
+              <span class="skill-tag">Transitions</span>
+              <span class="skill-tag">Theming</span>
+              <span class="skill-tag">Optimization</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 
+      ④ PROJECTS SECTION
+      Responsive Grid (6 cards) using repeat(auto-fill, minmax()).
+    -->
+    <section id="projects" class="projects">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__subtitle">My Work</span>
+          <h2 class="section-header__title">Featured Projects</h2>
+        </header>
+
+        <div class="projects__grid">
+
+          <!-- PROJECT 1 (Featured - Spans 2 columns on desktop) -->
+          <article class="project-card project-card--featured visible">
+            <div class="project-card__image-wrapper">
+              <div class="project-card__image-placeholder" style="background: var(--gradient-primary);">🚀</div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Stellar E-Commerce Platform</h3>
+              <p class="project-card__description">
+                A high-performance online store with custom design tokens and
+                a fully responsive grid-based gallery. Features advanced filtering
+                and a seamless dark mode.
+              </p>
+              <div class="project-card__tags">
+                <span class="tech-tag">HTML5</span>
+                <span class="tech-tag">CSS Grid</span>
+                <span class="tech-tag">Variables</span>
+              </div>
+              <button class="btn btn--ghost project-card__btn">View Project</button>
+            </div>
+          </article>
+
+          <!-- PROJECT 2 -->
+          <article class="project-card visible">
+            <div class="project-card__image-wrapper">
+              <div class="project-card__image-placeholder" style="background: var(--gradient-accent);">📊</div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Analytics Dashboard</h3>
+              <p class="project-card__description">
+                Clean data visualization interface using CSS Flexbox for layouts
+                and custom animations for charts.
+              </p>
+              <div class="project-card__tags">
+                <span class="tech-tag">Flexbox</span>
+                <span class="tech-tag">Animation</span>
+              </div>
+              <button class="btn btn--ghost project-card__btn">View Project</button>
+            </div>
+          </article>
+
+          <!-- PROJECT 3 -->
+          <article class="project-card visible">
+            <div class="project-card__image-wrapper">
+              <div class="project-card__image-placeholder" style="background: var(--color-primary-dark);">📱</div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Mobile First App</h3>
+              <p class="project-card__description">
+                A social networking component library built with 100% mobile-first
+                methodology and zero overflow.
+              </p>
+              <div class="project-card__tags">
+                <span class="tech-tag">Responsive</span>
+                <span class="tech-tag">Accessibility</span>
+              </div>
+              <button class="btn btn--ghost project-card__btn">View Project</button>
+            </div>
+          </article>
+
+          <!-- PROJECT 4 -->
+          <article class="project-card visible">
+            <div class="project-card__image-wrapper">
+              <div class="project-card__image-placeholder" style="background: #16213e;">🎨</div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Design System 2.0</h3>
+              <p class="project-card__description">
+                Comprehensive CSS variable library for large scale web applications
+                supporting multiple automated themes.
+              </p>
+              <div class="project-card__tags">
+                <span class="tech-tag">Theming</span>
+                <span class="tech-tag">CSS Custom Prop</span>
+              </div>
+              <button class="btn btn--ghost project-card__btn">View Project</button>
+            </div>
+          </article>
+
+          <!-- PROJECT 5 -->
+          <article class="project-card visible">
+            <div class="project-card__image-wrapper">
+              <div class="project-card__image-placeholder" style="background: var(--color-accent-dark);">📄</div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">SaaS Landing Page</h3>
+              <p class="project-card__description">
+                Marketing site for a software company featuring glassmorphism
+                effects and SVG-based decorative elements.
+              </p>
+              <div class="project-card__tags">
+                <span class="tech-tag">Glassmorphism</span>
+                <span class="tech-tag">SVG</span>
+              </div>
+              <button class="btn btn--ghost project-card__btn">View Project</button>
+            </div>
+          </article>
+
+          <!-- PROJECT 6 -->
+          <article class="project-card visible">
+            <div class="project-card__image-wrapper">
+              <div class="project-card__image-placeholder" style="background: #27ae60;">🛠️</div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Dev Workflow Tools</h3>
+              <p class="project-card__description">
+                A documentation site for development tools with advanced
+                typography hierarchy and sidebar navigation.
+              </p>
+              <div class="project-card__tags">
+                <span class="tech-tag">Typography</span>
+                <span class="tech-tag">Documentation</span>
+              </div>
+              <button class="btn btn--ghost project-card__btn">View Project</button>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 
+      ⑤ EXPERIENCE SECTION
+      Vertical Timeline (4 entries) alternating left/right.
+    -->
+    <section id="experience" class="experience">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__subtitle">Career path</span>
+          <h2 class="section-header__title">Experience Timeline</h2>
+        </header>
+
+        <div class="timeline">
+
+          <!-- ENTRY 1 -->
+          <div class="timeline__item visible">
+            <div class="timeline__card">
+              <span class="timeline__date">2023 - Present</span>
+              <h3 class="timeline__role">Senior UI Engineer</h3>
+              <p class="timeline__company">Creative Solutions Inc.</p>
+              <p class="timeline__description">
+                Leading the development of accessible design systems and
+                modular CSS architectures for enterprise applications.
+              </p>
+            </div>
+          </div>
+
+          <!-- ENTRY 2 -->
+          <div class="timeline__item visible">
+            <div class="timeline__card">
+              <span class="timeline__date">2021 - 2023</span>
+              <h3 class="timeline__role">Web Developer</h3>
+              <p class="timeline__company">Digital Agency Pro</p>
+              <p class="timeline__description">
+                Built responsive landing pages for diverse clients using
+                modern CSS techniques and semantic structures.
+              </p>
+            </div>
+          </div>
+
+          <!-- ENTRY 3 -->
+          <div class="timeline__item visible">
+            <div class="timeline__card">
+              <span class="timeline__date">2019 - 2021</span>
+              <h3 class="timeline__role">Junior Developer</h3>
+              <p class="timeline__company">StartUp Hub</p>
+              <p class="timeline__description">
+                Developed front-end components and maintained a consistent
+                visual brand across multiple platform deployments.
+              </p>
+            </div>
+          </div>
+
+          <!-- ENTRY 4 -->
+          <div class="timeline__item visible">
+            <div class="timeline__card">
+              <span class="timeline__date">2018 - 2019</span>
+              <h3 class="timeline__role">Intern Designer</h3>
+              <p class="timeline__company">Design Lab</p>
+              <p class="timeline__description">
+                Assisted in high-fidelity mockup creation and basic
+                HTML/CSS implementation for prototype testing.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 
+      ⑥ TESTIMONIALS SECTION
+      Flexbox row (3 cards).
+    -->
+    <section id="testimonials" class="testimonials">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__subtitle">Kind words</span>
+          <h2 class="section-header__title">What Clients Say</h2>
+        </header>
+
+        <div class="testimonials__grid">
+
+          <!-- TESTIMONIAL 1 -->
+          <article class="testimonial-card visible">
+            <blockquote class="testimonial-card__quote">
+              "Sushma's attention to detail in CSS layout is unparalleled.
+              The site she built for us is fast, beautiful, and works
+              perfectly on every device we tested."
+            </blockquote>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">JD</div>
+              <div>
+                <p class="testimonial-card__name">Jane Doe</p>
+                <p class="testimonial-card__role">CEO, TechFlow</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- TESTIMONIAL 2 -->
+          <article class="testimonial-card visible">
+            <blockquote class="testimonial-card__quote">
+              "A true master of modern web design. The transition to dark
+              mode is seamless, and the accessibility features really
+              show that she cares about all users."
+            </blockquote>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">RS</div>
+              <div>
+                <p class="testimonial-card__name">Robert Smith</p>
+                <p class="testimonial-card__role">Product Lead, Innovate</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- TESTIMONIAL 3 -->
+          <article class="testimonial-card visible">
+            <blockquote class="testimonial-card__quote">
+              "Working with Sushma was a breeze. She understands the
+              balance between aesthetics and performance perfectly.
+              Highly recommended for any UI-heavy project!"
+            </blockquote>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">AM</div>
+              <div>
+                <p class="testimonial-card__name">Alice Meyer</p>
+                <p class="testimonial-card__role">CTO, Global Web</p>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 
+      ⑦ CONTACT SECTION
+      Two-column Grid (Form left, Details right).
+    -->
+    <section id="contact" class="contact">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__subtitle">Get in touch</span>
+          <h2 class="section-header__title">Let's Build Something Together</h2>
+        </header>
+
+        <div class="contact__grid">
+
+          <!-- CONTACT FORM -->
+          <div class="contact__form-area">
+            <form action="#" method="POST" class="contact-form">
+              <fieldset class="form-fieldset">
+                <legend aria-hidden="true">Send a Message</legend>
+
+                <div class="form-row">
+                  <!-- Name field -->
+                  <div class="form-group">
+                    <label for="user-name" class="form-label">Full Name <span class="required"
+                        aria-hidden="true">*</span></label>
+                    <input type="text" id="user-name" name="name" class="form-control" placeholder="John Doe" required>
+                  </div>
+                  <!-- Email field -->
+                  <div class="form-group">
+                    <label for="user-email" class="form-label">Email Address <span class="required"
+                        aria-hidden="true">*</span></label>
+                    <input type="email" id="user-email" name="email" class="form-control" placeholder="john@example.com"
+                      required>
+                  </div>
+                </div>
+
+                <!-- Subject dropdown -->
+                <div class="form-group" style="margin-top: var(--space-5);">
+                  <label for="subject" class="form-label">Subject <span class="required"
+                      aria-hidden="true">*</span></label>
+                  <select id="subject" name="subject" class="form-control" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="freelance">Freelance Project</option>
+                    <option value="collaboration">Collaboration</option>
+                    <option value="hiring">Job Inquiry</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <!-- Message field -->
+                <div class="form-group" style="margin-top: var(--space-5);">
+                  <label for="message" class="form-label">Message <span class="required"
+                      aria-hidden="true">*</span></label>
+                  <textarea id="message" name="message" class="form-control" placeholder="How can I help you?"
+                    required></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div style="margin-top: var(--space-8);">
+                  <button type="submit" class="btn--submit">Send Message 🚀</button>
+                </div>
+
+              </fieldset>
+            </form>
+          </div>
+
+          <!-- CONTACT DETAILS -->
+          <div class="contact__info-area">
+            <div class="contact-info">
+              <h3 class="about__label" style="margin-bottom: var(--space-6);">Contact Details</h3>
+
+              <!-- Location -->
+              <div class="contact-detail">
+                <div class="contact-detail__icon" aria-hidden="true">📍</div>
+                <div>
+                  <p class="contact-detail__label">Location</p>
+                  <p class="contact-detail__value">San Francisco, CA</p>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="contact-detail">
+                <div class="contact-detail__icon" aria-hidden="true">✉️</div>
+                <div>
+                  <p class="contact-detail__label">Email</p>
+                  <p class="contact-detail__value">hello@sushma.dev</p>
+                </div>
+              </div>
+
+              <!-- Phone -->
+              <div class="contact-detail">
+                <div class="contact-detail__icon" aria-hidden="true">📞</div>
+                <div>
+                  <p class="contact-detail__label">Phone</p>
+                  <p class="contact-detail__value">+1 (555) 000-0000</p>
+                </div>
+              </div>
+
+              <!-- Social Links -->
+              <div style="margin-top: var(--space-10);">
+                <h3 class="about__label" style="margin-bottom: var(--space-4);">Follow Me</h3>
+                <div class="social-links">
+                  <a href="#" class="social-link social-link--github" aria-label="GitHub"><span>GH</span></a>
+                  <a href="#" class="social-link social-link--linkedin" aria-label="LinkedIn"><span>IN</span></a>
+                  <a href="#" class="social-link social-link--twitter" aria-label="Twitter"><span>TW</span></a>
+                  <a href="#" class="social-link social-link--instagram" aria-label="Instagram"><span>IG</span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 
+    ⑧ FOOTER SECTION
+    Three-column layout (Quick link, Social, Copyright).
+  -->
+  <footer class="footer">
+    <div class="container footer__inner">
+
+      <!-- Col 1: Links -->
+      <div class="footer__col">
+        <h4 class="footer__col-title">Quick Links</h4>
+        <nav class="footer__links">
+          <a href="#hero" class="footer__link">Home</a>
+          <a href="#about" class="footer__link">About Me</a>
+          <a href="#projects" class="footer__link">Portfolio</a>
+          <a href="#experience" class="footer__link">Resume</a>
+        </nav>
+      </div>
+
+      <!-- Col 2: Socials -->
+      <div class="footer__col">
+        <h4 class="footer__col-title">Stay Connected</h4>
+        <div class="footer__social">
+          <a href="#" aria-label="GitHub">GH</a>
+          <a href="#" aria-label="LinkedIn">LI</a>
+          <a href="#" aria-label="Twitter">TW</a>
+          <a href="#" aria-label="Dribbble">DB</a>
+        </div>
+      </div>
+
+      <!-- Col 3: Copyright -->
+      <div class="footer__col">
+        <h4 class="footer__col-title">Portfolio v2.0</h4>
+        <p class="footer__copyright">
+          Built with passion by <strong>Sushma</strong>.<br>
+          Designed using semantic HTML5 and modern CSS Grid.
+        </p>
+        <p class="footer__bottom">
+          &copy; 2026 Sushma. All rights reserved.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+
+
+</body>
+
+</html>

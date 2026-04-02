@@ -1,0 +1,31 @@
+<!--
+Create a responsive image using the <picture> element with different sources for mobile and desktop.-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Responsive Flower Image</h2>
+
+<picture>
+    <!-- Mobile image (small size flower) -->
+    <source 
+        media="(max-width: 600px)" 
+        srcset="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=600">
+
+    <!-- Desktop image (large detailed flower) -->
+    <source 
+        media="(min-width: 601px)" 
+        srcset="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200">
+
+    <!-- Default fallback image -->
+    <img 
+        src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=800" 
+        alt="Beautiful colorful flowers"
+        style="width:100%; height:auto;">
+</picture>
+</body>
+</html>

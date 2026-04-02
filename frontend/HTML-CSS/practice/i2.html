@@ -1,0 +1,47 @@
+<!--
+Create a navigation bar with logo on the left and links on the right using justify-content: space-between. 
+ -->
+
+
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #333;
+  padding: 10px 20px;
+  color: white;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">MyLogo</div>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!--
+Create a sticky footer layout using Flexbox (header, flexible content area, footer at bottom). 
+
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+header {
+  background: #333;
+  color: white;
+  padding: 10px;
+}
+
+main {
+  flex: 1; /* pushes footer down */
+  padding: 20px;
+}
+
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+</style>
+</head>
+<body>
+
+<header>Header</header>
+
+<main>
+  <p>Main Content Area</p>
+</main>
+
+<footer>Footer</footer>
+
+</body>
+</html>

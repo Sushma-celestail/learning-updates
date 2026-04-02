@@ -1,0 +1,148 @@
+<!-- Q3. Data Table with Merged Cells & Accessibility 
+
+Topics: Tables, colspan, rowspan, Accessibility, scope 
+
+Problem Statement: 
+
+Create a quarterly sales report table for a company with 3 products (Alpha, Beta, Gamma) across 4 quarters (Q1–Q4). The table must include: a caption, column headers for each quarter, row headers for each product, merged cells for a "Total" row spanning all quarters, and a <tfoot> showing grand totals. Use the scope attribute on all header cells. 
+
+Expected Output: 
+
+A table showing products as rows, quarters as columns, individual quarterly figures, per-product totals, and an overall grand total in the footer. 
+
+Constraints: 
+
+Use <caption>, <thead>, <tbody>, <tfoot>, <th>, <td> 
+
+Use scope='col' on column headers and scope='row' on row headers 
+
+Use colspan to span the grand total label across product columns 
+
+All numeric data must be right-aligned using CSS 
+
+Add alternating row colors with CSS (no inline styles)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quarterly Sales Report</title>
+
+    <style>
+        /* Align all numeric values to the right */
+        td {
+            text-align: right;
+        }
+
+        /* Keep row headers (product names) left aligned */
+        th[scope="row"] {
+            text-align: left;
+        }
+
+        /* Add alternating row colors for better readability */
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Simple table styling */
+        table {
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Table starts -->
+<table>
+
+    <!-- Caption describes the table purpose (important for accessibility) -->
+    <caption>Quarterly Sales Report (Alpha, Beta, Gamma)</caption>
+
+    <!-- Table Head: Contains column headers -->
+    <thead>
+        <tr>
+            <!-- Empty top-left cell (no product/quarter here) -->
+            <th></th>
+
+            <!-- Column headers with scope="col" -->
+            <th scope="col">Q1</th>
+            <th scope="col">Q2</th>
+            <th scope="col">Q3</th>
+            <th scope="col">Q4</th>
+
+            <!-- Total column -->
+            <th scope="col">Total</th>
+        </tr>
+    </thead>
+
+    <!-- Table Body: Main data -->
+    <tbody>
+
+        <!-- Row 1: Alpha -->
+        <tr>
+            <!-- Row header with scope="row" -->
+            <th scope="row">Alpha</th>
+
+            <!-- Quarterly data -->
+            <td>100</td>
+            <td>150</td>
+            <td>200</td>
+            <td>250</td>
+
+            <!-- Row total -->
+            <td>700</td>
+        </tr>
+
+        <!-- Row 2: Beta -->
+        <tr>
+            <th scope="row">Beta</th>
+            <td>80</td>
+            <td>120</td>
+            <td>160</td>
+            <td>200</td>
+            <td>560</td>
+        </tr>
+
+        <!-- Row 3: Gamma -->
+        <tr>
+            <th scope="row">Gamma</th>
+            <td>90</td>
+            <td>140</td>
+            <td>180</td>
+            <td>220</td>
+            <td>630</td>
+        </tr>
+
+        <!-- Total Row (Merged Cells Example using colspan) -->
+        <tr>
+            <!-- This cell spans across Product + Q1–Q4 columns -->
+            <th scope="row" colspan="5">Total Sales (All Products)</th>
+
+            <!-- Final total value -->
+            <td>1890</td>
+        </tr>
+
+    </tbody>
+
+    <!-- Table Footer: Grand totals -->
+    <tfoot>
+        <tr>
+            <!-- Label spans across first 5 columns -->
+            <th scope="row" colspan="5">Grand Total</th>
+
+            <!-- Overall total -->
+            <td>1890</td>
+        </tr>
+    </tfoot>
+
+</table>
+
+</table>
+</body>
+</html>

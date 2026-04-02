@@ -1,0 +1,24 @@
+
+/*Use ::before and ::after pseudo-elements to add decorative icons or labels to elements. 
+*/
+
+/* Add icon before links */
+a::before {
+  content: "🔗 ";
+}
+
+/* Add label after headings */
+h2::after {
+  content: " ★";
+  color: gold;
+}
+
+/* Custom badge */
+.button::after {
+  content: " NEW";
+  background: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  margin-left: 5px;
+}

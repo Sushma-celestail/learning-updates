@@ -1,0 +1,82 @@
+<!--Style a table using CSS with alternate row shading, hover effects, and responsive behavior.-->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+table {
+  width: 90%;
+  border-collapse: collapse;
+  margin: 20px auto;
+}
+
+/* Borders & spacing */
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+/* Header styling */
+th {
+  background-color: #333;
+  color: white;
+}
+
+/* Alternate row shading */
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Hover effect */
+tbody tr:hover {
+  background-color: #d1e7ff;
+  cursor: pointer;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  table {
+    width: 100%;
+    font-size: 12px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<table>
+  <caption>Styled Student Table</caption>
+
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Course</th>
+      <th>Marks</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>Sushma</td>
+      <td>AI</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>Rahul</td>
+      <td>ML</td>
+      <td>85</td>
+    </tr>
+    <tr>
+      <td>Anita</td>
+      <td>Data Science</td>
+      <td>88</td>
+    </tr>
+  </tbody>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "left   main   right"
+    "footer footer footer";
+  grid-template-columns: 200px 1fr 200px;
+  gap: 10px;
+  height: 100vh;
+}
+
+header { grid-area: header; background: #333; color: white; }
+.left   { grid-area: left; background: #ddd; }
+main    { grid-area: main; background: #aaa; }
+.right  { grid-area: right; background: #ddd; }
+footer  { grid-area: footer; background: #333; color: white; }
+
+* { padding: 20px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>Header</header>
+  <div class="left">Sidebar</div>
+  <main>Main Content</main>
+  <div class="right">Sidebar</div>
+  <footer>Footer</footer>
+</div>
+
+</body>
+</html>

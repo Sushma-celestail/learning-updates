@@ -1,0 +1,420 @@
+/* =============================================================
+   FILE: animations.css
+   PURPOSE: All CSS transitions and keyframe animations
+   
+   WORKFLOW:
+   This file handles ALL movement on the page.
+   Think of it as the choreography script for a dance.
+   The components.css sets up the STAGE; animations.css adds MOTION.
+   
+   HOW CSS ANIMATIONS WORK:
+   1. @keyframes defines the animation sequence (what changes, when)
+   2. Elements reference animations via: animation: name duration timing
+   3. Transitions are simpler — they tween between two states on trigger
+   
+   @keyframes SYNTAX:
+   @keyframes animationName {
+     from { ... }     ← start state (0%)
+     to   { ... }     ← end state (100%)
+   }
+   — OR —
+   @keyframes animationName {
+     0%   { ... }     ← at the start
+     50%  { ... }     ← halfway through
+     100% { ... }     ← at the end
+   }
+   
+   PERFORMANCE NOTE:
+   Always animate: transform, opacity, filter
+   NEVER animate: width, height, top, left, margin, padding
+   
+   WHY? The browser has a rendering pipeline:
+   Layout → Paint → Composite
+   
+   Changing width/height forces LAYOUT recalculation (expensive).
+   Changing transform/opacity only requires COMPOSITING (GPU-accelerated, fast).
+   This is why translateY(-8px) is used instead of top: -8px.
+   ============================================================= */
+
+
+/* ─────────────────────────────────────────────────────────────
+   HERO SECTION ANIMATIONS (REQUIREMENT: at least 2 @keyframes)
+   
+   Hero entry animation — fades in and slides up.
+   Each element is staggered with animation-delay for a
+   cinematic "one by one" reveal effect.
+   ───────────────────────────────────────────────────────────── */
+
+/*
+  fadeSlideUp: The element starts invisible (opacity: 0) and
+  shifted down by 40px, then gracefully rises to its real position.
+  This creates the "entry from below" effect.
+*/
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);  /* starts 40px below its real position */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);     /* settles at its real position */
+  }
+}
+
+/*
+  fadeIn: Simple opacity fade — for elements that shouldn't move,
+  just appear softly.
+*/
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/*
+  slideInLeft: Slide from left for about text, timeline items, etc.
+*/
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);  /* starts 50px to the left */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/*
+  slideInRight: Slide from right for alternating timeline items, images.
+*/
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);   /* starts 50px to the right */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   HERO ELEMENT STAGGER ANIMATIONS
+   
+   Each element in the hero animates in sequence.
+   animation-delay staggers them so they cascade gracefully.
+   
+   animation-fill-mode: backwards means the element starts
+   at the FROM keyframe state (invisible) while waiting for
+   its delay. Without this, elements would be visible, then 
+   disappear, then animate in (bad!).
+   ───────────────────────────────────────────────────────────── */
+.hero__label {
+  animation: fadeSlideUp 0.8s ease-out backwards;
+  animation-delay: 0.1s;  /* first to appear */
+}
+
+.hero__name {
+  animation: fadeSlideUp 0.8s ease-out backwards;
+  animation-delay: 0.3s;  /* 0.2s after label */
+}
+
+.hero__title {
+  animation: fadeSlideUp 0.8s ease-out backwards;
+  animation-delay: 0.5s;  /* follows name */
+}
+
+.hero__tagline {
+  animation: fadeSlideUp 0.8s ease-out backwards;
+  animation-delay: 0.7s;
+}
+
+.hero__actions {
+  animation: fadeSlideUp 0.8s ease-out backwards;
+  animation-delay: 0.9s;
+}
+
+.hero__scroll-indicator {
+  animation: fadeIn 1s ease-out backwards;
+  animation-delay: 1.5s;  /* last to appear — after main content */
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   SCROLL DOWN BOUNCE ANIMATION (REQUIREMENT: at least 2 @keyframes)
+   
+   The bouncing arrow below the hero uses an infinite looping
+   animation to visually signal "keep scrolling".
+   ───────────────────────────────────────────────────────────── */
+
+/*
+  bounce: Moves the element up and down repeatedly.
+  Using cubic-bezier for a natural, physical bounce feel.
+  The arrow "falls" and gently bounces back up.
+*/
+@keyframes bounce {
+  0%, 100% {
+    transform: rotate(45deg) translateY(0);    /* rest position (rotated 45° = chevron shape) */
+  }
+  50% {
+    transform: rotate(45deg) translateY(8px);  /* descended position */
+  }
+}
+
+/* Applied in components.css to .scroll-indicator__arrow */
+
+
+/* ─────────────────────────────────────────────────────────────
+   SKILL BAR FILL ANIMATION
+   
+   When skill bars enter the viewport, they fill from left to right.
+   The actual width is set per-element via --skill-width CSS variable.
+   
+   Animation starts from width:0 and expands to the target width.
+   Each skill bar has an animation-delay for staircase effect.
+   ───────────────────────────────────────────────────────────── */
+@keyframes skillFill {
+  from {
+    transform: scaleX(0);        /* start collapsed */
+    transform-origin: left;      /* expand from the left side */
+  }
+  to {
+    transform: scaleX(1);        /* expand to full width */
+  }
+}
+
+/*
+  Stagger delays for skill bars — each bar animates slightly after the previous.
+  :nth-child selects specific items in the list.
+*/
+.skill-item:nth-child(1) .skill-item__bar { animation-delay: 0.1s; }
+.skill-item:nth-child(2) .skill-item__bar { animation-delay: 0.2s; }
+.skill-item:nth-child(3) .skill-item__bar { animation-delay: 0.3s; }
+.skill-item:nth-child(4) .skill-item__bar { animation-delay: 0.4s; }
+.skill-item:nth-child(5) .skill-item__bar { animation-delay: 0.5s; }
+.skill-item:nth-child(6) .skill-item__bar { animation-delay: 0.6s; }
+
+/* Play the animation when section is in view (using intersection observer class) */
+.skills-visible .skill-item__bar {
+  animation-play-state: running;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   FLOATING/PULSE ANIMATION
+   
+   Used for decorative elements to add subtle movement.
+*/
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);  /* floats up 15px and back */
+  }
+}
+
+/* Pulse — rings expanding outward from a circle */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(108, 99, 255, 0);  /* ring expands and fades */
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(108, 99, 255, 0);
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   GRADIENT SHIFT ANIMATION
+   
+   The hero background shifts colors slowly for a living,
+   dynamic background effect.
+*/
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Apply to hero for subtle color breathing */
+.hero {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   TYPING CURSOR EFFECT
+   
+   The blinking cursor after the name creates a "typing" feel.
+*/
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  color: var(--color-primary-light);
+  font-weight: var(--font-regular);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   CARD REVEAL ON SCROLL
+   
+   Project cards animate in when scrolled into view.
+   The .visible class is added by Intersection Observer in JS.
+   Without JS, cards just appear normally (graceful degradation).
+*/
+.project-card {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.project-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger cascade for project cards */
+.project-card:nth-child(1) { transition-delay: 0.1s; }
+.project-card:nth-child(2) { transition-delay: 0.2s; }
+.project-card:nth-child(3) { transition-delay: 0.3s; }
+.project-card:nth-child(4) { transition-delay: 0.1s; }
+.project-card:nth-child(5) { transition-delay: 0.2s; }
+.project-card:nth-child(6) { transition-delay: 0.3s; }
+
+
+/* ─────────────────────────────────────────────────────────────
+   TIMELINE ITEM REVEAL
+   
+   Timeline items slide in from alternating sides when scrolled to.
+*/
+.timeline__item {
+  opacity: 0;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.timeline__item:nth-child(odd) {
+  transform: translateX(-30px);  /* starts left of position */
+}
+
+.timeline__item:nth-child(even) {
+  transform: translateX(30px);   /* starts right of position */
+}
+
+.timeline__item.visible {
+  opacity: 1;
+  transform: translateX(0);  /* slides to real position */
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   TESTIMONIAL CARD REVEAL
+*/
+.testimonial-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.testimonial-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Middle card re-applies its elevation after visibility */
+.testimonial-card:nth-child(2).visible {
+  transform: translateY(-8px); /* still elevated after animation */
+}
+
+.testimonial-card:nth-child(1) { transition-delay: 0s; }
+.testimonial-card:nth-child(2) { transition-delay: 0.15s; }
+.testimonial-card:nth-child(3) { transition-delay: 0.3s; }
+
+
+/* ─────────────────────────────────────────────────────────────
+   REDUCED MOTION ACCESSIBILITY
+   
+   CRITICAL: Some users have vestibular disorders and motion
+   sensitivity. The 'prefers-reduced-motion' media query detects
+   when the user has enabled "reduce motion" in their OS settings.
+   
+   We remove all non-essential animations for these users.
+   This is an ACCESSIBILITY REQUIREMENT.
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;  /* instant — no movement */
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;       /* disable smooth scroll */
+  }
+  
+  /* Still show elements that were initially hidden for animations */
+  .project-card,
+  .timeline__item,
+  .testimonial-card {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   DECORATIVE BACKGROUND SHAPES ANIMATION
+   
+   Subtle floating orbs behind section backgrounds.
+*/
+@keyframes orbFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+/* Navigation active indicator transition */
+.nav__link::after {
+  transition: width var(--transition-base);  /* smooth underline grow */
+}
+
+/* Smooth theme transition — all elements transition on theme change */
+body,
+.nav,
+.project-card,
+.testimonial-card,
+.timeline__card,
+.form-control,
+section {
+  transition: background-color var(--transition-slow),
+              color var(--transition-base),
+              border-color var(--transition-base);
+}
+
+/* Loading dots animation (could be used for button loading state) */
+@keyframes dotPulse {
+  0%, 20% { opacity: 0; }
+  50%      { opacity: 1; }
+  80%, 100%{ opacity: 0; }
+}

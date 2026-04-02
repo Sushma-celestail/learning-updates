@@ -1,0 +1,503 @@
+<!-- Section D — CSS Grid Layouts 
+
+Q10. Dashboard Layout with Grid Areas 
+
+Topics: CSS Grid, grid-template-areas, grid-template-columns, grid-template-rows 
+
+Problem Statement: 
+
+Build a dashboard layout using CSS Grid with named grid areas. The layout has: a top header (full width), a left sidebar (fixed 250px), a main content area (flexible), and a bottom footer (full width). On mobile (<768px), all sections stack vertically in a single column. 
+
+Desktop Layout: 
+
++-------------------------------+ 
+
+|           HEADER              | 
+
++----------+--------------------+ 
+
+|          |                    | 
+
+| SIDEBAR  |      MAIN          | 
+
+|          |                    | 
+
++----------+--------------------+ 
+
+|           FOOTER              | 
+
++-------------------------------+ 
+
+Constraints: 
+
+Use grid-template-areas for layout definition 
+
+Sidebar: fixed 250px width; Main: 1fr (flexible) 
+
+Header and Footer: span full width 
+
+Minimum page height: 100vh 
+
+On mobile (<768px): single column, sidebar appears above main content 
+
+Add background colors to each section for visual clarity  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q10 — Dashboard Grid Layout</title>
+  <style>
+    /* ============================================================
+       RESET & BASE
+       A minimal reset so browser defaults don't interfere.
+       box-sizing: border-box means padding and border are INCLUDED
+       in an element's declared width/height — much more predictable.
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 16px;
+      background: #0f0f13;
+      color: #e2e8f0;
+    }
+
+    /* ============================================================
+       THE GRID CONTAINER
+       This is the outermost wrapper. Everything lives inside it.
+
+       display: grid  →  turns this element into a grid container.
+                         Its direct children become grid items.
+
+       min-height: 100vh  →  at minimum, fill the entire viewport
+                             height. If content grows taller, the
+                             grid grows with it.
+
+       grid-template-columns: 250px 1fr
+         →  defines TWO columns:
+            • column 1: exactly 250px (the sidebar)
+            • column 2: 1fr = "one fraction of the remaining space"
+              so it takes up everything the sidebar doesn't.
+
+       grid-template-rows: auto 1fr auto
+         →  defines THREE rows:
+            • row 1 (header): auto = shrinks to fit its content
+            • row 2 (sidebar+main): 1fr = fills all leftover height
+            • row 3 (footer): auto = shrinks to fit its content
+         The 1fr middle row is what makes the layout fill 100vh.
+
+       grid-template-areas
+         →  This is the KEY property of this exercise.
+            It's a visual map of the layout written as a string.
+            Each quoted line = one row.
+            Each word = one cell.
+            Identical words = that area spans those cells.
+            "header header" means the header spans BOTH columns.
+            "sidebar main"  means sidebar takes col1, main takes col2.
+            "footer footer" means footer spans BOTH columns again.
+    ============================================================ */
+    .dashboard {
+      display: grid;
+      min-height: 100vh;
+      grid-template-columns: 250px 1fr;
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas:
+        "header  header"
+        "sidebar main"
+        "footer  footer";
+    }
+
+    /* ============================================================
+       ASSIGNING AREAS TO ELEMENTS
+       grid-area: <name>  →  places this element into the named
+       region defined in grid-template-areas above.
+       No need to specify row/column numbers — the name does it all.
+    ============================================================ */
+    .header  { grid-area: header; }
+    .sidebar { grid-area: sidebar; }
+    .main    { grid-area: main; }
+    .footer  { grid-area: footer; }
+
+    /* ============================================================
+       VISUAL STYLING — HEADER
+    ============================================================ */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-bottom: 1px solid #2d3748;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #63b3ed;
+      letter-spacing: -0.5px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .header-nav a {
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover { color: #e2e8f0; }
+
+    /* ============================================================
+       VISUAL STYLING — SIDEBAR
+       overflow-y: auto  →  if sidebar content is taller than the
+       available space, show a scrollbar inside the sidebar only.
+    ============================================================ */
+    .sidebar {
+      background: #1a1a2e;
+      border-right: 1px solid #2d3748;
+      padding: 1.5rem 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-section-title {
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #4a5568;
+      padding: 0 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 1.5rem;
+      color: #718096;
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .sidebar-link:hover {
+      background: #2d3748;
+      color: #e2e8f0;
+    }
+
+    .sidebar-link.active {
+      background: rgba(99, 179, 237, 0.1);
+      color: #63b3ed;
+      border-right: 2px solid #63b3ed;
+    }
+
+    .sidebar-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    /* ============================================================
+       VISUAL STYLING — MAIN CONTENT
+       overflow-y: auto  →  main area scrolls independently if
+       content is taller than its grid cell.
+    ============================================================ */
+    .main {
+      background: #0f0f13;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 0.25rem;
+    }
+
+    .page-subtitle {
+      font-size: 0.875rem;
+      color: #4a5568;
+      margin-bottom: 2rem;
+    }
+
+    /* A nested grid inside the main area for the stat cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #1a1a2e;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .stat-change {
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .stat-change.up   { color: #68d391; }
+    .stat-change.down { color: #fc8181; }
+
+    .content-panel {
+      background: #1a1a2e;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 1rem;
+    }
+
+    /* Simple placeholder bars to simulate a chart */
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 100px;
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(to top, #3182ce, #63b3ed);
+      border-radius: 4px 4px 0 0;
+      opacity: 0.8;
+    }
+
+    /* ============================================================
+       VISUAL STYLING — FOOTER
+    ============================================================ */
+    .footer {
+      background: #1a1a2e;
+      border-top: 1px solid #2d3748;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #4a5568;
+    }
+
+    /* ============================================================
+       RESPONSIVE — MOBILE LAYOUT (<768px)
+
+       On small screens we completely redefine the grid:
+
+       grid-template-columns: 1fr
+         →  collapse to a single column (no more 250px | 1fr split)
+
+       grid-template-rows: auto auto 1fr auto
+         →  four auto rows. We add a row because sidebar and main
+            are now stacked vertically, each needing its own row.
+
+       grid-template-areas: (redefined)
+         →  Now each area gets its own row in the single column.
+            Sidebar comes BEFORE main as required by the spec.
+            Notice: ALL areas are now a single word per row
+            because there's only one column.
+
+       This is the elegance of grid-template-areas: to completely
+       change a complex layout, you just rewrite the "map".
+    ============================================================ */
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr auto;
+        grid-template-areas:
+          "header"
+          "sidebar"
+          "main"
+          "footer";
+      }
+
+      /* On mobile, sidebar becomes a horizontal scrolling nav strip */
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #2d3748;
+        padding: 0.5rem 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        /* Allow the links to flow horizontally */
+        display: flex;
+        align-items: center;
+      }
+
+      .sidebar-section {
+        display: flex;
+        margin-bottom: 0;
+        padding: 0;
+      }
+
+      .sidebar-section-title {
+        display: none; /* hide category labels on mobile */
+      }
+
+      .sidebar-link {
+        white-space: nowrap;
+        padding: 0.75rem 1rem;
+      }
+
+      .header-nav {
+        display: none; /* hide nav links on mobile (would need hamburger menu) */
+      }
+
+      .main {
+        padding: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    THE HTML STRUCTURE
+    Each element's class matches a grid-area name.
+    The grid container (.dashboard) knows where to place each child
+    purely from the grid-area CSS property — no extra markup needed.
+  -->
+  <div class="dashboard">
+
+    <!-- HEADER: spans full width via grid-template-areas -->
+    <header class="header">
+      <div class="header-logo">◈ DataBoard</div>
+      <nav>
+        <ul class="header-nav">
+          <li><a href="#">Overview</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- SIDEBAR: fixed 250px column via grid-template-columns -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Menu</div>
+        <a href="#" class="sidebar-link active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="#" class="sidebar-link">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Analytics
+        </a>
+        <a href="#" class="sidebar-link">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Users
+        </a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Reports</div>
+        <a href="#" class="sidebar-link">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Revenue
+        </a>
+        <a href="#" class="sidebar-link">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Growth
+        </a>
+        <a href="#" class="sidebar-link">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          History
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN: flexible 1fr column -->
+    <main class="main">
+      <h1 class="page-title">Good morning, Alex</h1>
+      <p class="page-subtitle">Here's what's happening today — Monday, April 1</p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value">$48,295</div>
+          <div class="stat-change up">↑ 12.5% from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Users</div>
+          <div class="stat-value">3,842</div>
+          <div class="stat-change up">↑ 8.2% from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Conversion Rate</div>
+          <div class="stat-value">4.6%</div>
+          <div class="stat-change down">↓ 1.1% from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg. Session</div>
+          <div class="stat-value">3m 42s</div>
+          <div class="stat-change up">↑ 0.3% from last month</div>
+        </div>
+      </div>
+
+      <div class="content-panel">
+        <div class="panel-title">Weekly Revenue</div>
+        <div class="chart-bars">
+          <div class="bar" style="height:40%"></div>
+          <div class="bar" style="height:65%"></div>
+          <div class="bar" style="height:50%"></div>
+          <div class="bar" style="height:80%"></div>
+          <div class="bar" style="height:70%"></div>
+          <div class="bar" style="height:95%"></div>
+          <div class="bar" style="height:75%"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER: spans full width via grid-template-areas -->
+    <footer class="footer">
+      <span>© 2025 DataBoard Inc.</span>
+      <span>v2.4.1 · All systems operational</span>
+    </footer>
+
+  </div>
+</body>
+</html>

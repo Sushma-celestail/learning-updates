@@ -1,0 +1,290 @@
+/* =============================================================
+   FILE: variables.css
+   PURPOSE: CSS Custom Properties (Variables) — Design Tokens
+   
+   WHY CSS VARIABLES?
+   Instead of writing color codes like #1a1a2e everywhere (which
+   makes changing the theme painful), we define named variables once.
+   Every component file USES these variables, never hardcoded values.
+   
+   WORKFLOW:
+   1. :root defines LIGHT THEME as default variables
+   2. .dark-theme (added to <body> via JS) overrides those variables
+   3. @media prefers-color-scheme auto-detects system dark mode
+   4. Because all components reference variables, changing ONE value
+      here changes EVERY component automatically — this is the power
+      of the design token pattern.
+   
+   NAMING CONVENTION:
+   --color-*      → color tokens
+   --font-*       → typography tokens  
+   --spacing-*    → spacing/sizing tokens
+   --radius-*     → border-radius tokens
+   --shadow-*     → box-shadow tokens
+   --transition-* → animation timing tokens
+   ============================================================= */
+
+
+/* ─────────────────────────────────────────────────────────────
+   LIGHT THEME (DEFAULT)
+   Applied when :root is the selector — meaning these styles
+   apply to the entire document by default.
+   ───────────────────────────────────────────────────────────── */
+:root {
+
+  /* ── COLOR PALETTE ── */
+  /* Primary brand color — used for buttons, highlights, active states */
+  --color-primary: #6c63ff;          /* vibrant indigo/purple */
+  --color-primary-dark: #5a52d5;     /* darker shade for hover states */
+  --color-primary-light: #a09cff;    /* lighter shade for subtle accents */
+
+  /* Accent color — secondary highlight, used sparingly for contrast */
+  --color-accent: #ff6584;           /* coral/pink accent */
+  --color-accent-dark: #e54d6a;      /* darker accent for hover */
+
+  /* Background colors — layered from base to elevated surfaces */
+  --color-bg: #f8f9ff;               /* page background — very light lavender */
+  --color-bg-secondary: #ffffff;     /* cards, panels — pure white */
+  --color-bg-tertiary: #eef0fb;      /* subtle section backgrounds */
+
+  /* Text colors — multiple tones for hierarchy */
+  --color-text: #1a1a2e;             /* primary text — near-black navy */
+  --color-text-secondary: #4a4a6a;   /* secondary text — muted */
+  --color-text-muted: #8888aa;       /* muted text — captions, placeholders */
+  --color-text-inverse: #ffffff;     /* text on dark backgrounds */
+
+  /* Navigation */
+  --color-nav-bg: rgba(248, 249, 255, 0.95);  /* semi-transparent for frosted effect */
+  --color-nav-text: #1a1a2e;
+
+  /* Border colors */
+  --color-border: #dde1f5;           /* subtle border for cards/inputs */
+  --color-border-focus: #6c63ff;     /* border when input is focused */
+
+  /* Status colors */
+  --color-success: #27ae60;
+  --color-warning: #f39c12;
+  --color-error: #e74c3c;
+
+  /* ── TYPOGRAPHY ── */
+  /* 
+    System font stack as fallback, but we use Google Fonts (Inter).
+    Inter is a clean, highly legible modern sans-serif designed for screens.
+    Loaded in HTML <head> — no install needed.
+  */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; /* for code tags */
+
+  /* Font size scale — using rem for accessibility */
+  --font-xs: 1.2rem;    /* 12px — tiny captions */
+  --font-sm: 1.4rem;    /* 14px — small labels */
+  --font-base: 1.6rem;  /* 16px — body text */
+  --font-lg: 1.8rem;    /* 18px — large body */
+  --font-xl: 2.0rem;    /* 20px — sub-headings */
+  --font-2xl: 2.4rem;   /* 24px — section headings */
+  --font-3xl: 3.2rem;   /* 32px — large headings */
+  --font-4xl: 4.8rem;   /* 48px — hero heading */
+  --font-5xl: 6.4rem;   /* 64px — display text */
+
+  /* Font weights */
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+
+  /* Line heights */
+  --leading-tight: 1.2;    /* headings */
+  --leading-normal: 1.6;   /* body text */
+  --leading-loose: 1.8;    /* comfortable reading */
+
+  /* ── SPACING SCALE ── */
+  /*
+    Based on a 4px base unit (--space-1 = 4px).
+    This creates a harmonious, mathematical spacing system.
+    Using variables means all spacing stays consistent — no random px values.
+  */
+  --space-1: 0.4rem;    /* 4px  */
+  --space-2: 0.8rem;    /* 8px  */
+  --space-3: 1.2rem;    /* 12px */
+  --space-4: 1.6rem;    /* 16px */
+  --space-5: 2.0rem;    /* 20px */
+  --space-6: 2.4rem;    /* 24px */
+  --space-8: 3.2rem;    /* 32px */
+  --space-10: 4.0rem;   /* 40px */
+  --space-12: 4.8rem;   /* 48px */
+  --space-16: 6.4rem;   /* 64px */
+  --space-20: 8.0rem;   /* 80px */
+  --space-24: 9.6rem;   /* 96px */
+
+  /* Section vertical padding — consistent section height feel */
+  --section-padding: var(--space-20);  /* 80px top/bottom for each section */
+
+  /* Container max-width — prevents content from stretching too wide */
+  --container-max: 1200px;
+  --container-padding: var(--space-6); /* 24px side padding */
+
+  /* ── BORDER RADIUS ── */
+  --radius-sm: 0.4rem;    /* subtle rounding for tags */
+  --radius-md: 0.8rem;    /* inputs, small cards */
+  --radius-lg: 1.6rem;    /* cards */
+  --radius-xl: 2.4rem;    /* buttons, big cards */
+  --radius-full: 9999px;  /* pills, circles */
+
+  /* ── BOX SHADOWS ── */
+  /*
+    Multiple shadow layers create depth.
+    The pattern: offset-x offset-y blur spread color
+    Using RGBA with alpha so shadows look natural on any background.
+  */
+  --shadow-sm: 0 1px 3px rgba(108, 99, 255, 0.08),
+               0 1px 2px rgba(0, 0, 0, 0.06);
+
+  --shadow-md: 0 4px 6px rgba(108, 99, 255, 0.10),
+               0 2px 4px rgba(0, 0, 0, 0.06);
+
+  --shadow-lg: 0 10px 15px rgba(108, 99, 255, 0.10),
+               0 4px 6px rgba(0, 0, 0, 0.05);
+
+  --shadow-xl: 0 20px 25px rgba(108, 99, 255, 0.12),
+               0 10px 10px rgba(0, 0, 0, 0.04);
+
+  --shadow-card-hover: 0 25px 50px rgba(108, 99, 255, 0.20),
+                       0 10px 20px rgba(0, 0, 0, 0.08);
+
+  --shadow-nav: 0 2px 20px rgba(108, 99, 255, 0.12);      /* nav bar shadow */
+  --shadow-btn: 0 4px 15px rgba(108, 99, 255, 0.30);      /* button glow */
+  --shadow-btn-hover: 0 8px 25px rgba(108, 99, 255, 0.45); /* button hover glow */
+
+  /* ── TRANSITIONS ── */
+  /* 
+    Consistent easing makes the site feel polished.
+    'ease-out' = fast start, slow finish (feels snappy)
+    'ease-in-out' = gentle acceleration/deceleration (feels smooth)
+  */
+  --transition-fast: 0.15s ease-out;      /* micro interactions (color changes) */
+  --transition-base: 0.3s ease-out;       /* standard transitions (hover states) */
+  --transition-slow: 0.5s ease-in-out;    /* larger transforms (card lifts) */
+  --transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* springy bounce */
+
+  /* ── Z-INDEX SCALE ── */
+  /*
+    Named z-index values prevent the "z-index war" where developers
+    keep increasing z-index without knowing what stacks on what.
+  */
+  --z-below: -1;      /* behind page */
+  --z-base: 0;        /* normal flow */
+  --z-raised: 10;     /* slightly above */
+  --z-dropdown: 100;  /* dropdowns, tooltips */
+  --z-fixed: 200;     /* fixed elements (nav) */
+  --z-modal: 300;     /* overlay modals */
+  --z-top: 999;       /* always on top */
+
+  /* ── GRADIENTS ── */
+  --gradient-primary: linear-gradient(135deg, #6c63ff 0%, #a09cff 100%);
+  --gradient-accent: linear-gradient(135deg, #ff6584 0%, #ff9a8b 100%);
+  --gradient-hero: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+  --gradient-btn: linear-gradient(135deg, #6c63ff 0%, #a09cff 100%);
+
+  /* ── HERO SPECIFIC ── */
+  --hero-height: 100vh;   /* hero takes full viewport height */
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   DARK THEME
+   
+   HOW IT WORKS:
+   When JS runs: document.body.classList.toggle('dark-theme')
+   The .dark-theme class is added to <body>.
+   Because this selector is MORE SPECIFIC than :root for body's
+   children, these values OVERRIDE the :root variables above.
+   
+   CSS variable override works because variables are INHERITED —
+   a child element reads the nearest ancestor's variable value.
+   Since <body> has .dark-theme, all children inherit dark values.
+   ───────────────────────────────────────────────────────────── */
+.dark-theme {
+  /* Backgrounds — deep dark blues (not pure black — easier on eyes) */
+  --color-bg: #0d0d1a;             /* very dark navy */
+  --color-bg-secondary: #1a1a2e;   /* dark navy — card backgrounds */
+  --color-bg-tertiary: #16213e;    /* mid dark — section alternation */
+
+  /* Text — light on dark */
+  --color-text: #e8e8f4;           /* near-white with slight blue tint */
+  --color-text-secondary: #b0b0cc; /* muted light purple */
+  --color-text-muted: #6666888;    /* very muted */
+  --color-text-inverse: #0d0d1a;   /* dark text for light backgrounds */
+
+  /* Navigation */
+  --color-nav-bg: rgba(13, 13, 26, 0.95);  /* dark frosted nav */
+  --color-nav-text: #e8e8f4;
+
+  /* Borders */
+  --color-border: #2a2a4a;         /* subtle dark border */
+  --color-border-focus: #a09cff;   /* lighter focus indicator for dark mode */
+
+  /* Colors — slightly adjusted for dark backgrounds */
+  --color-primary: #a09cff;        /* lighter purple for dark bg */
+  --color-primary-dark: #8b87ff;
+  --color-primary-light: #6c63ff;
+  --color-accent: #ff8fa3;         /* softer coral on dark */
+
+  /* Shadows — more intense and colored for dark mode depth */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.50);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.60);
+  --shadow-card-hover: 0 25px 50px rgba(160, 156, 255, 0.20);
+  --shadow-nav: 0 2px 20px rgba(0, 0, 0, 0.50);
+  --shadow-btn: 0 4px 15px rgba(160, 156, 255, 0.40);
+  --shadow-btn-hover: 0 8px 25px rgba(160, 156, 255, 0.60);
+
+  /* Gradients — deeper for dark mode */
+  --gradient-hero: linear-gradient(135deg, #0d0d1a 0%, #0f0f2a 40%, #1a0a3e 100%);
+  --gradient-card: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+  --gradient-btn: linear-gradient(135deg, #a09cff 0%, #6c63ff 100%);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   AUTO DARK MODE (SYSTEM PREFERENCE)
+   
+   This media query detects if the user's OS/browser is set to
+   dark mode. If so, it automatically applies dark theme variables
+   WITHOUT requiring the user to toggle.
+   
+   Note: If the user then manually toggles, .dark-theme takes over,
+   and they can switch back to light manually.
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0d0d1a;
+    --color-bg-secondary: #1a1a2e;
+    --color-bg-tertiary: #16213e;
+    --color-text: #e8e8f4;
+    --color-text-secondary: #b0b0cc;
+    --color-text-muted: #66668888;
+    --color-text-inverse: #0d0d1a;
+    --color-nav-bg: rgba(13, 13, 26, 0.95);
+    --color-nav-text: #e8e8f4;
+    --color-border: #2a2a4a;
+    --color-border-focus: #a09cff;
+    --color-primary: #a09cff;
+    --color-primary-dark: #8b87ff;
+    --color-primary-light: #6c63ff;
+    --color-accent: #ff8fa3;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.40);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.50);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.60);
+    --shadow-card-hover: 0 25px 50px rgba(160, 156, 255, 0.20);
+    --shadow-nav: 0 2px 20px rgba(0, 0, 0, 0.50);
+    --shadow-btn: 0 4px 15px rgba(160, 156, 255, 0.40);
+    --shadow-btn-hover: 0 8px 25px rgba(160, 156, 255, 0.60);
+    --gradient-hero: linear-gradient(135deg, #0d0d1a 0%, #0f0f2a 40%, #1a0a3e 100%);
+    --gradient-card: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    --gradient-btn: linear-gradient(135deg, #a09cff 0%, #6c63ff 100%);
+  }
+}

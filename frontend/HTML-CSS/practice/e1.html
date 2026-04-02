@@ -1,0 +1,51 @@
+<!--1. Registration Form (with HTML5 validation)-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Forms Demo</title>
+</head>
+<body>
+
+<h2>Registration Form</h2>
+
+<form>
+  <!-- Name -->
+  <label>Name:</label>
+  <input type="text" name="name" required minlength="3"><br><br>
+
+  <!-- Email -->
+  <label>Email:</label>
+  <input type="email" name="email" required><br><br>
+
+  <!-- Password -->
+  <label>Password:</label>
+  <input type="password" name="password" required minlength="6"><br><br>
+
+  <!-- Age -->
+  <label>Age:</label>
+  <input type="number" name="age" min="18" max="100" required><br><br>
+
+  <!-- Phone -->
+  <label>Phone:</label>
+  <input type="tel" name="phone" pattern="[0-9]{10}" placeholder="10-digit number" required><br><br>
+
+  <!-- Gender -->
+  <label>Gender:</label>
+  <input type="radio" name="gender" value="male" required> Male
+  <input type="radio" name="gender" value="female"> Female
+  <input type="radio" name="gender" value="other"> Other<br><br>
+
+  <!-- Interests -->
+  <label>Interests:</label>
+  <input type="checkbox" name="interest" value="coding"> Coding
+  <input type="checkbox" name="interest" value="music"> Music
+  <input type="checkbox" name="interest" value="sports"> Sports<br><br>
+
+  <!-- Bio -->
+  <label>Bio:</label><br>
+  <textarea name="bio" rows="4" cols="30" maxlength="200"></textarea><br><br>
+
+  <button type="submit">Register</button>
+</form>
+
+<hr>
