@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DOM Utility Functions</title>
+  <style>
+    body.light {
+      background: #ffffff;
+      color: #222;
+    }
+    body.dark {
+      background: #1e1e1e;
+      color: #fff;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      width: 200px;
+      margin: 10px;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body class="light" data-theme="light">
+
+  <button onclick="toggleTheme()">Toggle Theme</button>
+
+  <div id="card-container"></div>
+
+  <ul id="list"></ul>
+
+  <script>
+    // ============================================
+    // 1. CREATE CARD FUNCTION
+    // ============================================
+
+    function createCard(title, description, imageUrl) {
+      const container = document.getElementById("card-container");
+
+      // Create elements
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.src = imageUrl;
+
+      const h3 = document.createElement("h3");
+      h3.textContent = title;
+
+      const p = document.createElement("p");
+      p.textContent = description;
+
+      // Build structure
+      card.appendChild(img);
+      card.appendChild(h3);
+      card.appendChild(p);
+
+      // Append to container
+      container.appendChild(card);
+    }
+
+    // Example usage
+    createCard("Nature", "Beautiful view", "https://via.placeholder.com/200");
+
+
+    // ============================================
+    // 2. REMOVE ALL CHILDREN
+    // ============================================
+
+    function removeAllChildren(parentSelector) {
+      const parent = document.querySelector(parentSelector);
+
+      // Fastest way: wipe innerHTML
+      parent.innerHTML = "";
+
+      // Alternative (manual removal):
+      // while (parent.firstChild) {
+      //   parent.removeChild(parent.firstChild);
+      // }
+    }
+
+
+    // ============================================
+    // 3. TOGGLE THEME (LIGHT / DARK)
+    // ============================================
+
+    function toggleTheme() {
+      const body = document.body;
+
+      // Toggle classes
+      body.classList.toggle("dark");
+      body.classList.toggle("light");
+
+      // Update data-theme attribute
+      const currentTheme = body.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+
+      body.setAttribute("data-theme", newTheme);
+
+      console.log("Theme changed to:", newTheme);
+    }
+
+
+    // ============================================
+    // 4. DOCUMENT FRAGMENT PERFORMANCE DEMO
+    // ============================================
+
+    function addItemsOneByOne() {
+      const ul = document.getElementById("list");
+      ul.innerHTML = "";
+
+      console.time("OneByOne");
+
+      for (let i = 0; i < 1000; i++) {
+        const li = document.createElement("li");
+        li.textContent = "Item " + i;
+        ul.appendChild(li); // triggers DOM reflow repeatedly 😬
+      }
+
+      console.timeEnd("OneByOne");
+    }
+
+
+    function addItemsWithFragment() {
+      const ul = document.getElementById("list");
+      ul.innerHTML = "";
+
+      console.time("Fragment");
+
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < 1000; i++) {
+        const li = document.createElement("li");
+        li.textContent = "Item " + i;
+        fragment.appendChild(li); // stays in memory (no reflow)
+      }
+
+      ul.appendChild(fragment); // single DOM update 🚀
+
+      console.timeEnd("Fragment");
+    }
+
+    // Run both to compare
+    addItemsOneByOne();
+    addItemsWithFragment();
+
+
+    // ============================================
+    // 5. READ data-* ATTRIBUTES
+    // ============================================
+
+    function getDataAttributes(element) {
+      const data = {};
+
+      // dataset gives all data-* attributes
+      for (let key in element.dataset) {
+        data[key] = element.dataset[key];
+      }
+
+      return data;
+    }
+
+    // Example usage:
+    const demoEl = document.createElement("div");
+    demoEl.setAttribute("data-user", "john");
+    demoEl.setAttribute("data-role", "admin");
+
+    console.log(getDataAttributes(demoEl));
+    // Output: { user: "john", role: "admin" }
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Table Builder</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 60%;
+      margin: 20px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #333;
+      color: white;
+    }
+
+    /* Zebra striping */
+    .even {
+      background-color: #f9f9f9;
+    }
+
+    .odd {
+      background-color: #e6f2ff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Container where table will be injected -->
+  <div id="app"></div>
+
+  <script>
+    /**
+     * Function: buildTable
+     * Creates a dynamic table using DOM methods only
+     */
+    function buildTable(containerId, data, columns) {
+
+      // 1. Get container element
+      const container = document.getElementById(containerId);
+
+      // 2. Create table element
+      const table = document.createElement("table");
+
+      // 3. Create THEAD
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      // Loop through columns to create header cells
+      columns.forEach(col => {
+        const th = document.createElement("th");
+        th.textContent = col.label; // Set column label
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // 4. Create TBODY
+      const tbody = document.createElement("tbody");
+
+      // Use DocumentFragment for performance
+      const fragment = document.createDocumentFragment();
+
+      // Loop through data to create rows
+      data.forEach((item, index) => {
+        const tr = document.createElement("tr");
+
+        // Add zebra striping (even / odd)
+        if (index % 2 === 0) {
+          tr.classList.add("even");
+        } else {
+          tr.classList.add("odd");
+        }
+
+        // Store index using dataset
+        tr.dataset.index = index;
+
+        // Create cells based on columns config
+        columns.forEach(col => {
+          const td = document.createElement("td");
+
+          let value = item[col.key];
+
+          // Apply format function if exists
+          if (col.format) {
+            value = col.format(value);
+          }
+
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+
+        fragment.appendChild(tr);
+      });
+
+      tbody.appendChild(fragment);
+      table.appendChild(tbody);
+
+      // 5. Append table to container
+      container.appendChild(table);
+    }
+
+    // ======================
+    // INPUT DATA
+    // ======================
+
+    const users = [
+      { name: "Alice", age: 25, role: "Developer" },
+      { name: "Bob", age: 30, role: "Designer" },
+      { name: "Carol", age: 28, role: "Manager" },
+    ];
+
+    const columns = [
+      { key: "name", label: "Full Name" },
+      { key: "age", label: "Age", format: (val) => `${val} years` },
+      { key: "role", label: "Position" },
+    ];
+
+    // Call function
+    buildTable("app", users, columns);
+  </script>
+
+</body>
+</html>

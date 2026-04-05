@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infinite Scroll with Throttle</title>
+
+<style>
+/* Reset basic styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+}
+
+/* Container for posts */
+#post-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Each post card */
+.post {
+    background: white;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Loader styling */
+#loader {
+    text-align: center;
+    padding: 20px;
+    font-weight: bold;
+}
+
+/* Error message */
+#error {
+    text-align: center;
+    color: red;
+    display: none;
+}
+
+/* Retry button */
+#retry-btn {
+    display: none;
+    margin: 10px auto;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/* End message */
+#end-message {
+    text-align: center;
+    padding: 20px;
+    font-weight: bold;
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="post-container"></div>
+
+<!-- Loader -->
+<div id="loader">Loading...</div>
+
+<!-- Error -->
+<div id="error">Failed to load data</div>
+<button id="retry-btn">Retry</button>
+
+<!-- Sentinel (observer watches this) -->
+<div id="sentinel"></div>
+
+<!-- End message -->
+<div id="end-message">All posts loaded 🎉</div>
+
+<script>
+/* =========================
+   GLOBAL VARIABLES
+========================= */
+
+// Track starting index for API
+let start = 0;
+
+// Number of posts per request
+const limit = 20;
+
+// Total posts available
+const total = 100;
+
+// Flag to prevent multiple fetch calls
+let isLoading = false;
+
+
+/* =========================
+   THROTTLE FUNCTION
+========================= */
+
+/*
+Throttle ensures a function runs at most once
+in a given interval (e.g., every 500ms)
+*/
+function throttle(fn, interval) {
+    let lastTime = 0; // stores last execution time
+
+    return function (...args) {
+        const now = Date.now(); // current timestamp
+
+        // Only run if enough time has passed
+        if (now - lastTime >= interval) {
+            lastTime = now;
+            fn.apply(this, args); // call original function
+        }
+    };
+}
+
+
+/* =========================
+   FETCH POSTS FUNCTION
+========================= */
+
+async function fetchPosts() {
+
+    // Prevent duplicate calls
+    if (isLoading) return;
+
+    // Stop if all posts loaded
+    if (start >= total) return;
+
+    isLoading = true;
+
+    // Show loader
+    document.getElementById("loader").style.display = "block";
+    document.getElementById("error").style.display = "none";
+    document.getElementById("retry-btn").style.display = "none";
+
+    try {
+        // Fetch data from API
+        const res = await fetch(
+            `https://jsonplaceholder.typicode.com/posts?_start=${start}&_limit=${limit}`
+        );
+
+        // Convert response to JSON
+        const data = await res.json();
+
+        // Render posts
+        renderPosts(data);
+
+        // Move to next batch
+        start += limit;
+
+        // If all loaded → show end message
+        if (start >= total) {
+            document.getElementById("end-message").style.display = "block";
+            observer.disconnect(); // stop observing sentinel
+        }
+
+    } catch (err) {
+        // Handle error
+        document.getElementById("error").style.display = "block";
+        document.getElementById("retry-btn").style.display = "block";
+    } finally {
+        isLoading = false;
+        document.getElementById("loader").style.display = "none";
+    }
+}
+
+
+/* =========================
+   RENDER POSTS
+========================= */
+
+function renderPosts(posts) {
+    const container = document.getElementById("post-container");
+
+    posts.forEach(post => {
+        const div = document.createElement("div");
+
+        // Assign class for styling
+        div.className = "post";
+
+        // Insert content
+        div.innerHTML = `
+            <h3>${post.id}. ${post.title}</h3>
+            <p>${post.body}</p>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+
+/* =========================
+   INTERSECTION OBSERVER
+========================= */
+
+/*
+Observer watches the sentinel element.
+When it enters viewport → load more posts
+*/
+
+const observer = new IntersectionObserver(
+    throttle((entries) => {
+
+        const entry = entries[0];
+
+        // If sentinel is visible → fetch more data
+        if (entry.isIntersecting) {
+            fetchPosts();
+        }
+
+    }, 500), // throttle interval = 500ms
+
+    {
+        root: null,        // viewport
+        threshold: 1.0     // trigger when fully visible
+    }
+);
+
+
+/* =========================
+   RETRY BUTTON
+========================= */
+
+document.getElementById("retry-btn").addEventListener("click", fetchPosts);
+
+
+/* =========================
+   INITIAL LOAD
+========================= */
+
+// Load first batch
+fetchPosts();
+
+// Start observing sentinel
+observer.observe(document.getElementById("sentinel"));
+
+</script>
+
+</body>
+</html>

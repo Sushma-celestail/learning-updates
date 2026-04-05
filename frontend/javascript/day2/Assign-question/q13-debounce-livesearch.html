@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Debounced Live Search</title>
+
+  <style>
+    body { font-family: Arial; padding: 20px; }
+
+    #results {
+      border: 1px solid #ccc;
+      max-width: 300px;
+      margin-top: 5px;
+    }
+
+    .item {
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .highlight {
+      background: yellow;
+      font-weight: bold;
+    }
+
+    .spinner {
+      padding: 10px;
+      color: blue;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Live User Search</h2>
+
+  <!-- SEARCH INPUT -->
+  <input id="search" placeholder="Type at least 2 characters..." />
+
+  <!-- DROPDOWN RESULTS -->
+  <div id="results"></div>
+
+  <script>
+    // ============================================
+    // BASE URL
+    // ============================================
+    const BASE = "https://jsonplaceholder.typicode.com/users";
+
+    // Select elements
+    const input = document.getElementById("search");
+    const results = document.getElementById("results");
+
+    // Store current AbortController
+    let controller = null;
+
+
+    // ============================================
+    // DEBOUNCE FUNCTION (from scratch)
+    // ============================================
+    function debounce(fn, delay) {
+
+      let timer; // closure variable
+
+      return function (...args) {
+
+        // Clear previous timer
+        clearTimeout(timer);
+
+        // Set new timer
+        timer = setTimeout(() => {
+          fn.apply(this, args);
+        }, delay);
+      };
+    }
+
+
+    // ============================================
+    // HIGHLIGHT MATCHING TEXT
+    // ============================================
+    function highlight(text, query) {
+
+      const regex = new RegExp(`(${query})`, "gi");
+
+      // Wrap match in span
+      return text.replace(regex, `<span class="highlight">$1</span>`);
+    }
+
+
+    // ============================================
+    // FETCH USERS
+    // ============================================
+    async function searchUsers(query) {
+
+      // Minimum 2 characters check
+      if (query.length < 2) {
+        results.innerHTML = "";
+        return;
+      }
+
+      // Abort previous request if exists
+      if (controller) {
+        controller.abort();
+      }
+
+      // Create new AbortController
+      controller = new AbortController();
+
+      // Show loading spinner
+      results.innerHTML = `<div class="spinner">Loading...</div>`;
+
+      try {
+        const res = await fetch(`${BASE}?q=${query}`, {
+          signal: controller.signal
+        });
+
+        if (!res.ok) throw new Error("Fetch failed");
+
+        const data = await res.json();
+
+        // Clear results
+        results.innerHTML = "";
+
+        // No results case
+        if (data.length === 0) {
+          results.innerHTML = "<div class='item'>No results</div>";
+          return;
+        }
+
+        // Render results
+        data.forEach(user => {
+
+          const div = document.createElement("div");
+          div.className = "item";
+
+          // Highlight matching text
+          div.innerHTML = highlight(user.name, query);
+
+          results.appendChild(div);
+        });
+
+      } catch (err) {
+
+        // Ignore abort error
+        if (err.name === "AbortError") return;
+
+        results.innerHTML = "<div class='item'>Error loading data</div>";
+      }
+    }
+
+
+    // ============================================
+    // DEBOUNCED SEARCH FUNCTION (300ms)
+    // ============================================
+    const debouncedSearch = debounce(searchUsers, 300);
+
+
+    // ============================================
+    // INPUT EVENT
+    // ============================================
+    input.addEventListener("input", function () {
+
+      const value = input.value.trim();
+
+      // Clear results if empty
+      if (value === "") {
+        results.innerHTML = "";
+        return;
+      }
+
+      // Call debounced search
+      debouncedSearch(value);
+    });
+
+  </script>
+
+</body>
+</html>

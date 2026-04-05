@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fetch CRUD Operations</title>
+</head>
+<body>
+
+  <h2>Check Console for Output</h2>
+
+  <script>
+    // ============================================
+    // BASE URL (JSONPlaceholder API)
+    // ============================================
+    const BASE_URL = "https://jsonplaceholder.typicode.com/posts";
+
+
+    // ============================================
+    // FETCH WRAPPER WITH TIMEOUT
+    // ============================================
+    async function fetchWithTimeout(url, options = {}, timeout = 5000) {
+
+      // Create AbortController to cancel request if timeout occurs
+      const controller = new AbortController();
+
+      // Attach signal to fetch options
+      const config = { ...options, signal: controller.signal };
+
+      // Start timeout timer
+      const timer = setTimeout(() => {
+        controller.abort(); // Abort request if time exceeds
+      }, timeout);
+
+      try {
+        // Make fetch request
+        const response = await fetch(url, config);
+
+        // Clear timeout if response arrives in time
+        clearTimeout(timer);
+
+        // Log method, URL, and status
+        console.log(`${config.method || "GET"} ${url} → ${response.status}`);
+
+        // Check if response is OK (status 200–299)
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        // Parse JSON response
+        const data = await response.json();
+
+        // Return success format
+        return { success: true, data, error: null };
+
+      } catch (error) {
+
+        // Handle abort separately
+        if (error.name === "AbortError") {
+          return { success: false, data: null, error: "Request timed out" };
+        }
+
+        // General error handling
+        return { success: false, data: null, error: error.message };
+      }
+    }
+
+
+    // ============================================
+    // GET ALL POSTS (with optional limit)
+    // ============================================
+    async function getAllPosts(limit) {
+
+      // Build URL with query param if limit exists
+      const url = limit ? `${BASE_URL}?_limit=${limit}` : BASE_URL;
+
+      // Call fetch wrapper
+      return await fetchWithTimeout(url);
+    }
+
+
+    // ============================================
+    // GET SINGLE POST
+    // ============================================
+    async function getPost(id) {
+
+      // Construct URL with ID
+      const url = `${BASE_URL}/${id}`;
+
+      return await fetchWithTimeout(url);
+    }
+
+
+    // ============================================
+    // CREATE POST (POST)
+    // ============================================
+    async function createPost(data) {
+
+      return await fetchWithTimeout(BASE_URL, {
+        method: "POST", // HTTP method
+        headers: {
+          "Content-Type": "application/json" // Required for JSON body
+        },
+        body: JSON.stringify(data) // Convert JS object → JSON
+      });
+    }
+
+
+    // ============================================
+    // UPDATE POST (PUT)
+    // ============================================
+    async function updatePost(id, data) {
+
+      const url = `${BASE_URL}/${id}`;
+
+      return await fetchWithTimeout(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+    }
+
+
+    // ============================================
+    // DELETE POST
+    // ============================================
+    async function deletePost(id) {
+
+      const url = `${BASE_URL}/${id}`;
+
+      return await fetchWithTimeout(url, {
+        method: "DELETE"
+      });
+    }
+
+
+    // ============================================
+    // TEST ALL FUNCTIONS
+    // ============================================
+    async function testCRUD() {
+
+      console.log("---- GET ALL POSTS ----");
+      console.log(await getAllPosts(5));
+
+      console.log("---- GET SINGLE POST ----");
+      console.log(await getPost(1));
+
+      console.log("---- CREATE POST ----");
+      console.log(await createPost({
+        title: "New Post",
+        body: "This is a test post",
+        userId: 1
+      }));
+
+      console.log("---- UPDATE POST ----");
+      console.log(await updatePost(1, {
+        title: "Updated Title",
+        body: "Updated content",
+        userId: 1
+      }));
+
+      console.log("---- DELETE POST ----");
+      console.log(await deletePost(1));
+    }
+
+
+    // Run all tests
+    testCRUD();
+
+  </script>
+
+</body>
+</html>

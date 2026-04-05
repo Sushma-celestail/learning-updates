@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DOM Selection Practice</title>
+  <style>
+    .highlight {
+      background-color: yellow;
+    }
+    .card {
+      border: 1px solid black;
+      padding: 10px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sample Elements -->
+  <div id="main">
+    <div class="card">Card 1</div>
+    <div class="card">Card 2</div>
+  </div>
+
+  <p>This is normal text</p>
+  <p>This is important text</p>
+  <p>Another important message</p>
+
+  <input type="text" name="username" value="John">
+
+  <table border="1">
+    <tr><td>Row 1</td></tr>
+    <tr><td>Row 2</td></tr>
+    <tr><td>Row 3</td></tr>
+    <tr><td>Row 4</td></tr>
+  </table>
+
+  <script>
+    // ============================
+    // 1. Select by ID, Class, Tag
+    // ============================
+
+    // Select by ID → returns a SINGLE Element
+    const byId = document.getElementById("main");
+    console.log("By ID:", byId);
+    console.log("Type:", byId.constructor.name); // Element
+
+    // Select by Class → returns HTMLCollection (LIVE collection)
+    const byClass = document.getElementsByClassName("card");
+    console.log("By Class:", byClass);
+    console.log("Type:", byClass.constructor.name); // HTMLCollection
+
+    // Select by Tag → returns HTMLCollection
+    const byTag = document.getElementsByTagName("p");
+    console.log("By Tag:", byTag);
+    console.log("Type:", byTag.constructor.name); // HTMLCollection
+
+
+    // ============================
+    // 2. querySelector Examples
+    // ============================
+
+    // First .card inside #main
+    const firstCard = document.querySelector("#main .card");
+    console.log("First card inside #main:", firstCard);
+
+    // All EVEN table rows (nth-child starts from 1)
+    const evenRows = document.querySelectorAll("tr:nth-child(even)");
+    console.log("Even rows:", evenRows); // NodeList
+
+    // Input with specific name
+    const inputByName = document.querySelector("input[name='username']");
+    console.log("Input by name:", inputByName);
+
+
+    // ============================
+    // 3. querySelectorAll + forEach
+    // ============================
+
+    const paragraphs = document.querySelectorAll("p");
+
+    paragraphs.forEach(p => {
+      // Check if text contains "important"
+      if (p.textContent.includes("important")) {
+        p.classList.add("highlight"); // add CSS class
+      }
+    });
+
+
+    // ============================
+    // 4. Custom closest() Function
+    // ============================
+
+    function findAncestor(element, selector) {
+      // Start from parent
+      let current = element.parentElement;
+
+      while (current) {
+        // matches() checks if element satisfies selector
+        if (current.matches(selector)) {
+          return current;
+        }
+        // Move up the DOM tree
+        current = current.parentElement;
+      }
+
+      return null; // No match found
+    }
+
+    // Example usage:
+    const someCard = document.querySelector(".card");
+    const ancestor = findAncestor(someCard, "#main");
+
+    console.log("Ancestor found:", ancestor);
+
+
+    // ============================
+    // EXTRA UNDERSTANDING 💡
+    // ============================
+
+    /*
+    Element → single DOM node (getElementById)
+
+    HTMLCollection → LIVE collection
+    - updates automatically if DOM changes
+    - returned by getElementsByClassName, getElementsByTagName
+
+    NodeList → STATIC collection
+    - does NOT auto-update
+    - returned by querySelectorAll
+    - supports forEach()
+    */
+
+  </script>
+
+</body>
+</html>

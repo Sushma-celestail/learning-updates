@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notes App</title>
+
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .note { padding: 10px; margin: 10px 0; border-radius: 8px; }
+    .yellow { background: #fff3cd; }
+    .blue { background: #d1ecf1; }
+    .green { background: #d4edda; }
+  </style>
+</head>
+<body>
+
+  <h2>Notes App</h2>
+
+  <!-- INPUTS -->
+  <input id="title" placeholder="Title" />
+  <textarea id="content" placeholder="Content"></textarea>
+  <select id="color">
+    <option value="yellow">Yellow</option>
+    <option value="blue">Blue</option>
+    <option value="green">Green</option>
+  </select>
+  <button id="add">Add Note</button>
+
+  <br><br>
+
+  <!-- SEARCH + SORT -->
+  <input id="search" placeholder="Search..." />
+  <select id="sort">
+    <option value="date">Sort by Date</option>
+    <option value="title">Sort by Title</option>
+  </select>
+
+  <br><br>
+
+  <!-- EXPORT / IMPORT -->
+  <button id="export">Export JSON</button>
+  <input type="file" id="import" />
+
+  <p id="info"></p>
+
+  <!-- NOTES CONTAINER -->
+  <div id="notes"></div>
+
+  <script>
+    // ============================================
+    // STORAGE KEY
+    // ============================================
+    const STORAGE_KEY = "notesApp";
+
+    // ============================================
+    // LOAD NOTES FROM localStorage
+    // ============================================
+    function getNotes() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    }
+
+    // ============================================
+    // SAVE NOTES TO localStorage
+    // ============================================
+    function saveNotes(notes) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      } catch (e) {
+        // Handle storage full error
+        if (e.name === "QuotaExceededError") {
+          alert("Storage is full!");
+        }
+      }
+    }
+
+    // ============================================
+    // GENERATE UNIQUE ID
+    // ============================================
+    function generateId() {
+      return Date.now() + Math.random();
+    }
+
+    // ============================================
+    // RENDER NOTES
+    // ============================================
+    function renderNotes() {
+
+      const container = document.getElementById("notes");
+      const searchText = document.getElementById("search").value.toLowerCase();
+      const sortType = document.getElementById("sort").value;
+
+      let notes = getNotes();
+
+      // FILTER NOTES
+      notes = notes.filter(note =>
+        note.title.toLowerCase().includes(searchText) ||
+        note.content.toLowerCase().includes(searchText)
+      );
+
+      // SORT NOTES
+      if (sortType === "date") {
+        notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      } else {
+        notes.sort((a, b) => a.title.localeCompare(b.title));
+      }
+
+      container.innerHTML = "";
+
+      // DISPLAY NOTES
+      notes.forEach(note => {
+
+        const div = document.createElement("div");
+        div.className = `note ${note.color}`;
+
+        // TITLE INPUT (editable)
+        const title = document.createElement("input");
+        title.value = note.title;
+
+        // CONTENT TEXTAREA (editable)
+        const content = document.createElement("textarea");
+        content.value = note.content;
+
+        // DELETE BUTTON
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+
+        // DELETE LOGIC
+        delBtn.onclick = () => {
+          if (confirm("Delete this note?")) {
+            const updated = getNotes().filter(n => n.id !== note.id);
+            saveNotes(updated);
+            renderNotes();
+          }
+        };
+
+        // AUTO SAVE ON EDIT
+        title.oninput = content.oninput = () => {
+          const updated = getNotes().map(n => {
+            if (n.id === note.id) {
+              return {
+                ...n,
+                title: title.value,
+                content: content.value,
+                updatedAt: new Date().toISOString()
+              };
+            }
+            return n;
+          });
+          saveNotes(updated);
+        };
+
+        div.appendChild(title);
+        div.appendChild(content);
+        div.appendChild(delBtn);
+
+        container.appendChild(div);
+      });
+
+      // INFO DISPLAY
+      document.getElementById("info").textContent =
+        `Total: ${notes.length} | Last updated: ${new Date().toLocaleTimeString()}`;
+    }
+
+    // ============================================
+    // ADD NEW NOTE
+    // ============================================
+    document.getElementById("add").onclick = () => {
+
+      const title = document.getElementById("title").value.trim();
+      const content = document.getElementById("content").value.trim();
+      const color = document.getElementById("color").value;
+
+      if (!title || !content) return;
+
+      const newNote = {
+        id: generateId(),
+        title,
+        content,
+        color,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const notes = getNotes();
+      notes.push(newNote);
+
+      saveNotes(notes);
+      renderNotes();
+    };
+
+    // ============================================
+    // SEARCH + SORT EVENTS
+    // ============================================
+    document.getElementById("search").oninput = renderNotes;
+    document.getElementById("sort").onchange = renderNotes;
+
+    // ============================================
+    // EXPORT NOTES
+    // ============================================
+    document.getElementById("export").onclick = () => {
+      const data = JSON.stringify(getNotes(), null, 2);
+
+      const blob = new Blob([data], { type: "application/json" });
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "notes.json";
+      a.click();
+    };
+
+    // ============================================
+    // IMPORT NOTES
+    // ============================================
+    document.getElementById("import").onchange = (e) => {
+
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function () {
+        try {
+          const imported = JSON.parse(reader.result);
+
+          saveNotes(imported);
+          renderNotes();
+
+        } catch {
+          alert("Invalid JSON file");
+        }
+      };
+
+      reader.readAsText(file);
+    };
+
+    // ============================================
+    // INITIAL RENDER
+    // ============================================
+    renderNotes();
+
+  </script>
+
+</body>
+</html>

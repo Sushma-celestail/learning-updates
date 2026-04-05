@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* TOAST */
+.toast {
+    background: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    min-width: 250px;
+    position: relative;
+    animation: slideIn 0.3s;
+}
+
+/* TYPES */
+.toast.success { background: green; }
+.toast.error { background: red; }
+.toast.info { background: blue; }
+.toast.warning { background: orange; }
+
+/* PROGRESS BAR */
+.progress {
+    height: 4px;
+    background: yellow;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+/* ANIMATION */
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+</style>
+
+<div id="toast-container"></div>
+
+<script>
+class Toast {
+    constructor() {
+        this.container = document.getElementById("toast-container");
+        this.queue = [];
+        this.max = 5;
+    }
+
+    static getInstance() {
+        if (!Toast.instance) {
+            Toast.instance = new Toast();
+        }
+        return Toast.instance;
+    }
+
+    show(message, type = "info", duration = 3000) {
+
+        if (this.container.children.length >= this.max) {
+            this.queue.push({ message, type, duration });
+            return;
+        }
+
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+
+        toast.innerHTML = `
+            ${message}
+            <button style="float:right">X</button>
+            <div class="progress"></div>
+        `;
+
+        this.container.prepend(toast);
+
+        const progress = toast.querySelector(".progress");
+
+        let start = Date.now();
+        let timer;
+
+        const run = () => {
+            timer = setInterval(() => {
+                let elapsed = Date.now() - start;
+                let percent = 100 - (elapsed / duration) * 100;
+                progress.style.width = percent + "%";
+
+                if (elapsed >= duration) remove();
+            }, 50);
+        };
+
+        const remove = () => {
+            clearInterval(timer);
+            toast.remove();
+            this.next();
+        };
+
+        toast.querySelector("button").onclick = remove;
+
+        toast.onmouseenter = () => clearInterval(timer);
+        toast.onmouseleave = () => {
+            start = Date.now();
+            run();
+        };
+
+        if (duration > 0) run();
+    }
+
+    next() {
+        if (this.queue.length > 0) {
+            const { message, type, duration } = this.queue.shift();
+            this.show(message, type, duration);
+        }
+    }
+}
+
+// USAGE
+const toast = Toast.getInstance();
+
+toast.show("File saved successfully", "success", 3000);
+toast.show("Network error occurred", "error", 5000);
+toast.show("New message received", "info", 4000);
+toast.show("Low disk space", "warning", 0);
+</script>
+</body>
+</html>

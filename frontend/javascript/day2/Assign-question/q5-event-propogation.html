@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Propagation Playground</title>
+
+  <style>
+    /* Basic styling for visualization */
+    #grandparent {
+      padding: 30px;
+      background: #f8d7da;
+    }
+
+    #parent {
+      padding: 30px;
+      background: #d1ecf1;
+    }
+
+    #child {
+      padding: 10px 20px;
+    }
+
+    #log {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      height: 200px;
+      overflow-y: auto;
+      padding: 10px;
+      font-family: monospace;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===============================
+       NESTED STRUCTURE
+       =============================== -->
+
+  <!-- Outer container -->
+  <div id="grandparent">
+
+    <!-- Middle container -->
+    <div id="parent">
+
+      <!-- Inner clickable element -->
+      <button id="child">Click Me</button>
+
+    </div>
+  </div>
+
+  <!-- ===============================
+       CONTROL CHECKBOXES
+       =============================== -->
+
+  <!-- Toggle stopPropagation -->
+  <label>
+    <input type="checkbox" id="stop-prop" />
+    Stop Propagation on Parent
+  </label>
+
+  <br>
+
+  <!-- Toggle stopImmediatePropagation -->
+  <label>
+    <input type="checkbox" id="stop-imm" />
+    Stop Immediate on Parent
+  </label>
+
+  <!-- ===============================
+       LOG OUTPUT AREA
+       =============================== -->
+  <div id="log"></div>
+
+  <script>
+    // =====================================
+    // STEP 1: Select all required elements
+    // =====================================
+
+    const grandparent = document.getElementById("grandparent"); // Outer div
+    const parent = document.getElementById("parent");           // Middle div
+    const child = document.getElementById("child");             // Button
+
+    const stopPropCheckbox = document.getElementById("stop-prop"); // Checkbox for stopPropagation
+    const stopImmCheckbox = document.getElementById("stop-imm");   // Checkbox for stopImmediatePropagation
+
+    const logDiv = document.getElementById("log"); // Area to display logs
+
+
+    // =====================================
+    // STEP 2: Helper function to log output
+    // =====================================
+
+    function log(message) {
+      // Create a new div for each log line
+      const line = document.createElement("div");
+
+      // Set text content
+      line.textContent = message;
+
+      // Append log line to log container
+      logDiv.appendChild(line);
+
+      // Auto-scroll to bottom
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+
+    // =====================================
+    // STEP 3: Generic event handler creator
+    // =====================================
+
+    function createHandler(phaseName, elementName, isParent = false) {
+
+      return function (event) {
+
+        // Log phase, element, and eventPhase value
+        log(`${phaseName.toUpperCase()}: ${elementName} (phase=${event.eventPhase})`);
+
+        // =====================================
+        // Apply stopPropagation on parent (if checked)
+        // =====================================
+        if (isParent && stopPropCheckbox.checked && phaseName === "bubble") {
+          event.stopPropagation(); // Stops event from going to next parent
+        }
+
+        // =====================================
+        // Apply stopImmediatePropagation on parent (if checked)
+        // =====================================
+        if (isParent && stopImmCheckbox.checked && phaseName === "bubble") {
+          event.stopImmediatePropagation(); 
+          // Stops:
+          // 1. Further propagation
+          // 2. Other listeners on same element
+        }
+      };
+    }
+
+
+    // =====================================
+    // STEP 4: ADD EVENT LISTENERS
+    // =====================================
+
+    // ---------- CAPTURING PHASE ----------
+    // (Top → Down)
+
+    grandparent.addEventListener(
+      "click",
+      createHandler("capture", "grandparent"),
+      { capture: true } // Enable capturing
+    );
+
+    parent.addEventListener(
+      "click",
+      createHandler("capture", "parent"),
+      { capture: true }
+    );
+
+    child.addEventListener(
+      "click",
+      createHandler("capture", "child"),
+      { capture: true }
+    );
+
+
+    // ---------- BUBBLING PHASE ----------
+    // (Bottom → Up)
+
+    grandparent.addEventListener(
+      "click",
+      createHandler("bubble", "grandparent")
+    );
+
+    parent.addEventListener(
+      "click",
+      createHandler("bubble", "parent", true) // Mark as parent for stop logic
+    );
+
+    // Adding TWO listeners on parent to demonstrate stopImmediatePropagation
+    parent.addEventListener(
+      "click",
+      function () {
+        log("BUBBLE: parent SECOND listener");
+      }
+    );
+
+    child.addEventListener(
+      "click",
+      createHandler("bubble", "child")
+    );
+
+
+    // =====================================
+    // STEP 5: Clear logs on each click start
+    // =====================================
+
+    document.addEventListener("click", function () {
+      // Clear previous logs before new event cycle
+      logDiv.innerHTML = "";
+    }, { capture: true }); // Runs first before all others
+
+  </script>
+
+</body>
+</html>

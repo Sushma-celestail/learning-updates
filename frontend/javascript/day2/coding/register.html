@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+
+    <style>
+        form{
+            display: flex;
+            flex-direction: column;
+            width: 400px;
+            gap:10px;
+            height: 100vh;
+            justify-content: center;
+            justify-items: center;
+        }
+        input{
+            padding:8px;
+
+        }
+        small{
+            color:red;
+        }
+
+    </style>
+</head>
+<body>
+    <form id="form">
+        <input type="text" id="name" placeholder="Name">
+        <small id="nameError"></small>
+
+        <input type="email" id="email" placeholder="Email">
+        <small id="emailError"></small>
+
+        <input type="password" id="password" placeholder="password">
+        <small id="passError" ></small>
+        
+        <input type="password" id="comfirm" placeholder="Confirm password">
+        <small id="ConfirmError"></small>
+
+        <input type="number" id="age" placeholder="Age">
+        <small id="ageError"></small>
+        <div id="step1">
+            <input id="name" placeholder="Name">
+            <small id="nameError"></small>
+            <button type="button" onclick="nextStep()">Next</button>
+        </div>
+        <div id="step2" style="display:none;">
+            <input id="email" placeholder="Email">
+            <small id="emailError"></small>
+            <button type="button" onclick="submitForm()">Submit</button>
+            
+        </div>        
+        
+        </script>
+    </form>
+    <script src="register-form.js"></script>
+</body>
+</html>

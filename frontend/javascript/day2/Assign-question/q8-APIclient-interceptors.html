@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Axios API Service</title>
+
+  <!-- Include Axios via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+  <h2>Check Console for Output</h2>
+
+  <script>
+    // ============================================
+    // API SERVICE CLASS
+    // ============================================
+    class ApiService {
+
+      // Constructor receives base URL
+      constructor(baseURL) {
+
+        // Store auth token (initially null)
+        this.token = null;
+
+        // Create Axios instance with base config
+        this.api = axios.create({
+          baseURL: baseURL,     // Base API URL
+          timeout: 10000,       // 10 seconds timeout
+          headers: {
+            "Content-Type": "application/json" // Default header
+          }
+        });
+
+        // Initialize interceptors
+        this._setupInterceptors();
+      }
+
+
+      // ============================================
+      // SET AUTH TOKEN
+      // ============================================
+      setAuthToken(token) {
+        this.token = token; // Save token
+      }
+
+
+      // ============================================
+      // INTERCEPTORS SETUP
+      // ============================================
+      _setupInterceptors() {
+
+        // -----------------------------
+        // REQUEST INTERCEPTOR
+        // -----------------------------
+        this.api.interceptors.request.use(
+          (config) => {
+
+            // If token exists → attach Authorization header
+            if (this.token) {
+              config.headers.Authorization = `Bearer ${this.token}`;
+            }
+
+            // Log request info
+            console.log(`${config.method.toUpperCase()} ${config.baseURL}${config.url}`);
+
+            return config;
+          },
+          (error) => Promise.reject(error)
+        );
+
+
+        // -----------------------------
+        // RESPONSE INTERCEPTOR
+        // -----------------------------
+        this.api.interceptors.response.use(
+
+          // SUCCESS RESPONSE
+          (response) => {
+            // Return simplified response
+            return {
+              data: response.data,
+              status: response.status
+            };
+          },
+
+          // ERROR RESPONSE
+          async (error) => {
+
+            const originalRequest = error.config;
+
+            const status = error.response ? error.response.status : null;
+
+            // ==========================
+            // HANDLE 401 (Unauthorized)
+            // ==========================
+            if (status === 401) {
+              console.warn("Unauthorized — redirect to login");
+            }
+
+            // ==========================
+            // HANDLE 404
+            // ==========================
+            if (status === 404) {
+              console.error("Resource not found");
+            }
+
+            // ==========================
+            // HANDLE 500+
+            // ==========================
+            if (status >= 500) {
+
+              // Retry logic (max 2 retries)
+              if (!originalRequest._retryCount) {
+                originalRequest._retryCount = 0;
+              }
+
+              if (originalRequest._retryCount < 2) {
+                originalRequest._retryCount++;
+
+                console.warn(`Retrying request... Attempt ${originalRequest._retryCount}`);
+
+                return this.api(originalRequest); // Retry request
+              }
+            }
+
+            // Throw enriched error object
+            return Promise.reject({
+              message: error.message,
+              status: status,
+              originalError: error
+            });
+          }
+        );
+      }
+
+
+      // ============================================
+      // GET METHOD
+      // ============================================
+      async get(url, params = {}) {
+
+        // Send GET request with query params
+        return await this.api.get(url, { params });
+      }
+
+
+      // ============================================
+      // POST METHOD
+      // ============================================
+      async post(url, data) {
+
+        return await this.api.post(url, data);
+      }
+
+
+      // ============================================
+      // PUT METHOD
+      // ============================================
+      async put(url, data) {
+
+        return await this.api.put(url, data);
+      }
+
+
+      // ============================================
+      // DELETE METHOD
+      // ============================================
+      async delete(url) {
+
+        return await this.api.delete(url);
+      }
+    }
+
+
+    // ============================================
+    // TESTING THE API SERVICE
+    // ============================================
+
+    async function testAPI() {
+
+      // Create API instance
+      const api = new ApiService("https://jsonplaceholder.typicode.com");
+
+      // Set auth token
+      api.setAuthToken("my-jwt-token-123");
+
+      try {
+
+        // ---------------- GET ----------------
+        const posts = await api.get("/posts", { _limit: 5 });
+        console.log("GET:", posts);
+
+        // ---------------- POST ----------------
+        const newPost = await api.post("/posts", {
+          title: "Hello",
+          body: "World",
+          userId: 1
+        });
+        console.log("POST:", newPost);
+
+        // ---------------- PUT ----------------
+        const updated = await api.put("/posts/1", {
+          title: "Updated"
+        });
+        console.log("PUT:", updated);
+
+        // ---------------- DELETE ----------------
+        const deleted = await api.delete("/posts/1");
+        console.log("DELETE:", deleted);
+
+      } catch (err) {
+
+        // Handle errors thrown from interceptor
+        console.error("Error:", err);
+      }
+    }
+
+    // Run test
+    testAPI();
+
+  </script>
+
+</body>
+</html>

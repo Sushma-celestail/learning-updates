@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Alert System</title>
+
+    <style>
+        body{
+            font-family: Arial,sans-serif;
+            background: #111;
+            color: white;
+            padding:20px;
+        }
+        button {
+    margin: 5px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* ================= TOAST ================= */
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 10px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: 0.3s;
+  }
+
+  .toast.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast.success { background: green; }
+  .toast.info { background: blue; }
+  .toast.warning { background: orange; }
+  .toast.error { background: red; }
+
+  /* ================= MODAL ================= */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(240, 237, 237, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .overlay.show {
+    display: flex;
+  }
+
+  .modal {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+  }
+
+  .modal button {
+    margin-top: 10px;
+    color: rgb(255, 254, 254);
+  }
+
+  input {
+    width: 100%;
+    padding: 6px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+    <h2>Custom Alert System</h2>
+
+<!-- Toast buttons -->
+<button onclick="showToast('success!','sucess')">success</button>
+<button onclick="showToast('Info!','info')">info</button>
+<button onclick="showToast('warning!','warning')">Warning</button>
+<button onclick="showToast('Error!','error')">error</button>
+
+<br></br>
+
+<button onclick="testConfirm()">Open Confirm</button>
+<button onclick="testPrompt()">Open Prompt</button>
+<button onclick="runFlow()">Run full flow</button>
+
+
+<!-- modal -->
+<div class="overlay" id="overlay">
+    <div class="modal">
+        <h3 id="modalTitle"></h3>
+        <p id="modalMessage"></p>
+        <input id="modalInput" style="display:none;"/>
+
+        <button id="okBtn">OK</button>
+        <button id="cancelBtn">Cancel</button>
+    </div>
+</div>
+
+<script>
+    function showToast(message, type = "info") {
+  const t = document.createElement("div");
+  t.className = "toast " + type;
+  t.textContent = message;
+
+  document.body.appendChild(t);
+
+  requestAnimationFrame(() => t.classList.add("in"));
+
+  setTimeout(() => {
+    t.classList.remove("in");
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
+}
+
+/* ================= CONFIRM ================= */
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    const overlay = document.getElementById("overlay");
+    const msg = document.getElementById("modalMessage");
+    const input = document.getElementById("modalInput");
+
+    msg.textContent = message;
+    input.style.display = "none";
+
+    overlay.classList.add("show");
+
+    okBtn.onclick = () => {
+      overlay.classList.remove("show");
+      resolve(true);
+    };
+
+    cancelBtn.onclick = () => {
+      overlay.classList.remove("show");
+      resolve(false);
+    };
+  });
+}
+/* ================= PROMPT ================= */
+function showPrompt(message, placeholder = "") {
+  return new Promise((resolve) => {
+    const overlay = document.getElementById("overlay");
+    const msg = document.getElementById("modalMessage");
+    const input = document.getElementById("modalInput");
+
+    msg.textContent = message;
+    input.style.display = "block";
+    input.value = "";
+    input.placeholder = placeholder;
+
+    overlay.classList.add("show");
+    input.focus();
+
+    okBtn.onclick = () => {
+      overlay.classList.remove("show");
+      resolve(input.value || null);
+    };
+
+    cancelBtn.onclick = () => {
+      overlay.classList.remove("show");
+      resolve(null);
+    };
+
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") okBtn.click();
+      if (e.key === "Escape") cancelBtn.click();
+    };
+  });
+}
+
+
+/* ================= TEST FUNCTIONS ================= */
+async function testConfirm() {
+  const ok = await showConfirm("Delete this file?");
+  if (ok) showToast("Deleted!", "success");
+  else showToast("Cancelled", "info");
+}
+
+async function testPrompt() {
+  const name = await showPrompt("Enter your name:", "John");
+  if (name) showToast("Hello " + name, "success");
+}
+
+
+/* ================= FULL FLOW ================= */
+async function runFlow() {
+  const ok = await showConfirm("Delete old file?");
+  if (!ok) return showToast("Cancelled", "info");
+
+  const name = await showPrompt("Enter new file name:", "file.txt");
+  if (!name) return showToast("No name provided", "warning");
+
+  showToast("Created " + name, "success");
+}
+</script>
+
+</body>
+</html>

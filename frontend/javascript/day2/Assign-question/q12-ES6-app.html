@@ -1,0 +1,68 @@
+<!-- Q12. ES6 Modules — Modular App Architecture 
+
+Topics: Named/Default Exports, Dynamic Import, Barrel Files, Module Pattern 
+
+ 
+
+Problem Statement: 
+
+Refactor a monolithic script into a modular architecture with separate modules for validators, formatters, API service, storage service, and a dynamically loaded modal component. 
+
+ 
+
+Input: 
+
+// Module structure: 
+
+/src 
+
+  /utils 
+
+    validators.js (named: validateEmail, validatePhone, validatePassword) 
+
+    formatters.js (named: formatDate, formatCurrency, capitalize) 
+
+    index.js (barrel file re-exporting all) 
+
+  /services 
+
+    api.js (default: ApiService class) 
+
+    storage.js (default: StorageService class) 
+
+  /components 
+
+    modal.js (default: Modal class — dynamically imported) 
+
+  app.js (main entry point) 
+
+ 
+
+Expected Output: 
+
+// app.js imports: { validateEmail } from "./utils" 
+
+// Modal loaded only on button click via dynamic import() 
+
+// No global variables — everything through imports 
+
+ 
+
+Constraints: 
+
+Use named exports for utility functions 
+
+Use default exports for service classes 
+
+Create a barrel file utils/index.js that re-exports everything 
+
+Modal module is loaded via dynamic import() only when user clicks "Open Modal" 
+
+Use type="module" in the HTML script tag 
+
+No global variables — everything accessed through imports 
+
+Demonstrate tree-shaking benefit: import only validateEmail from the barrel  -->
+
+
+

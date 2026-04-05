@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Batch Rendering with DocumentFragment</title>
+
+  <style>
+    ul {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    li {
+      padding: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Batch Rendering List</h2>
+
+  <!-- Progress indicator -->
+  <p id="progress">Starting...</p>
+
+  <!-- Container where list will be rendered -->
+  <ul id="list-container"></ul>
+
+  <script>
+    /**
+     * Function: renderList
+     * Renders items in batches using DocumentFragment + requestAnimationFrame
+     */
+    function renderList(containerId, items, batchSize) {
+
+      // Get container element
+      const container = document.getElementById(containerId);
+
+      // Clear previous content (if any)
+      container.innerHTML = "";
+
+      // Select progress element
+      const progressEl = document.getElementById("progress");
+
+      // Track current index
+      let index = 0;
+
+      // Total items count
+      const total = items.length;
+
+      // Record start time using performance.now()
+      const startTime = performance.now();
+
+
+      /**
+       * Function to render one batch
+       */
+      function renderBatch() {
+
+        // Create a fragment (off-DOM container for performance)
+        const fragment = document.createDocumentFragment();
+
+        // Calculate end index for this batch
+        const end = Math.min(index + batchSize, total);
+
+        // Loop through batch items
+        for (let i = index; i < end; i++) {
+
+          // Create <li> element
+          const li = document.createElement("li");
+
+          // Set text content
+          li.textContent = items[i].text;
+
+          // Store id using data attribute
+          li.dataset.id = items[i].id;
+
+          // Append li to fragment (NOT directly to DOM)
+          fragment.appendChild(li);
+        }
+
+        // Append entire fragment to DOM in ONE operation
+        container.appendChild(fragment);
+
+        // Update current index
+        index = end;
+
+        // Update progress text
+        progressEl.textContent = `Rendered ${index}/${total}`;
+
+        // If more items remain → schedule next batch
+        if (index < total) {
+          requestAnimationFrame(renderBatch);
+        } else {
+          // All items rendered → log total time
+          const endTime = performance.now();
+          console.log(`Batch Rendering Time: ${(endTime - startTime).toFixed(2)} ms`);
+        }
+      }
+
+      // Start rendering first batch
+      renderBatch();
+    }
+
+
+    /**
+     * NON-OPTIMIZED VERSION (for comparison)
+     * Direct DOM insertion without batching or fragment
+     */
+    function renderListWithoutOptimization(containerId, items) {
+
+      const container = document.getElementById(containerId);
+
+      container.innerHTML = "";
+
+      const startTime = performance.now();
+
+      // Loop through all items at once
+      items.forEach(item => {
+
+        const li = document.createElement("li");
+
+        li.textContent = item.text;
+
+        li.dataset.id = item.id;
+
+        // Direct append to DOM (slow for large lists)
+        container.appendChild(li);
+      });
+
+      const endTime = performance.now();
+
+      console.log(`Non-Optimized Rendering Time: ${(endTime - startTime).toFixed(2)} ms`);
+    }
+
+
+    // ==========================
+    // INPUT DATA (10,000 items)
+    // ==========================
+
+    const items = Array.from({ length: 10000 }, (_, i) => ({
+      id: i + 1,
+      text: `Item ${i + 1}`
+    }));
+
+
+    // ==========================
+    // CALL FUNCTION
+    // ==========================
+
+    // Optimized version (batch rendering)
+    renderList("list-container", items, 500);
+
+    // Uncomment below to test slow version
+    // renderListWithoutOptimization("list-container", items);
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live DOM Search Filter</title>
+
+  <style>
+    /* Hide elements using a class (NOT inline styles as per constraint) */
+    .hidden {
+      display: none;
+    }
+
+    /* Basic styling for cards */
+    .card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Search input field -->
+  <input id="search" placeholder="Search..." />
+
+  <!-- Cards container -->
+  <div id="cards">
+
+    <!-- Each card contains title + description -->
+    <div class="card">
+      <h3>JavaScript Basics</h3>
+      <p>Learn variables and functions</p>
+    </div>
+
+    <div class="card">
+      <h3>CSS Grid</h3>
+      <p>Master grid layouts</p>
+    </div>
+
+    <div class="card">
+      <h3>React Hooks</h3>
+      <p>useState and useEffect</p>
+    </div>
+
+  </div>
+
+  <!-- Message when no results found -->
+  <p id="no-results" class="hidden">No results found</p>
+
+  <script>
+    // ===============================
+    // STEP 1: Select required elements
+    // ===============================
+
+    // Select the search input field
+    const searchInput = document.querySelector("#search");
+
+    // Select ALL cards using querySelectorAll (NodeList)
+    const cards = document.querySelectorAll(".card");
+
+    // Select the "No results" message
+    const noResults = document.querySelector("#no-results");
+
+
+    // ==========================================
+    // STEP 2: Add input event listener to search
+    // ==========================================
+
+    searchInput.addEventListener("input", function () {
+
+      // Get the search text and convert to lowercase
+      // (for case-insensitive comparison)
+      const searchText = searchInput.value.toLowerCase();
+
+      // Counter to track how many cards match
+      let matchCount = 0;
+
+
+      // ======================================
+      // STEP 3: Loop through each card
+      // ======================================
+
+      cards.forEach(function (card) {
+
+        // Get the text content of the entire card
+        // (includes both title and description)
+        const cardText = card.textContent.toLowerCase();
+
+        // ======================================
+        // STEP 4: Check if card matches search
+        // ======================================
+
+        if (cardText.includes(searchText)) {
+
+          // If match found → SHOW the card
+          card.classList.remove("hidden");
+
+          // Increase match counter
+          matchCount++;
+
+        } else {
+
+          // If no match → HIDE the card
+          card.classList.add("hidden");
+        }
+      });
+
+
+      // ======================================
+      // STEP 5: Show/Hide "No results" message
+      // ======================================
+
+      if (matchCount === 0) {
+        // No matches → show message
+        noResults.classList.remove("hidden");
+      } else {
+        // Matches found → hide message
+        noResults.classList.add("hidden");
+      }
+
+    });
+  </script>
+
+</body>
+</html>

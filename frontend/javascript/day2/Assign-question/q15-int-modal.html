@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Accessible Modal</title>
+
+<style>
+/* BACKDROP */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+}
+
+/* SHOW STATE */
+.modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* MODAL BOX */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 300px;
+    transition: transform 0.3s;
+}
+
+/* ANIMATION */
+.modal-backdrop.show .modal {
+    transform: translate(-50%, -50%) scale(1);
+}
+</style>
+</head>
+
+<body>
+
+<button id="openBtn">Open Modal</button>
+
+<script>
+function createModal({ title, content, onConfirm, onCancel }) {
+
+    // CREATE BACKDROP
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+
+    // CREATE MODAL
+    const modal = document.createElement("div");
+    modal.className = "modal";
+
+    // ARIA ATTRIBUTES
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "modal-title");
+
+    // CONTENT
+    modal.innerHTML = `
+        <h2 id="modal-title">${title}</h2>
+        <p>${content}</p>
+        <button id="confirm">Confirm</button>
+        <button id="cancel">Cancel</button>
+    `;
+
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+
+    let lastFocusedElement = null;
+
+    // FOCUSABLE ELEMENTS
+    const getFocusable = () =>
+        modal.querySelectorAll(
+            'button, input, textarea, select, a[href], [tabindex]:not([tabindex="-1"])'
+        );
+
+    // OPEN
+    function open() {
+        lastFocusedElement = document.activeElement;
+
+        backdrop.classList.add("show");
+
+        // PREVENT SCROLL
+        document.body.style.overflow = "hidden";
+
+        // FOCUS FIRST ELEMENT
+        setTimeout(() => {
+            getFocusable()[0].focus();
+        }, 0);
+    }
+
+    // CLOSE
+    function close() {
+        backdrop.classList.remove("show");
+
+        document.body.style.overflow = "";
+
+        // RESTORE FOCUS
+        if (lastFocusedElement) lastFocusedElement.focus();
+    }
+
+    // DESTROY
+    function destroy() {
+        backdrop.remove();
+    }
+
+    // ESC KEY
+    function handleKey(e) {
+        if (e.key === "Escape") close();
+
+        // FOCUS TRAP
+        if (e.key === "Tab") {
+            const focusable = getFocusable();
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    }
+
+    document.addEventListener("keydown", handleKey);
+
+    // CLICK OUTSIDE
+    backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) close();
+    });
+
+    // BUTTON EVENTS
+    modal.querySelector("#confirm").onclick = () => {
+        onConfirm && onConfirm();
+        close();
+    };
+
+    modal.querySelector("#cancel").onclick = () => {
+        onCancel && onCancel();
+        close();
+    };
+
+    return { open, close, destroy };
+}
+
+// USAGE
+const modal = createModal({
+    title: "Confirm",
+    content: "Are you sure?",
+    onConfirm: () => console.log("Yes"),
+    onCancel: () => console.log("No")
+});
+
+document.getElementById("openBtn").onclick = () => modal.open();
+</script>
+
+</body>
+</html>

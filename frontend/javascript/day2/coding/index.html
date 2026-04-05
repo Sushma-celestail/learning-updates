@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Example</title>
+
+    <style>
+        div {
+            min-width: 100px;
+            min-height: 100px;
+            padding: 30px;
+            border: 1px solid black;
+        }
+
+        #grandparent { background-color: lightblue; }
+        #parent { background-color: lightgreen; }
+        #child { background-color: lightcoral; }
+    </style>
+</head>
+<body>
+
+    <div id="grandparent">
+        Grandparent
+        <div id="parent">
+            Parent
+            <div id="child">Child</div>
+        </div>
+    </div>
+
+    <!-- ✅ Always place JS at bottom -->
+    <script src="event1.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Form Validation</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    .error {
+      color: red;
+      font-size: 12px;
+    }
+
+    .success {
+      color: green;
+      font-size: 12px;
+    }
+
+    .strength {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px;
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Registration Form</h2>
+
+  <!-- ============================
+       FORM START
+       ============================ -->
+  <form id="form" novalidate>
+
+    <!-- NAME -->
+    <label>Name</label>
+    <input id="name" type="text" required />
+    <div class="error" id="name-error"></div>
+
+    <!-- EMAIL -->
+    <label>Email</label>
+    <input id="email" type="email" required />
+    <div class="error" id="email-error"></div>
+
+    <!-- PHONE -->
+    <label>Phone</label>
+    <input id="phone" type="text" required />
+    <div class="error" id="phone-error"></div>
+
+    <!-- PASSWORD -->
+    <label>Password</label>
+    <input id="password" type="password" required />
+    <div class="strength" id="password-strength"></div>
+    <div class="error" id="password-error"></div>
+
+    <!-- CONFIRM PASSWORD -->
+    <label>Confirm Password</label>
+    <input id="confirm-password" type="password" required />
+    <div class="error" id="confirm-error"></div>
+
+    <!-- AGE -->
+    <label>Age</label>
+    <input id="age" type="number" required />
+    <div class="error" id="age-error"></div>
+
+    <!-- SUBMIT -->
+    <button type="submit">Register</button>
+
+  </form>
+
+  <!-- OUTPUT JSON -->
+  <pre id="output"></pre>
+
+  <script>
+    // ===============================
+    // STEP 1: Select form and inputs
+    // ===============================
+
+    const form = document.getElementById("form");
+
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const phoneInput = document.getElementById("phone");
+    const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirm-password");
+    const ageInput = document.getElementById("age");
+
+    const output = document.getElementById("output");
+
+
+    // ===============================
+    // STEP 2: Regex patterns
+    // ===============================
+
+    const nameRegex = /^[A-Za-z ]{2,}$/; // Letters + spaces, min 2 chars
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email pattern
+    const phoneRegex = /^\d{10}$/; // Exactly 10 digits
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+
+    // ===============================
+    // STEP 3: Helper to show errors
+    // ===============================
+
+    function showError(input, message, errorId) {
+      input.setCustomValidity(message); // Set browser validation message
+      document.getElementById(errorId).textContent = message;
+    }
+
+    function clearError(input, errorId) {
+      input.setCustomValidity(""); // Clear validation
+      document.getElementById(errorId).textContent = "";
+    }
+
+
+    // ===============================
+    // STEP 4: VALIDATIONS (on blur)
+    // ===============================
+
+    nameInput.addEventListener("blur", function () {
+      if (!nameRegex.test(nameInput.value)) {
+        showError(nameInput, "Name must be at least 2 letters only", "name-error");
+      } else {
+        clearError(nameInput, "name-error");
+      }
+    });
+
+    emailInput.addEventListener("blur", function () {
+      if (!emailRegex.test(emailInput.value)) {
+        showError(emailInput, "Invalid email format", "email-error");
+      } else {
+        clearError(emailInput, "email-error");
+      }
+    });
+
+    phoneInput.addEventListener("blur", function () {
+      if (!phoneRegex.test(phoneInput.value)) {
+        showError(phoneInput, "Phone must be 10 digits", "phone-error");
+      } else {
+        clearError(phoneInput, "phone-error");
+      }
+    });
+
+    ageInput.addEventListener("blur", function () {
+      const age = parseInt(ageInput.value);
+      if (age < 18 || age > 120) {
+        showError(ageInput, "Age must be between 18 and 120", "age-error");
+      } else {
+        clearError(ageInput, "age-error");
+      }
+    });
+
+
+    // ===============================
+    // STEP 5: PASSWORD VALIDATION (input)
+    // ===============================
+
+    passwordInput.addEventListener("input", function () {
+
+      const value = passwordInput.value;
+      const strengthEl = document.getElementById("password-strength");
+
+      // Check strength levels
+      if (value.length < 6) {
+        strengthEl.textContent = "Weak";
+        strengthEl.style.color = "red";
+      } else if (value.length < 8) {
+        strengthEl.textContent = "Medium";
+        strengthEl.style.color = "orange";
+      } else if (strongPasswordRegex.test(value)) {
+        strengthEl.textContent = "Strong";
+        strengthEl.style.color = "green";
+      }
+
+      // Validate full password rule
+      if (!strongPasswordRegex.test(value)) {
+        showError(passwordInput, "Password must be strong", "password-error");
+      } else {
+        clearError(passwordInput, "password-error");
+      }
+    });
+
+
+    // ===============================
+    // STEP 6: CONFIRM PASSWORD
+    // ===============================
+
+    confirmInput.addEventListener("blur", function () {
+      if (confirmInput.value !== passwordInput.value) {
+        showError(confirmInput, "Passwords do not match", "confirm-error");
+      } else {
+        clearError(confirmInput, "confirm-error");
+      }
+    });
+
+
+    // ===============================
+    // STEP 7: FORM SUBMIT
+    // ===============================
+
+    form.addEventListener("submit", function (e) {
+
+      e.preventDefault(); // Prevent default submission
+
+      // Trigger built-in validation
+      if (!form.checkValidity()) {
+        return; // Stop if invalid
+      }
+
+      // Collect form data using FormData API
+      const formData = new FormData(form);
+
+      // Convert to plain object
+      const data = Object.fromEntries(formData.entries());
+
+      // Remove confirm password from output
+      delete data["confirm-password"];
+
+      // Display JSON result
+      output.textContent = JSON.stringify(data, null, 2);
+    });
+
+  </script>
+
+</body>
+</html>

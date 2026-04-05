@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Delegation Todo List</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    li {
+      margin: 8px 0;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Completed task style */
+    .completed span {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Input to type todo -->
+  <input id="todo-input" placeholder="Add todo..." />
+
+  <!-- Button to add todo -->
+  <button id="add-btn">Add</button>
+
+  <!-- Todo list container -->
+  <ul id="todo-list"></ul>
+
+  <script>
+    // ===============================
+    // STEP 1: Select elements
+    // ===============================
+
+    const input = document.getElementById("todo-input");   // Input field
+    const addBtn = document.getElementById("add-btn");     // Add button
+    const list = document.getElementById("todo-list");     // UL list
+
+    let idCounter = 1; // Unique ID for each todo
+
+
+    // =========================================
+    // STEP 2: Add new todo item (button click)
+    // =========================================
+
+    addBtn.addEventListener("click", function () {
+
+      const text = input.value.trim(); // Remove extra spaces
+
+      // Prevent adding empty todos
+      if (text === "") return;
+
+      // Create <li>
+      const li = document.createElement("li");
+
+      // Store unique ID using data attribute
+      li.dataset.id = idCounter++;
+
+      // Create span to hold text
+      const span = document.createElement("span");
+      span.textContent = text;
+
+      // Create delete button
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "X";
+
+      // Append elements inside li
+      li.appendChild(span);
+      li.appendChild(delBtn);
+
+      // Append li to list
+      list.appendChild(li);
+
+      // Clear input field
+      input.value = "";
+    });
+
+
+    // =====================================================
+    // STEP 3: EVENT DELEGATION (Single listener on <ul>)
+    // =====================================================
+
+    list.addEventListener("click", function (event) {
+
+      // Find the closest <li> from clicked element
+      const li = event.target.closest("li");
+
+      // If click is outside li → ignore
+      if (!li) return;
+
+      // =====================================
+      // DELETE ITEM (if button clicked)
+      // =====================================
+
+      if (event.target.tagName === "BUTTON") {
+        li.remove(); // Remove the entire li
+        return;
+      }
+
+      // =====================================
+      // TOGGLE COMPLETE (if text clicked)
+      // =====================================
+
+      if (event.target.tagName === "SPAN") {
+        li.classList.toggle("completed"); // Toggle class
+      }
+    });
+
+
+    // =====================================================
+    // STEP 4: DOUBLE CLICK → EDIT MODE
+    // =====================================================
+
+    list.addEventListener("dblclick", function (event) {
+
+      // Only trigger if span (text) is double-clicked
+      if (event.target.tagName !== "SPAN") return;
+
+      const span = event.target;
+      const li = span.closest("li");
+
+      // Create input for editing
+      const editInput = document.createElement("input");
+
+      // Set current text as value
+      editInput.value = span.textContent;
+
+      // Replace span with input
+      li.replaceChild(editInput, span);
+
+      // Focus input immediately
+      editInput.focus();
+
+
+      // =====================================
+      // SAVE FUNCTION (on Enter or blur)
+      // =====================================
+
+      function saveEdit() {
+
+        const newText = editInput.value.trim();
+
+        // Prevent empty text
+        if (newText === "") {
+          li.remove(); // Option: delete empty item
+          return;
+        }
+
+        // Create new span with updated text
+        const newSpan = document.createElement("span");
+        newSpan.textContent = newText;
+
+        // Replace input with span
+        li.replaceChild(newSpan, editInput);
+      }
+
+      // Save when Enter key is pressed
+      editInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          saveEdit();
+        }
+      });
+
+      // Save when input loses focus
+      editInput.addEventListener("blur", saveEdit);
+    });
+
+  </script>
+
+</body>
+</html>

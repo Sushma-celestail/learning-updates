@@ -1,0 +1,257 @@
+<!-- Q11. Cookie Manager & Session Tracker 
+
+Topics: Cookies, document.cookie, Expiry, Parsing 
+
+ 
+
+Problem Statement: 
+
+Build a cookie management utility and a session tracker. 
+
+ 
+
+Part A — Cookie Manager: Write a CookieManager object with methods: set(name, value, options), get(name), getAll(), delete(name), has(name). 
+
+ 
+
+Part B — Session Tracker: Use the CookieManager to track: visit count, first visit timestamp, last visit timestamp, and preferred theme. 
+
+ 
+
+Input: 
+
+// Part A: 
+
+CookieManager.set("theme", "dark", { expires: 30, path: "/" }); 
+
+CookieManager.get("theme"); // "dark" 
+
+CookieManager.getAll(); // { theme: "dark", visits: "5", ... } 
+
+CookieManager.delete("theme"); 
+
+ 
+
+// Part B: 
+
+// On page load: visit count increments, timestamps update 
+
+ 
+
+Expected Output: 
+
+// Cookie string: "theme=dark; expires=...; path=/" 
+
+// getAll() returns parsed object of all cookies 
+
+// Session tracker shows: "Visit #5 | First: Jan 1 | Last: Jan 15" 
+
+ 
+
+Constraints: 
+
+set() must properly format the cookie string with all options (expires, path, secure, sameSite) 
+
+get() must parse document.cookie and handle URL-encoded values 
+
+getAll() returns an object of all cookies 
+
+delete() sets expiry to past date 
+
+Session tracker cookie expires after 30 days 
+
+Handle edge cases: cookies with = in values, empty values  -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cookie Manager & Session Tracker</title>
+</head>
+<body>
+
+  <h2>Session Tracker</h2>
+  <p id="session-info"></p>
+
+  <script>
+    // ============================================
+    // PART A: COOKIE MANAGER OBJECT
+    // ============================================
+    const CookieManager = {
+
+      // ------------------------------------------
+      // SET COOKIE
+      // ------------------------------------------
+      set(name, value, options = {}) {
+
+        // Encode name and value to handle special characters
+        let cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+        // Handle expiry (days → date string)
+        if (options.expires) {
+          const date = new Date();
+          date.setTime(date.getTime() + options.expires * 24 * 60 * 60 * 1000);
+          cookie += "; expires=" + date.toUTCString();
+        }
+
+        // Add path if provided
+        if (options.path) {
+          cookie += "; path=" + options.path;
+        }
+
+        // Secure flag
+        if (options.secure) {
+          cookie += "; secure";
+        }
+
+        // SameSite policy
+        if (options.sameSite) {
+          cookie += "; samesite=" + options.sameSite;
+        }
+
+        // Set cookie in browser
+        document.cookie = cookie;
+      },
+
+
+      // ------------------------------------------
+      // GET SINGLE COOKIE
+      // ------------------------------------------
+      get(name) {
+
+        // Encode name for comparison
+        const encodedName = encodeURIComponent(name) + "=";
+
+        // Split cookies into array
+        const cookies = document.cookie.split("; ");
+
+        for (let c of cookies) {
+
+          // Check if cookie starts with name=
+          if (c.startsWith(encodedName)) {
+
+            // Extract value part and decode it
+            return decodeURIComponent(c.substring(encodedName.length));
+          }
+        }
+
+        return null; // Not found
+      },
+
+
+      // ------------------------------------------
+      // GET ALL COOKIES
+      // ------------------------------------------
+      getAll() {
+
+        const result = {};
+
+        // If no cookies exist
+        if (!document.cookie) return result;
+
+        // Split cookies
+        const cookies = document.cookie.split("; ");
+
+        cookies.forEach(c => {
+
+          // Split ONLY first "=" to handle values containing "="
+          const index = c.indexOf("=");
+
+          const key = decodeURIComponent(c.substring(0, index));
+          const value = decodeURIComponent(c.substring(index + 1));
+
+          result[key] = value;
+        });
+
+        return result;
+      },
+
+
+      // ------------------------------------------
+      // DELETE COOKIE
+      // ------------------------------------------
+      delete(name) {
+
+        // Set expiry to past date to remove cookie
+        document.cookie = encodeURIComponent(name) +
+          "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+      },
+
+
+      // ------------------------------------------
+      // CHECK IF COOKIE EXISTS
+      // ------------------------------------------
+      has(name) {
+        return this.get(name) !== null;
+      }
+    };
+
+
+    // ============================================
+    // PART B: SESSION TRACKER
+    // ============================================
+
+    function updateSession() {
+
+      // Get existing values or initialize
+      let visits = parseInt(CookieManager.get("visits")) || 0;
+      let firstVisit = CookieManager.get("firstVisit");
+      let lastVisit = CookieManager.get("lastVisit");
+
+      // Increment visit count
+      visits++;
+
+      const now = new Date().toISOString();
+
+      // If first visit not set → set it
+      if (!firstVisit) {
+        firstVisit = now;
+        CookieManager.set("firstVisit", firstVisit, { expires: 30, path: "/" });
+      }
+
+      // Update last visit every time
+      lastVisit = now;
+
+      // Save updated values
+      CookieManager.set("visits", visits, { expires: 30, path: "/" });
+      CookieManager.set("lastVisit", lastVisit, { expires: 30, path: "/" });
+
+      // Preferred theme (example default)
+      if (!CookieManager.has("theme")) {
+        CookieManager.set("theme", "light", { expires: 30, path: "/" });
+      }
+
+      // ============================================
+      // DISPLAY SESSION INFO
+      // ============================================
+
+      const info = document.getElementById("session-info");
+
+      info.textContent =
+        `Visit #${visits} | First: ${new Date(firstVisit).toLocaleDateString()} | Last: ${new Date(lastVisit).toLocaleDateString()}`;
+    }
+
+
+    // ============================================
+    // TEST COOKIE MANAGER (OPTIONAL)
+    // ============================================
+
+    // Example usage:
+    CookieManager.set("theme", "dark", { expires: 30, path: "/" });
+
+    console.log("Theme:", CookieManager.get("theme"));
+
+    console.log("All Cookies:", CookieManager.getAll());
+
+    // ============================================
+    // RUN SESSION TRACKER ON PAGE LOAD
+    // ============================================
+    updateSession();
+
+  </script>
+
+</body>
+</html>

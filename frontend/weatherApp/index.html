@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Weather Dashboard - Search cities, view live weather data, and manage your favorite locations."
+    />
+    <title>Weather Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <!--
+      ============================================================
+      STRUCTURE OVERVIEW
+      ============================================================
+      - <header>       : App title + theme toggle button
+      - <main>
+          - .search-section   : Search bar + form validation feedback
+          - .weather-section  : Current weather card display area
+          - .favorites-section: Saved favorite cities list
+      - #toast-container     : Floating toast notification area
+      - #spinner-overlay     : Full-screen loading spinner
+      ============================================================
+    -->
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header" role="banner">
+      <div class="header-content">
+        <div class="logo-area">
+          <!-- Decorative SVG icon for the app logo -->
+          <svg
+            class="logo-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"
+              fill="url(#logoGrad)"
+            />
+            <path
+              d="M8 12a4 4 0 1 1 8 0"
+              stroke="#fff"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <defs>
+              <linearGradient
+                id="logoGrad"
+                x1="3"
+                y1="3"
+                x2="21"
+                y2="21"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop offset="0%" stop-color="#6366f1" />
+                <stop offset="100%" stop-color="#8b5cf6" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <h1 class="app-title">Weather Dashboard</h1>
+        </div>
+
+        <!-- Theme toggle: persisted in localStorage (Concept: localStorage + DOM manipulation) -->
+        <button
+          id="theme-toggle"
+          class="theme-btn"
+          aria-label="Toggle light/dark theme"
+          title="Toggle Theme"
+        >
+          <!-- Icon is injected dynamically by ui.js -->
+          <span class="theme-icon" aria-hidden="true"></span>
+          <span class="theme-label"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="app-main" role="main">
+      <!-- ── SEARCH SECTION ── -->
+      <section class="search-section" aria-label="City search">
+        <div class="search-container">
+          <!--
+            Concept: Form Validation using Constraint Validation API
+            - "required" + "pattern" attributes drive built-in validation
+            - JS reads .validity object to show custom messages
+          -->
+          <form
+            id="search-form"
+            class="search-form"
+            novalidate
+            aria-label="Search for a city"
+          >
+            <div class="input-wrapper">
+              <label for="city-input" class="sr-only">City name</label>
+              <svg
+                class="search-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="8"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M21 21l-4.35-4.35"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <input
+                type="text"
+                id="city-input"
+                class="city-input"
+                placeholder="Search for a city..."
+                autocomplete="off"
+                required
+                pattern="[A-Za-z\s\-]+"
+                aria-describedby="input-hint input-error"
+                aria-invalid="false"
+                aria-autocomplete="none"
+              />
+              <!-- Clear button -->
+              <button
+                type="button"
+                id="clear-btn"
+                class="clear-btn"
+                aria-label="Clear search input"
+                hidden
+              >
+                ✕
+              </button>
+            </div>
+
+            <!-- Validation error message (Concept: Form Validation) -->
+            <p
+              id="input-error"
+              class="input-error"
+              role="alert"
+              aria-live="polite"
+            ></p>
+            <p id="input-hint" class="input-hint">
+              Press Enter or click Search to look up weather
+            </p>
+
+            <button type="submit" id="search-btn" class="search-btn" aria-label="Search weather">
+              Search
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ── WEATHER DISPLAY SECTION ── -->
+      <section
+        class="weather-section"
+        aria-label="Current weather"
+        aria-live="polite"
+        aria-busy="false"
+      >
+        <!--
+          Cards are injected here dynamically by ui.js
+          using DocumentFragment for performance (Concept: Performance / DocumentFragment)
+        -->
+        <div id="weather-cards-container" class="weather-cards-container">
+          <!-- Weather cards rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ── FAVORITES SECTION ── -->
+      <section class="favorites-section" aria-label="Favorite cities">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="icon-star"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+              />
+            </svg>
+            Favorite Cities
+          </h2>
+          <span
+            id="favorites-count"
+            class="favorites-count"
+            aria-label="Number of favorites"
+          >0</span>
+        </div>
+
+        <!--
+          Concept: Event Delegation
+          A single 'click' listener is placed on this <ul>.
+          It handles clicks on any favorite item's "load" or "remove" button
+          without attaching individual listeners to each item.
+        -->
+        <ul
+          id="favorites-list"
+          class="favorites-list"
+          role="list"
+          aria-label="List of favorite cities"
+        >
+          <!-- Favorite city items injected by JS -->
+        </ul>
+
+        <!-- Empty state shown when no favorites exist -->
+        <div id="favorites-empty" class="favorites-empty" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+          </svg>
+          <p>No favorites yet. Search a city and click ★ to save it!</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== TOAST NOTIFICATIONS ===== -->
+    <!--
+      Concept: Error Handling
+      Toast messages for network errors, 404s, API limits, etc.
+      aria-live="polite" ensures screen readers announce new toasts.
+    -->
+    <div
+      id="toast-container"
+      class="toast-container"
+      aria-live="polite"
+      aria-atomic="false"
+      role="status"
+    ></div>
+
+    <!-- ===== LOADING SPINNER OVERLAY ===== -->
+    <!--
+      Concept: Loading State
+      Shown while fetch requests are in-flight.
+      aria-busy on <section> also updates to communicate state.
+    -->
+    <div id="spinner-overlay" class="spinner-overlay" hidden aria-hidden="true">
+      <div class="spinner" role="status" aria-label="Loading weather data">
+        <div class="spinner-ring"></div>
+        <span class="spinner-text">Fetching weather...</span>
+      </div>
+    </div>
+
+    <!--
+      ES6 Modules Entry Point (Concept: ES6 Modules)
+      type="module" enables import/export syntax.
+      app.js orchestrates all other modules.
+    -->
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
