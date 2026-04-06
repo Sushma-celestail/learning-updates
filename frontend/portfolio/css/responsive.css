@@ -64,8 +64,8 @@
   height: 100vh;
   background: var(--color-bg-secondary);
   border-left: 1px solid var(--color-border);
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
   padding: var(--space-12) var(--space-8);
   gap: var(--space-4);

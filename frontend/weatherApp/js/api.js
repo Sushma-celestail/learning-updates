@@ -6,7 +6,7 @@
  */
 
 // Replace with a valid OpenWeatherMap API key (Requirement: Fetch data from a weather API)
-const API_KEY = '22e9fb05f7c4f7cfb4a419e55b9c6bd8';
+const API_KEY = '58abdc841d8062a09f5624e2c8d7259b';
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
 /**
