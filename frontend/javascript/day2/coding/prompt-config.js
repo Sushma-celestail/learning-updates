@@ -8,6 +8,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+
 // Helper function to ask questions (Promise-based)
 function ask(question) {
   return new Promise((resolve) => {

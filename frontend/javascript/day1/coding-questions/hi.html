@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            padding: 20px;
+        }
+        #text {
+            width: 200px;
+            height: 30px;
+            margin: 20px;
+        }
+         #password {
+            width: 200px;
+            height: 30px;
+            margin: 20px;
+        }
+        #container{
+            background-color: lightblue;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+         #btn {
+            width: 100px;
+            height: 30px;
+            display: flex;
+                justify-content: center;
+            align-items: center;
+                margin: 20px;
+                flex-direction: column;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="container">
+        <input type="text" id="text" placeholder="Enter your name">
+        <input type="password" id="password" placeholder="Enter your password">
+        <button id="btn" >click me</button>
+    </div>
+    <script>
+const btn = document.getElementById("btn");
+
+btn.addEventListener("click", function () {
+    const name = document.getElementById("text").value;
+    const password = document.getElementById("password").value;
+
+    // Store dynamically
+    localStorage.setItem("name", name);
+    sessionStorage.setItem("password", password);
+   document.cookie = "name="+name+"; max-age=86400; path=/";
+
+    console.log("LocalStorage:", localStorage.getItem("name"));
+    console.log("SessionStorage:", sessionStorage.getItem("password"));
+    console.log("Cookies:", document.cookie);
+
+    console.log("button clicked");
+
+    document.getElementById("text").value = "Welcome to JavaScript";
+});
+</script>
+</body>
+</html>

@@ -78,17 +78,15 @@ function deepMerge(target, source) {
         const targetValue = target[key];
         const sourceValue = source[key];
 
-        // Case 1: दोनों arrays हैं → concatenate
+      
         if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
             result[key] = [...targetValue, ...sourceValue];
         }
 
-        // Case 2: दोनों objects हैं → recursive merge
         else if (isObject(targetValue) && isObject(sourceValue)) {
             result[key] = deepMerge(targetValue, sourceValue);
         }
 
-        // Case 3: बाकी सब → source overrides (includes null, primitives)
         else {
             result[key] = sourceValue;
         }

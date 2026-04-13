@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>JavaScript async / await</h1>
+<p id="demo"></p>
+
+<script>
+// Function to display something
+function myDisplayer(some) {
+  document.getElementById("demo").innerHTML = some;
+}
+
+function step1() {
+  return Promise.resolve("A");
+}
+
+async function run() {
+  let value = await step1();
+  myDisplayer(value);
+}
+
+run();
+</script>
+
+</body>
+</html>

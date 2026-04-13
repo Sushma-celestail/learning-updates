@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>JavaScript Promises</h1>
+<h2>The .then() Method</h2>
+
+<p id="demo"></p>
+
+<script>
+// Funtion to display something
+function myDisplayer(some) {
+  document.getElementById("demo").innerHTML = some;
+}
+
+// Create a Promise Object
+let myPromise = new Promise(function(resolve, reject) {
+  ok = true;
+
+// Code that might take some time goes here
+
+  if (ok) {
+    resolve("OK");
+  } else {
+    reject("Error");
+  }
+});
+
+// Using then() to display the result
+myPromise.then(
+  function(value) {myDisplayer(value)},
+  function(value) {myDisplayer(value)}
+);
+</script>
+
+</body>
+</html>
