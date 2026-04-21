@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+
+  <head>
+  <meta charset="UTF-8" />
+  <title>4 Section App</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { font-family: Arial; }
+    .container { display: flex; gap: 20px; }
+    .left { width: 50%; }
+    .right { width: 50%; }
+    .section { border: 1px solid #333; padding: 10px; margin-top: 10px; }
+  </style>
+</head> 
+<body>
+
+<div class="container">
+  <div class="left">
+    <!-- Section 1 -->
+    <div id="section1" class="section">
+      <h3  id="h3tag" lang="ka">Section 1</h3> 
+      <h6 lang="ka">Section 1</h6>
+      <h6 lang="ka">Saction 1</h6>
+      <h8 lang="ka">Section 1</h8> 
+      <p>Section</p>
+      <button onclick="showSection2()">Show Section 2</button>
+    </div>
+    <!-- Section 2 --> 
+    <div id="section2" class="section" style="display:none;">
+      <h3 id="text">Section 2</h3>
+      <button onclick="showSection3()">Show Section 3</button>
+    </div>
+  </div>
+
+  <div class="right">
+    <!-- Section 3 -->
+    <div id="section3" class="section" style="display:none;">
+      <h3>Section 3</h3>
+      <button onclick="renderReactSection4()">Show Section 4 (React)</button>
+    </div>
+
+    <!-- Section 4 React Mount -->
+    <div id="react-root"></div>
+  </div>
+</div>
+
+<script>
+  function showSection2() {
+    document.getElementById('section2').style.display = 'block';
+  }
+
+  function showSection3() {
+    document.getElementById('section3').style.display = 'block';
+  }
+
+  function renderReactSection4() {
+    const root = ReactDOM.createRoot(document.getElementById('react-root'));
+    root.render(React.createElement(Section4));
+  }
+</script>
+
+<script type="text/babel">
+  function Section4() {
+
+    const showOnlySection1 = () => {
+      // Hide all sections except section 1
+      document.getElementById('section2').style.display = 'none';
+      document.getElementById('section3').style.display = 'none';
+      document.getElementById('react-root').innerHTML = '';
+
+      // Ensure section 1 is visible
+      document.getElementById('section1').style.display = 'block';
+    };
+
+    return (
+      <div className="section">
+        <h3>Section 4 (React)</h3>
+        <p>This is rendered using React</p>
+        <button onClick={showOnlySection1}>
+          Go Back to Section 1
+        </button>
+      </div>
+    );
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div class="container">
+        <form >
+            <h1 style="text-align: center; margin-bottom: 20px;">Registration Form</h1>
+            <div class="input-group">
+                <label >Username</label>
+                <input type="text" name="name" placeholder="Enter your Name" required />
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Enter your mail" required/>
+            </div>
+          
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" placeholder="+919273643892"/>
+            </div>
+            <div class="input-group">
+                <label>Gender</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="gender">Male</label>
+                    <label><input type="radio" name="gender">Female</label>
+                </div>
+      
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" placeholder="Enter your number">
+            </div>
+
+            <div class="input-group">
+                <label>Date of Birth</label>
+                <input type="date">
+            </div>
+            <div class="input-group">
+                <label>Country</label>
+                <select>
+                    <option>Select Country</option>
+                    <option>India</option>
+                    <option>USA</option>
+                    <option>UK</option>
+                </select>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>
+

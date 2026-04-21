@@ -11,7 +11,7 @@ function Dashboard(){
         <div style ={{
             background: theme === "dark" ? "#222" : "#fff",
             color:  theme === "dark" ? "#fff" :"#000",
-            padding: "20px"
+            padding: "15px"
         }}>
             <h1>Welcome, {user.name}</h1>
             <button onClick={toggleTheme}>Toggle Theme  </button>

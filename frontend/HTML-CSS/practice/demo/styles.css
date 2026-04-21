@@ -1,0 +1,136 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background: linear-gradient(100deg,#f2eff5,#838384);
+    padding-top: 70px; /* space for navbar */
+}
+
+.container{
+    width: 80%;
+    max-width: 400px;
+    margin: 40px auto; /* center horizontally + spacing */
+}
+.navbar {
+  position: fixed;   
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #2575fc;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+.nav-link{
+    display: flex;
+    flex-direction: row;
+    padding-inline: 20px;
+    align-items: center;
+}
+
+.form{
+    padding: 25px;
+    border-radius: 10px;
+    background: #fff;
+}
+.form h2{
+    margin-top: 10%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.input-group{
+    margin-bottom: 15px;
+}
+.input-group label{
+    display:block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    
+}
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+.input-group input:hover,
+.input-group select:hover{
+    border-color: #2575fc;
+}
+.radio-group{
+    display: flex;
+    justify-content: flex-start;
+    align-items: left;
+    gap: 15px;
+}
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 5px;  
+    cursor: pointer;
+}
+.input-group checkbox{
+    display: flex;
+
+}
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #6a11cb;
+  box-shadow: 0 0 5px rgba(106,17,203,0.5);
+}
+.input-group.checkbox {
+    display: flex;
+    justify-content: flex-start; /* left alignment */
+    align-items: left;
+   
+}
+.input-group.checkbox label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  
+    cursor: pointer;
+}
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #2575fc;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+/* Logo */
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Nav links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+/* Links */
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  transition: 0.3s;
+}
