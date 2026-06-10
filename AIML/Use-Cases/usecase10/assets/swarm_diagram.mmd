@@ -1,0 +1,45 @@
+﻿flowchart TD
+    U["Trader / Streamlit Chat UI"] --> NEMO["NeMo Guardrails\nInput safety: topic + prompt injection"]
+    NEMO -->|blocked| BLOCK["Blocked response"]
+    NEMO -->|allowed| ROUTER["Last Active Agent Checkpoint\nSupervisor-less swarm routing"]
+
+    ROUTER --> R["Research Agent\nweb_search + ticker_lookup"]
+    ROUTER --> K["Risk Agent\n10% portfolio exposure gate"]
+    ROUTER --> E["Execution Agent\nmock broker tool"]
+
+    R <--> K
+    K <--> E
+    E <--> R
+
+    MEM["Mem0 Memory\nEpisodic rationales + semantic risk prefs"] <--> R
+    MEM <--> K
+
+    R --> OUT["Output Guardrail\nexecute_trade requires risk gate"]
+    K --> OUT
+    OUT -->|rejected or missing risk approval| SAFE["Execution blocked"]
+    OUT -->|risk approved| HITLQ{"Trade > $1,000?"}
+
+    HITLQ -->|yes| INT["LangGraph interrupt()"]
+    INT --> HUMAN["Human Approval"]
+    HUMAN -->|reject| HREJ["No broker call"]
+    HUMAN -->|approve| BROKER["Mock Broker API"]
+    HITLQ -->|no| BROKER
+
+    BROKER --> PORT["Paper Portfolio Store"]
+
+    R --> LF["Langfuse spans"]
+    K --> LF
+    E --> LF
+    INT --> LF
+    SAFE --> LF
+
+    R --> AUDIT["audit.jsonl\nhash-chained immutable log"]
+    K --> AUDIT
+    E --> AUDIT
+    NEMO --> AUDIT
+    OUT --> AUDIT
+    INT --> AUDIT
+    HUMAN --> AUDIT
+
+    AUDIT --> VERIFY["verify_audit.py\ntamper detection"]
+    AUDIT --> EVAL["daily_eval.py\nsafety violation rate\ntool-call accuracy\nrisk rejection rate"]

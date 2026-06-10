@@ -1,0 +1,6 @@
+[server]
+# Exclude heavy ML packages from file watching to suppress torchvision warnings
+fileWatcherType = "none"
+
+[browser]
+gatherUsageStats = false

@@ -1,0 +1,9 @@
+mem0ai==2.0.2
+
+langchain
+
+langchain-google-genai
+
+chromadb
+
+python-dotenv

@@ -1,0 +1,34 @@
+{
+  "demo_trader": [
+    {
+      "memory": "User wanted to invest in technology leaders after strong AI demand.",
+      "memory_type": "episodic",
+      "metadata": {}
+    },
+    {
+      "memory": "User previously preferred paper trades before committing real capital.",
+      "memory_type": "episodic",
+      "metadata": {}
+    },
+    {
+      "memory": "User asked to avoid oversized single-stock exposure.",
+      "memory_type": "episodic",
+      "metadata": {}
+    },
+    {
+      "memory": "Risk preference: keep one stock at or below 10% of the portfolio.",
+      "memory_type": "semantic",
+      "metadata": {}
+    },
+    {
+      "memory": "Research rationale for MSFT: Cloud and AI platform revenue continue to support a resilient large-cap profile. (Fallback brief; live web search unavailable.) Memories considered: User previously preferred paper trades before committing real capital.; User wanted to invest in technology leaders after strong AI demand.; User asked to avoid oversized single-stock exposure.",
+      "memory_type": "episodic",
+      "metadata": {}
+    },
+    {
+      "memory": "Research rationale for AAPL: Services revenue is steady while device-cycle growth remains more muted. (Fallback brief; live web search unavailable.) Memories considered: User previously preferred paper trades before committing real capital.; Research rationale for MSFT: Cloud and AI platform revenue continue to support a resilient large-cap profile. (Fallback brief; live web search unavailable.) Memories considered: User previously preferred paper trades before committing real capital.; User wanted to invest in technology leaders after strong AI demand.; User asked to avoid oversized single-stock exposure.; User wanted to invest in technology leaders after strong AI demand.",
+      "memory_type": "episodic",
+      "metadata": {}
+    }
+  ]
+}

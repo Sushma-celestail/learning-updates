@@ -1,0 +1,64 @@
+[build-system]
+requires      = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+# ---------------------------------------------------------------------------
+# Workspace members — each use-case is a separate package
+# ---------------------------------------------------------------------------
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["shared*", "uc01_docs_buddy*", "uc02_hybrid_search*"]
+
+# ---------------------------------------------------------------------------
+# Project metadata
+# ---------------------------------------------------------------------------
+[project]
+name        = "ai-intern-monorepo"
+version     = "0.1.0"
+description = "AI Intern use-cases: Docs Buddy (UC01) + Hybrid Search RAG (UC02)"
+requires-python = ">=3.11"
+
+dependencies = [
+    # Core LangChain
+    "langchain>=0.3.13",
+    "langchain-core>=0.3.0",
+    "langchain-community>=0.3.13",
+    "langchain-text-splitters>=0.3.4",
+    "langchain-google-genai>=2.0.7",
+    "langchain-chroma>=0.1.4",
+
+    # Vector store
+    "chromadb>=0.5.23",
+
+    # Embeddings / reranking
+    "sentence-transformers>=3.0.0",   # local cross-encoder (UC02)
+    "rank-bm25>=0.2.2",               # BM25 keyword retrieval (UC02)
+
+    # Document loaders
+    "pypdf>=4.0.0",                   # PDF loader (UC02)
+    "beautifulsoup4>=4.12.3",         # HTML parsing
+    "lxml>=5.3.0",                    # fast XML/HTML
+
+    # UI
+    "streamlit>=1.41.1",
+
+    # Observability (UC02)
+    "langfuse>=2.0.0",
+
+    "langchain-classic>=0.0.1",           # EnsembleRetriever (LangChain 1.x)
+
+    # Utilities
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+cohere = ["cohere>=5.0.0"]           # Cohere reranker backend (UC02 optional)
+dev    = ["pytest>=8.3.4", "pytest-asyncio>=0.23.0"]
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths    = ["uc01_docs_buddy/tests", "uc02_hybrid_search/tests"]
+markers      = ["integration: requires API key and ingested data"]
+addopts      = "-v --tb=short"

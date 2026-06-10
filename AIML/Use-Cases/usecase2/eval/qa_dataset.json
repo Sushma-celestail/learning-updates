@@ -1,0 +1,12 @@
+[
+  {
+    "question": "How to create FastAPI middleware?",
+    "answer": "Use @app.middleware...",
+    "source": "fastapi_guide.pdf"
+  },
+  {
+    "question": "How do I handle async requests?",
+    "answer": "Use async def and await keywords.",
+    "source": "async_python.pdf"
+  }
+]

@@ -1,0 +1,11 @@
+﻿python-dotenv
+requests
+beautifulsoup4
+lxml
+streamlit
+chromadb
+langchain
+langchain-community
+langchain-text-splitters
+langchain-google-genai
+langchain-chroma

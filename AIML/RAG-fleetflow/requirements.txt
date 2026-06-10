@@ -1,0 +1,11 @@
+
+beautifulsoup4>=4.12.3      # HTML parsing library for processing web content
+chromadb>=0.5.23            # Vector database for embedding storage and similarity search
+langchain>=0.3.13           # Main LangChain framework for LLM application development
+langchain-chroma>=0.1.4     # ChromaDB integration package for LangChain vector stores
+langchain-community>=0.3.13 # Community extensions including document loaders
+langchain-google-genai>=2.0.7 # Google Gemini API integration for embeddings and chat
+langchain-text-splitters>=0.3.4 # Document chunking utilities
+lxml>=5.3.0                 # Fast XML/HTML processing library
+pytest>=8.3.4              # Python testing framework
+streamlit>=1.41.1           # Web app framework for the chat interface

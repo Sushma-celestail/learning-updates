@@ -1,0 +1,47 @@
+# INPUT RAIL 1 — Jailbreak / Prompt Injection
+
+define flow check jailbreak
+  $is_safe = execute llamaguard_input_check
+
+  if not $is_safe
+    bot refuse jailbreak
+    stop
+
+
+define bot refuse jailbreak
+  "I'm sorry, I can't help with that. This request was flagged as potentially harmful."
+
+
+# INPUT RAIL 2 — Topic Restriction
+
+define flow check topic
+  $on_topic = execute check_topic_allowed
+
+  if not $on_topic
+    bot refuse off topic
+    stop
+
+
+define bot refuse off topic
+  "I'm a cooking assistant and can only help with food, recipes, ingredients, kitchen tools, food safety, nutrition basics, and meal planning."
+
+
+# OUTPUT RAIL 1 — PII
+
+define flow check pii output
+  $redacted = execute redact_pii(text=$bot_message)
+  $bot_message = $redacted
+
+
+# OUTPUT RAIL 2 — Output Safety
+
+define flow check output safety
+  $is_safe = execute llamaguard_output_check(text=$bot_message)
+
+  if not $is_safe
+    bot refuse unsafe output
+    stop
+
+
+define bot refuse unsafe output
+  "I'm sorry, I cannot provide that response as it was flagged as unsafe."

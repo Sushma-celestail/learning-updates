@@ -1,0 +1,3 @@
+{"action": "one", "agent": "research_agent", "hash": "e4340972ed64ad206a301df1d435c07495cda7caf2c26612b0edbf3b2399d4a6", "payload": {"value": 1}, "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000"}
+{"action": "two", "agent": "risk_agent", "hash": "6fc9cf3c5680012ddbe475902930cff39149be70ea31937d10a912d08ecfb1cf", "payload": {"value": 200}, "prev_hash": "e4340972ed64ad206a301df1d435c07495cda7caf2c26612b0edbf3b2399d4a6"}
+{"action": "three", "agent": "execution_agent", "hash": "dc50035d688e2f2252b657fda1704cac5e82470cab57b6a670b22e8a78bc7e25", "payload": {"value": 3}, "prev_hash": "6fc9cf3c5680012ddbe475902930cff39149be70ea31937d10a912d08ecfb1cf"}

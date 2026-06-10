@@ -1,0 +1,7 @@
+langgraph>=1.0
+langchain>=1.2
+langchain-google-genai
+streamlit
+python-dotenv
+rich
+

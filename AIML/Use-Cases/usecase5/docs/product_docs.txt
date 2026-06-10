@@ -1,0 +1,7 @@
+# docs/product_docs.txt
+
+Product Documentation:
+- How to reset your password: Go to Settings > Security > Reset Password.
+- Billing FAQ: You can view invoices in the Billing section of your account.
+- Technical troubleshooting: If the app crashes, try restarting it.
+- Updating email: Navigate to Profile > Email and update your address.

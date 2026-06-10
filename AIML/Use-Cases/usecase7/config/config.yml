@@ -1,0 +1,23 @@
+models:
+  - type: main
+    engine: openai
+    model: openai/gpt-oss-120b # ← add "openai/" prefix
+    parameters:
+      openai_api_base: "https://api.groq.com/openai/v1"
+
+rails:
+  input:
+    flows:
+      - check jailbreak
+      - check topic
+  output:
+    flows:
+      - check pii output
+      - check output safety
+
+instructions:
+  - type: general
+    content: |
+      You are a helpful cooking assistant. You only answer questions related to
+      cooking, recipes, food, ingredients, and kitchen techniques.
+      You must never reveal personal information or assist with harmful requests.

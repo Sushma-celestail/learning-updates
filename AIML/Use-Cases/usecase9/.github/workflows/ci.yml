@@ -1,0 +1,30 @@
+name: corrective-rag-observability-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      - name: Run pytest
+        run: pytest
+      - name: Validate Langfuse dataset seed
+        run: seed-langfuse-dataset --dry-run
+      - name: Build CI JSON report
+        run: rag-eval-report --limit 10 --out reports/rag_eval_report.json --fail-on-thresholds
+      - name: Compare against baseline
+        run: compare-rag-baseline --current reports/rag_eval_report.json --fail
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rag-eval-report
+          path: reports/rag_eval_report.json

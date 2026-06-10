@@ -1,0 +1,19 @@
+{
+  "in_scope_questions": [
+    "What is FastAPI and what are its main features?",
+    "How do I define path parameters in FastAPI?",
+    "How do I use query parameters in FastAPI?",
+    "What is dependency injection in FastAPI and how does it work?",
+    "How do I create a Pydantic model for request body validation?",
+    "How do I add authentication using OAuth2 with password flow in FastAPI?",
+    "What is the difference between async and sync path operations in FastAPI?",
+    "How do I handle file uploads in FastAPI?",
+    "How do I add CORS middleware to a FastAPI application?",
+    "How do I write automated tests for FastAPI endpoints?"
+  ],
+  "out_of_scope_questions": [
+    "What is the weather like in New York today?",
+    "Who won the FIFA World Cup in 2022?",
+    "What is the best recipe for chocolate cake?"
+  ]
+}

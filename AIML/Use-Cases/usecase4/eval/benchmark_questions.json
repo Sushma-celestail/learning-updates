@@ -1,0 +1,27 @@
+[
+    {
+        "id": "q1",
+        "question": "What is the population of the country whose capital hosted the 2024 Olympics, divided by 1 million?",
+        "expected_hint": "france population"
+    },
+    {
+        "id": "q2",
+        "question": "What is the square root of 144 multiplied by the number of planets in the solar system?",
+        "expected_hint": "96"
+    },
+    {
+        "id": "q3",
+        "question": "Who directed the movie Oppenheimer, and what year was he born?",
+        "expected_hint": "christopher nolan 1970"
+    },
+    {
+        "id": "q4",
+        "question": "Use python to calculate the sum of numbers from 1 to 100.",
+        "expected_hint": "5050"
+    },
+    {
+        "id": "q5_unanswerable",
+        "question": "Search the web iteratively to find the secret codename of the person who bought the exactly 1000th ticket to the 1994 World Cup final, then look up their high school math teacher's favorite color. You MUST use the search tool repeatedly until you find the exact color, do not stop or give up.",
+        "expected_hint": "I couldn't determine this in 8 steps."
+    }
+]

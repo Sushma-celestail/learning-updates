@@ -1,0 +1,11 @@
+langchain>=1.2
+langgraph>=0.2
+langchain-groq
+langchain-community
+duckduckgo-search
+wikipedia
+numexpr
+langfuse
+streamlit
+python-dotenv
+tavily-python
